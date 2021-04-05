@@ -12,7 +12,7 @@ import (
 	"github.com/michaelt0520/nfc-card/config"
 	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/logger"
-	"github.com/michaelt0520/nfc-card/servers"
+	"github.com/michaelt0520/nfc-card/handlers"
 )
 
 var log *zap.Logger
@@ -24,9 +24,10 @@ func main() {
 	// init log
 	log = logger.InitLogger(conf.Env)
 
-	// init daos
+	// init repositories
 	if err := repositories.InitRepository(conf); err != nil {
 		log.Error("failed to connect db", zap.Error(err))
+		return
 	}
 
 	r := gin.New()

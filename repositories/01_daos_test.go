@@ -8,8 +8,8 @@ import (
 )
 
 type ConfigTesting struct {
-	conf *config.Config
-	ud   *UserDAO
+	conf  *config.Config
+	uRepo *UserRepo
 }
 
 var configTesting *ConfigTesting
@@ -20,12 +20,12 @@ func TestDAOInit(t *testing.T) {
 	// load config
 	conf := config.GetConfig()
 
-	// init daos
+	// init repositories
 	err := InitDAO(conf)
 	assert.Nil(err)
 
 	configTesting = &ConfigTesting{
-		conf: conf,
-		ud:   NewUserDAO(),
+		conf:  conf,
+		uRepo: NewUserRepo(),
 	}
 }

@@ -1,6 +1,6 @@
 package models
 
-import "time"
+import "gorm.io/gorm"
 
 // SocialInformation struct
 type SocialInformation struct {

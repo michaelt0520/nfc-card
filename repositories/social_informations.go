@@ -11,12 +11,19 @@ func NewSocialInformationRepository() *SocialInformationRepository {
 }
 
 // Create : create social info
-func (u *SocialInformationRepository) Create(username string) (*models.SocialInformation, error) {
-	var social_info models.SocialInformation
-
-	if err := GetDB().Where("username = ?", username).Find(&social_info).Error; err != nil {
-		return nil, err
+func (u *SocialInformationRepository) Create(socialInfo *models.SocialInformation) error {
+	if err := GetDB().Create(&socialInfo).Error; err != nil {
+		return err
 	}
 
-	return &user, nil
+	return nil
+}
+
+// Destroy : destroy category
+func (repo *SocialInformationRepository) Destroy(id uint) error {
+	if err := GetDB().Delete(&models.SocialInformation{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

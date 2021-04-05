@@ -17,7 +17,7 @@ type Server struct {
 // NewServer ...
 func NewServer(
 	g 						*gin.Engine,
-	userHandler   *handlers.UserHandler
+	userHandler   *handlers.UserHandler,
 	socialHandler *handlers.SocialInformationHandler) *Server {
 	return &Server{
 		g:       			 g,

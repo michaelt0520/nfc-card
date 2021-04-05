@@ -2,40 +2,40 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
-	"github.com/michaelt0520/nfc-card/daos"
+	"github.com/michaelt0520/nfc-card/errors"
+	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
 	"github.com/gin-gonic/gin"
 )
 
 // UserHandler : struct
 type UserHandler struct {
-	userDao *daos.UserDAO
+	userRepo *repositories.UserRepository
 }
 
 // NewUserHandler ...
-func NewUserHandler(userDAO *daos.UserDAO) *UserHandler {
+func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
 	return &UserHandler{
-		userDao: userDAO,
+		userRepo: userRepo,
 	}
 }
 
 // Find ...
 func (h *UserHandler) Find(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("username"))
-	if err == nil || id == "" {
-		respondError(c, http.StatusBadRequest, "id is invalid")
+	userName := c.Param("username")
+	if userName == "" {
+		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
 		return
 	}
 
-	res, err := h.userDao.Find(id)
+	res, err := h.userRepo.Find(userName)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	if res == nil {
-		respondError(c, http.StatusNoContent, "user not found")
+		respondError(c, http.StatusNoContent, errors.RecordNotFound.Error())
 		return
 	}
 

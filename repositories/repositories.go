@@ -14,13 +14,15 @@ var db *gorm.DB
 // InitRepository ...
 func InitRepository(conf *config.Config) (err error) {
 	connectStr := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBUserName, conf.DBPassword, conf.DBPort, conf.DBName)
-	db, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{
+	connectedDb, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 
 	if err != nil {
 		return err
 	}
+
+	db = connectedDb
 
 	return nil
 }
