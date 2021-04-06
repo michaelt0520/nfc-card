@@ -1,14 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
+	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
-	"github.com/michaelt0520/nfc-card/models"
-	"github.com/gin-gonic/gin"
 )
 
 // SocialInformationHandler : struct
@@ -25,6 +26,12 @@ func NewSocialInformationHandler(repoSocialInfo *repositories.SocialInformationR
 
 // Create ...
 func (h *SocialInformationHandler) Create(c *gin.Context) {
+	userID, ok := c.Get("UserID")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+		return
+	}
+
 	var socialValues serializers.SocialInfoCreateRequest
 	if err := c.ShouldBindJSON(&socialValues); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -37,6 +44,14 @@ func (h *SocialInformationHandler) Create(c *gin.Context) {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	uid, err := strconv.ParseUint(fmt.Sprintf("%v", userID), 10, 32)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, errors.ParameterInvalid.Error())
+		return
+	}
+
+	socialInfo.UserID = uint32(uid)
 
 	if err := h.repoSocialInfo.Create(&socialInfo); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())

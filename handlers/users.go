@@ -3,10 +3,10 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
-	"github.com/gin-gonic/gin"
 )
 
 // UserHandler : struct
@@ -23,13 +23,19 @@ func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
 
 // Find ...
 func (h *UserHandler) Find(c *gin.Context) {
-	userName := c.Param("username")
-	if userName == "" {
-		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
+	var userVals serializers.UserRequest
+	if err := c.BindUri(&userVals); err != nil {
+		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	res, err := h.userRepo.Find(userName)
+	var data map[string]interface{}
+	if err := serializers.ConvertSerializer(userVals, &data); err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	res, err := h.userRepo.Find(data)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return

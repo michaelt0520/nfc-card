@@ -10,9 +10,10 @@ import (
 
 	"github.com/michaelt0520/nfc-card/api"
 	"github.com/michaelt0520/nfc-card/config"
-	"github.com/michaelt0520/nfc-card/repositories"
-	"github.com/michaelt0520/nfc-card/logger"
 	"github.com/michaelt0520/nfc-card/handlers"
+	"github.com/michaelt0520/nfc-card/logger"
+	"github.com/michaelt0520/nfc-card/models"
+	"github.com/michaelt0520/nfc-card/repositories"
 )
 
 var log *zap.Logger
@@ -41,15 +42,22 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	// Migration
+	repositories.GetDB().AutoMigrate(
+		&models.User{},
+		&models.SocialInformation{},
+	)
+
 	// init Repository
-	userRepo 			 := repositories.NewUserRepository()
+	userRepo := repositories.NewUserRepository()
 	socialInfoRepo := repositories.NewSocialInformationRepository()
 
 	// init Server
-	userHandler 	:= handlers.NewUserHandler(userRepo)
+	authHandler := handlers.NewAuthHandler(userRepo)
+	userHandler := handlers.NewUserHandler(userRepo)
 	socialHandler := handlers.NewSocialInformationHandler(socialInfoRepo)
 
-	svr := api.NewServer(r, userHandler, socialHandler)
+	svr := api.NewServer(r, authHandler, userHandler, socialHandler)
 	svr.InitRoutes()
 
 	if err := r.Run(fmt.Sprintf(":%d", conf.Port)); err != nil {

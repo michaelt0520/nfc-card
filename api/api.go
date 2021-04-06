@@ -3,24 +3,27 @@ package api
 import (
 	"net/http"
 
-	"github.com/michaelt0520/nfc-card/handlers"
 	"github.com/gin-gonic/gin"
+	"github.com/michaelt0520/nfc-card/handlers"
 )
 
 // Server : struct
 type Server struct {
-	g       			*gin.Engine
+	g             *gin.Engine
+	authHandler   *handlers.AuthHandler
 	userHandler   *handlers.UserHandler
 	socialHandler *handlers.SocialInformationHandler
 }
 
 // NewServer ...
 func NewServer(
-	g 						*gin.Engine,
-	userHandler   *handlers.UserHandler,
+	g *gin.Engine,
+	authHandler *handlers.AuthHandler,
+	userHandler *handlers.UserHandler,
 	socialHandler *handlers.SocialInformationHandler) *Server {
 	return &Server{
-		g:       			 g,
+		g:             g,
+		authHandler:   authHandler,
 		userHandler:   userHandler,
 		socialHandler: socialHandler,
 	}

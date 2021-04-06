@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/michaelt0520/nfc-card/serializers"
 	"github.com/gin-gonic/gin"
+	"github.com/michaelt0520/nfc-card/serializers"
 )
 
 // respondError ...

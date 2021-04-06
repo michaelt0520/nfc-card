@@ -5,6 +5,7 @@ type SocialInfoRequest struct {
 }
 
 type SocialInfoCreateRequest struct {
-	Provider string `json:"provider"`
-	Data		 string `json:"data"`
+	Provider  string `json:"provider"`
+	Data      string `json:"data"`
+	IsPrivate bool   `json:"is_private"`
 }
