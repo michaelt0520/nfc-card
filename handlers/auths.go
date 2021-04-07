@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -17,8 +18,10 @@ type AuthHandler struct {
 	repoUser *repositories.UserRepository
 }
 
-// ExpiredCookie : expired authorized cookie
-const ExpiredCookie = 3600 * 24 * 30
+const (
+	ExpiredCookie = 3600 * 24 * 30
+	DefaultAvatar = "/public/images/default_avatar.png"
+)
 
 // NewAuthHandler : Constructor
 func NewAuthHandler(userRepo *repositories.UserRepository) *AuthHandler {
@@ -41,6 +44,8 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	user.AvatarData = fmt.Sprintf("%s%s", os.Getenv("app_host"), DefaultAvatar)
 
 	if err := h.repoUser.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())

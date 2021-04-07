@@ -6,6 +6,8 @@ import "github.com/michaelt0520/nfc-card/middlewares"
 func (s *Server) InitRoutes() {
 	s.g.GET("/", s.DefaultWelcome)
 
+	s.g.Static("/public", "./static")
+
 	apiGroup := s.g.Group("/api")
 	{
 		apiV1 := apiGroup.Group("/v1")

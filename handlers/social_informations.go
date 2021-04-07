@@ -51,7 +51,7 @@ func (h *SocialInformationHandler) Create(c *gin.Context) {
 		return
 	}
 
-	socialInfo.UserID = uint32(uid)
+	socialInfo.UserID = uint(uid)
 
 	if err := h.repoSocialInfo.Create(&socialInfo); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
