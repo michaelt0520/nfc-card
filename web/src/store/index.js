@@ -1,13 +1,15 @@
 import { createStore, createLogger } from 'vuex'
 import users from './users'
-import socialInformations from './social-informations'
+import informations from './informations'
+import cards from './cards'
 
 const debug = process.env.NODE_ENV === 'development'
 
 export default createStore({
   modules: {
     users,
-    socialInformations
+    informations,
+    cards
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

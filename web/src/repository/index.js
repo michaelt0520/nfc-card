@@ -1,9 +1,11 @@
 // repositoryFactory
 
 import AuthRepository from './authRepository'
+import CardRepository from './cardRepository'
 
 const repositories = {
-  auth: AuthRepository
+  auth: AuthRepository,
+  card: CardRepository,
 }
 
 export default {

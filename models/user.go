@@ -16,14 +16,14 @@ const (
 // User struct
 type User struct {
 	gorm.Model
-	Name               string         `gorm:"column:name" json:"name"`
-	Avatar             string         `gorm:"column:avatar" json:"avatar"`
-	Username           string         `gorm:"column:username;unique;not null" json:"username"`
-	Email              string         `gorm:"column:email;unique;not null" json:"email"`
-	Password           string         `gorm:"column:password" json:"password"`
-	Type               CardType       `gorm:"column:type" json:"type"`
-	CompanyID          uint           `gorm:"column:company_id" json:"company_id"`
-	Cards              []*Card        `gorm:"foreignKey:UserID" json:"cards"`
+	Name         string         `gorm:"column:name" json:"name"`
+	Avatar       string         `gorm:"column:avatar" json:"avatar"`
+	Username     string         `gorm:"column:username;unique;not null" json:"username"`
+	Email        string         `gorm:"column:email;unique;not null" json:"email"`
+	Password     string         `gorm:"column:password" json:"password"`
+	Type         CardType       `gorm:"column:type" json:"type"`
+	CompanyID    uint           `gorm:"column:company_id" json:"company_id"`
+	Cards        []*Card        `gorm:"foreignKey:UserID" json:"cards"`
 	Informations []*Information `gorm:"foreignKey:UserID" json:"informations"`
 }
 

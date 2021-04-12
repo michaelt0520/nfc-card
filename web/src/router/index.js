@@ -6,7 +6,10 @@ const lazyLoadRoute = pageName => {
 
 const routes = [
   { path: '/', name: 'Home', component: lazyLoadRoute('Home') },
-  { path: '/about', name: 'About', component: lazyLoadRoute('About') }
+  { path: '/about', name: 'About', component: lazyLoadRoute('About') },
+  { path: '/profile', name: 'Profile', component: lazyLoadRoute('Profile') },
+  { path: '/personal/:code', name: 'Card', component: lazyLoadRoute('Card') },
+  { path: '/admin/dashboard', name: 'Dashboard', component: lazyLoadRoute('Dashboard') },
 ]
 
 const router = createRouter({
