@@ -9,10 +9,11 @@ import (
 
 // Server : struct
 type Server struct {
-	g             *gin.Engine
-	authHandler   *handlers.AuthHandler
-	userHandler   *handlers.UserHandler
-	socialHandler *handlers.SocialInformationHandler
+	g           *gin.Engine
+	authHandler *handlers.AuthHandler
+	userHandler *handlers.UserHandler
+	infoHandler *handlers.InformationHandler
+	cardHandler *handlers.CardHandler
 }
 
 // NewServer ...
@@ -20,12 +21,14 @@ func NewServer(
 	g *gin.Engine,
 	authHandler *handlers.AuthHandler,
 	userHandler *handlers.UserHandler,
-	socialHandler *handlers.SocialInformationHandler) *Server {
+	infoHandler *handlers.InformationHandler,
+	cardHandler *handlers.CardHandler) *Server {
 	return &Server{
-		g:             g,
-		authHandler:   authHandler,
-		userHandler:   userHandler,
-		socialHandler: socialHandler,
+		g:           g,
+		authHandler: authHandler,
+		userHandler: userHandler,
+		infoHandler: infoHandler,
+		cardHandler: cardHandler,
 	}
 }
 

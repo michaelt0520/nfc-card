@@ -16,16 +16,16 @@ func (s *Server) InitRoutes() {
 			apiV1.POST("/signup", s.authHandler.Signup)
 			apiV1.DELETE("/signout", s.authHandler.Signout, middlewares.Auth())
 
-			userGroup := apiV1.Group("/users")
+			cardGroup := apiV1.Group("/cards")
 			{
-				userGroup.GET("/:username", s.userHandler.Find)
+				cardGroup.GET("/:code", s.cardHandler.Find)
 			}
 
-			socialGroup := apiV1.Group("/social")
+			socialGroup := apiV1.Group("/information")
 			socialGroup.Use(middlewares.Auth())
 			{
-				socialGroup.POST("/", s.socialHandler.Create)
-				socialGroup.DELETE("/:id", s.socialHandler.Destroy)
+				socialGroup.POST("/", s.infoHandler.Create)
+				socialGroup.DELETE("/:id", s.infoHandler.Destroy)
 			}
 		}
 	}

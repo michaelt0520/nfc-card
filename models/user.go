@@ -5,15 +5,26 @@ import (
 	"gorm.io/gorm"
 )
 
+// CardType : card type
+type CardType uint32
+
+const (
+	Personal CardType = iota + 1
+	Business
+)
+
 // User struct
 type User struct {
 	gorm.Model
-	Email              string               `gorm:"column:email;unique" json:"email"`
-	Password           string               `gorm:"column:password" json:"password"`
-	Username           string               `gorm:"column:username;unique" json:"username"`
-	Name               string               `gorm:"column:name" json:"name"`
-	AvatarData         string               `gorm:"column:avatar_data" json:"avatar_data"`
-	SocialInformations []*SocialInformation `gorm:"foreignKey:UserID" json:"social_informations"`
+	Name               string         `gorm:"column:name" json:"name"`
+	Avatar             string         `gorm:"column:avatar" json:"avatar"`
+	Username           string         `gorm:"column:username;unique;not null" json:"username"`
+	Email              string         `gorm:"column:email;unique;not null" json:"email"`
+	Password           string         `gorm:"column:password" json:"password"`
+	Type               CardType       `gorm:"column:type" json:"type"`
+	CompanyID          uint           `gorm:"column:company_id" json:"company_id"`
+	Cards              []*Card        `gorm:"foreignKey:UserID" json:"cards"`
+	Informations []*Information `gorm:"foreignKey:UserID" json:"informations"`
 }
 
 // HashPassword : encrypts user password

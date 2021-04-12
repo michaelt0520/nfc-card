@@ -12,34 +12,34 @@ import (
 	"github.com/michaelt0520/nfc-card/serializers"
 )
 
-// SocialInformationHandler : struct
-type SocialInformationHandler struct {
-	repoSocialInfo *repositories.SocialInformationRepository
+// InformationHandler : struct
+type InformationHandler struct {
+	repoSocialInfo *repositories.InformationRepository
 }
 
-// NewSocialInformationHandler ...
-func NewSocialInformationHandler(repoSocialInfo *repositories.SocialInformationRepository) *SocialInformationHandler {
-	return &SocialInformationHandler{
+// NewInformationHandler ...
+func NewInformationHandler(repoSocialInfo *repositories.InformationRepository) *InformationHandler {
+	return &InformationHandler{
 		repoSocialInfo: repoSocialInfo,
 	}
 }
 
 // Create ...
-func (h *SocialInformationHandler) Create(c *gin.Context) {
+func (h *InformationHandler) Create(c *gin.Context) {
 	userID, ok := c.Get("UserID")
 	if !ok {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
 
-	var socialValues serializers.SocialInfoCreateRequest
+	var socialValues serializers.InfoCreateRequest
 	if err := c.ShouldBindJSON(&socialValues); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	var socialInfo models.SocialInformation
-	err := serializers.ConvertSerializer(socialValues, &socialInfo)
+	var info models.Information
+	err := serializers.ConvertSerializer(socialValues, &info)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -51,25 +51,25 @@ func (h *SocialInformationHandler) Create(c *gin.Context) {
 		return
 	}
 
-	socialInfo.UserID = uint(uid)
+	info.UserID = uint(uid)
 
-	if err := h.repoSocialInfo.Create(&socialInfo); err != nil {
+	if err := h.repoSocialInfo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &socialInfo, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &info, Error: nil})
 }
 
 // Destroy ...
-func (h *SocialInformationHandler) Destroy(c *gin.Context) {
-	var socialValues serializers.SocialInfoRequest
+func (h *InformationHandler) Destroy(c *gin.Context) {
+	var socialValues serializers.InfoRequest
 	if err := c.ShouldBindUri(&socialValues); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := strconv.Atoi(socialValues.SocialInformationID)
+	id, err := strconv.Atoi(socialValues.InformationID)
 	if err != nil || id <= 0 {
 		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
 		return

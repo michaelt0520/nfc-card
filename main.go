@@ -45,19 +45,23 @@ func main() {
 	// Migration
 	repositories.GetDB().AutoMigrate(
 		&models.User{},
-		&models.SocialInformation{},
+		&models.Information{},
+		&models.Card{},
+		&models.Company{},
 	)
 
 	// init Repository
 	userRepo := repositories.NewUserRepository()
-	socialInfoRepo := repositories.NewSocialInformationRepository()
+	infoRepo := repositories.NewInformationRepository()
+	cardRepo := repositories.NewCardRepository()
 
 	// init Server
 	authHandler := handlers.NewAuthHandler(userRepo)
 	userHandler := handlers.NewUserHandler(userRepo)
-	socialHandler := handlers.NewSocialInformationHandler(socialInfoRepo)
+	socialHandler := handlers.NewInformationHandler(infoRepo)
+	cardHandler := handlers.NewCardHandler(cardRepo, userRepo)
 
-	svr := api.NewServer(r, authHandler, userHandler, socialHandler)
+	svr := api.NewServer(r, authHandler, userHandler, socialHandler, cardHandler)
 	svr.InitRoutes()
 
 	if err := r.Run(fmt.Sprintf(":%d", conf.Port)); err != nil {

@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/jwt"
@@ -10,12 +11,7 @@ import (
 // Auth validate token and authorizes user
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token, err := c.Cookie("Authorized")
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, "token not found")
-			c.Abort()
-			return
-		}
+		token := strings.TrimPrefix(c.Request.Header.Get("Authorization"), "Bearer ")
 
 		payload, err := jwt.ExtractToken(token)
 		if err != nil {

@@ -45,7 +45,8 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	user.AvatarData = fmt.Sprintf("%s%s", os.Getenv("app_host"), DefaultAvatar)
+	user.Avatar = fmt.Sprintf("%s%s", os.Getenv("app_host"), DefaultAvatar)
+	user.Type = models.Personal
 
 	if err := h.repoUser.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -89,8 +90,13 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
+	response := serializers.SigninResponse{
+		User:  res,
+		Token: token,
+	}
+
 	c.SetCookie("Authorized", token, ExpiredCookie, "/", os.Getenv("app_host"), false, true)
-	c.JSON(http.StatusOK, serializers.Resp{Result: token, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: response, Error: nil})
 }
 
 // Signout : DELETE #signout

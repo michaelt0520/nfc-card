@@ -15,13 +15,13 @@ func (u *UserRepository) Find(data map[string]interface{}) (*models.User, error)
 	var user models.User
 
 	if username, ok := data["username"]; ok {
-		if err := GetDB().Preload("SocialInformations").Where("username = ?", username).Find(&user).Error; err != nil {
+		if err := GetDB().Preload("Informations").Where("username = ?", username).Find(&user).Error; err != nil {
 			return nil, err
 		}
 
 		return &user, nil
 	} else {
-		if err := GetDB().Preload("SocialInformations").Where(data).Find(&user).Error; err != nil {
+		if err := GetDB().Preload("Informations").Where(data).Find(&user).Error; err != nil {
 			return nil, err
 		}
 
@@ -35,7 +35,7 @@ func (repo *UserRepository) Create(user *models.User) error {
 		return err
 	}
 
-	result := GetDB().Create(&user)
+	result := GetDB().Where("email = ?", user.Email).Or("username = ?", user.Username).FirstOrCreate(&user)
 
 	if result.Error != nil {
 		return result.Error
