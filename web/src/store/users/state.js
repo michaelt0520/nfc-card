@@ -1,5 +1,5 @@
 const state = {
-  user: {}
+  currentUser: localStorage.getItem('user') || {}
 }
 
 export default state
