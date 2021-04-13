@@ -1,6 +1,5 @@
 const state = {
-  card: {},
-  cards: []
+  companies: []
 }
 
 export default state

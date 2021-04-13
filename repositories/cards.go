@@ -13,6 +13,14 @@ func NewCardRepository() *CardRepository {
 }
 
 // Find : get card by code
+func (u *CardRepository) All() *[]models.Card {
+  var cards []models.Card
+	GetDB().Find(&cards)
+
+  return &cards
+}
+
+// Find : get card by code
 func (u *CardRepository) Find(cardCode string) (*models.Card, error) {
 	var card models.Card
 

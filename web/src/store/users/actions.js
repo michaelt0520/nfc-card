@@ -1,10 +1,12 @@
 import Repository from '@/repository'
 import {
   INITIAL_STATES_SET_USER,
-  CREATE_USER
+  CREATE_USER,
+  FETCH_LIST_USERS
 } from '../mutation-types'
 
 const AuthRepository = Repository.get('auth')
+const UserRepository = Repository.get('user')
 
 const actions = {
   login ({ commit }, data) {
@@ -30,6 +32,16 @@ const actions = {
       .then(res => {
         localStorage.removeItem('user')
         localStorage.removeItem('token')
+        localStorage.removeItem('is_authenticated')
+
+        return res
+      })
+  },
+
+  getListUsers ({ commit }) {
+    return UserRepository.index()
+      .then(res => {
+        commit(FETCH_LIST_USERS, res.data.Result)
 
         return res
       })

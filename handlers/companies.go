@@ -25,9 +25,7 @@ func NewCompanyHandler(compRepo *repositories.CompanyRepository) *CompanyHandler
 
 // Index : list all companies
 func (h *CompanyHandler) Index(c *gin.Context) {
-	result := repositories.GetDB().Find(&models.Company{})
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: h.compRepo.All(), Error: nil})
 }
 
 // Show ...

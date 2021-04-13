@@ -1,10 +1,10 @@
 import {
-  FETCH_CARD,
+  FETCH_LIST_CARDS,
 } from '../mutation-types'
 
 const mutations = {
-  [FETCH_CARD] (state, payload) {
-    state.card = payload.card
+  [FETCH_LIST_CARDS] (state, payload) {
+    state.cards = payload
   }
 }
 

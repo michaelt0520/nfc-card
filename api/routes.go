@@ -22,7 +22,7 @@ func (s *Server) InitRoutes() {
 				cardGroup.GET("/:code", s.cardHandler.Show)
 				cardGroup.POST("/", s.cardHandler.Create, middlewares.Auth())
 				cardGroup.PUT("/:code", s.cardHandler.Update, middlewares.Auth())
-				cardGroup.DELETE("/:code", s.cardHandler.Create, middlewares.Auth())
+				cardGroup.DELETE("/:code", s.cardHandler.Destroy, middlewares.Auth())
 			}
 
 			infoGroup := apiV1.Group("/informations")

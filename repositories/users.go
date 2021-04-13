@@ -12,6 +12,15 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
+// Find : get card by code
+func (u *UserRepository) All() *[]models.User {
+  var users []models.User
+	GetDB().Find(&users)
+
+  return &users
+}
+
+
 // Find : get user by username
 func (u *UserRepository) Find(data map[string]interface{}) (*models.User, error) {
 	var user models.User

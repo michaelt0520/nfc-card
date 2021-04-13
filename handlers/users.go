@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
-	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
 )
@@ -22,11 +21,9 @@ func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
 	}
 }
 
-// Index : list all companies
+// Index : list all users
 func (h *UserHandler) Index(c *gin.Context) {
-	result := repositories.GetDB().Find(&models.User{})
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: h.userRepo.All(), Error: nil})
 }
 
 // Update ...

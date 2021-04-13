@@ -31,10 +31,10 @@
           </div>
         </div>
         <div class="flex flex-wrap">
-            <card
-              v-for="item in [1, 2, 3, 4, 5, 6, 7]"
-              :key="item"/>
-          </div>
+          <card
+            v-for="card in cards"
+            :key="card.id"/>
+        </div>
       </div>
 
       <div
@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import Card from '../components/Card'
 import HeaderAdmin from '../components/HeaderAdmin'
 import User from '../components/User'
@@ -82,10 +83,22 @@ export default {
     Company
   },
 
+  computed: {
+    ...mapState('cards', ['cards']),
+  },
+
   data () {
     return {
       activeTab: 1
     }
+  },
+
+  methods: {
+    ...mapActions('cards', ['getListCards']),
+  },
+
+  created() {
+    this.getListCards()
   }
 }
 </script>

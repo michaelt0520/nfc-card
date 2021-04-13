@@ -5,23 +5,23 @@
     <main class="bg-white max-w-lg mx-auto p-8 md:p-12 my-10 rounded-lg shadow-2xl">
       <section>
         <h3 class="font-bold text-2xl">Welcome to Card</h3>
-        <p class="text-gray-600 pt-2">Sign in to your account.</p>
+        <p class="text-gray-600 pt-2">{{ loggedInMessage }}.</p>
       </section>
-      <section class="mt-10">
-        <form class="flex flex-col" method="POST" action="#">
+      <section v-if="!isAuthenticated" class="mt-10">
+        <form @submit.prevent class="flex flex-col">
           <div class="mb-6 pt-3 rounded bg-gray-200">
-            <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="email">Email</label>
-            <input type="text" id="email" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
+            <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="username">Username</label>
+            <input v-model="username" type="text" id="username" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
           </div>
           <div class="mb-6 pt-3 rounded bg-gray-200">
             <label class="block text-gray-700 text-sm font-bold mb-2 ml-3" for="password">Password</label>
-            <input type="password" id="password" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
+            <input v-model="password" type="password" id="password" class="bg-gray-200 rounded w-full text-gray-700 focus:outline-none border-b-4 border-gray-300 focus:border-purple-600 transition duration-500 px-3 pb-3">
           </div>
           <div class="flex flex-col justify-end">
             <p class="text-right"><a href="#" class="text-sm text-purple-600 hover:text-purple-700 hover:underline mb-6">Forgot your password?</a></p>
             <p class="text-right mb-6"><router-link to="/signup"><a href="#" class="text-sm text-purple-600 hover:text-purple-700 hover:underline mb-6">Do not have account?</a></router-link></p>
           </div>
-          <button class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">Sign In</button>
+          <button @click="onSubmit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded shadow-lg hover:shadow-xl transition duration-200" type="submit">Sign In</button>
         </form>
       </section>
     </main>
@@ -29,8 +29,37 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  name: 'Signin'
+  name: 'Signin',
+
+  data() {
+    return {
+      username: '',
+      password: ''
+    }
+  },
+
+  computed: {
+    ...mapState('users', ['isAuthenticated']),
+
+    loggedInMessage() {
+      return this.isAuthenticated ? 'You are already logged in' : 'Log in to your account'
+    }
+  },
+
+  methods: {
+    ...mapActions('users', ['login']),
+
+    onSubmit() {
+      const data = {
+        username: this.username,
+        password: this.password
+      }
+      this.login(data)
+    }
+  }
 }
 </script>
 

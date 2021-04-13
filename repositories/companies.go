@@ -12,6 +12,14 @@ func NewCompanyRepository() *CompanyRepository {
 	return &CompanyRepository{}
 }
 
+// Find : get card by code
+func (u *CompanyRepository) All() *[]models.Company {
+  var companies []models.Company
+	GetDB().Find(&companies)
+
+  return &companies
+}
+
 // Find : get company by id
 func (u *CompanyRepository) Find(id uint) (*models.Company, error) {
 	var company models.Company

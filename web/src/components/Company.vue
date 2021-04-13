@@ -11,17 +11,11 @@
       </thead>
 
       <tbody>
-        <tr>
-          <td class="text-left py-3 px-4">1Pac</td>
-          <td class="text-left py-3 px-4">86-88 Le Van Duyet, Binh Thanh</td>
-          <td class="text-center py-3 px-4"><img width="20" height="20" src="../assets/logo.png" alt="avatar"></td>
-          <td class="text-left py-3 px-4 hover:text-blue-500">1Pac.vn</td>
-        </tr>
-        <tr>
-          <td class="text-left py-3 px-4">Tokoinnn</td>
-          <td class="text-left py-3 px-4">86-88 Dien Bien Phu, Binh Thanh</td>
-          <td class="text-center py-3 px-4"><img width="20" height="20" src="../assets/logo.png" alt="avatar"></td>
-          <td class="text-left py-3 px-4 hover:text-blue-500">Tokoin.com.vn.indone</td>
+        <tr v-for="company in companies" :key="company.id">
+          <td class="text-center py-3 px-4"><img width="20" height="20" :src="company.logo" alt="avatar"></td>
+          <td class="text-left py-3 px-4">{{ company.name }}</td>
+          <td class="text-left py-3 px-4">{{ company.address }}</td>
+          <td class="text-left py-3 px-4 hover:text-blue-500">{{ company.website }}</td>
         </tr>
       </tbody>
     </table>
@@ -29,11 +23,21 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+
 export default {
-  name: 'Company'
+  name: 'Company',
+
+  computed: {
+    ...mapState('companies', ['companies']),
+  },
+
+  methods: {
+    ...mapActions('companies', ['getListCompanies']),
+  },
+
+  created() {
+    if (!(this.companies.length > 1)) this.getListCompanies()
+  }
 }
 </script>
-
-<style>
-
-</style>

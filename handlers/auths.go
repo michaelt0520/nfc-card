@@ -76,28 +76,28 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	res, err := h.repoUser.Find(data)
+	resU, err := h.repoUser.Find(data)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
-	} else if res == nil {
+	} else if resU == nil {
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
-	if err := res.CheckPassword(loginVals.Password); err != nil {
+	if err := resU.CheckPassword(loginVals.Password); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, errors.PasswordIncorrect.Error())
 		return
 	}
 
-	token, err := jwt.CreateToken(res)
+	token, err := jwt.CreateToken(resU)
 	if err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
   var resUser serializers.UserSerializer
-	if err := serializers.ConvertSerializer(loginVals, &resUser); err != nil {
+	if err := serializers.ConvertSerializer(resU, &resUser); err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
