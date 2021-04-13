@@ -5,11 +5,14 @@ const lazyLoadRoute = pageName => {
 }
 
 const routes = [
-  { path: '/', name: 'Home', component: lazyLoadRoute('Home') },
-  { path: '/about', name: 'About', component: lazyLoadRoute('About') },
-  { path: '/profile', name: 'Profile', component: lazyLoadRoute('Profile') },
-  { path: '/personal/:code', name: 'Card', component: lazyLoadRoute('Card') },
-  { path: '/admin/dashboard', name: 'Dashboard', component: lazyLoadRoute('Dashboard') },
+  { path: '/', name: 'home', component: lazyLoadRoute('Home') },
+  { path: '/about', name: 'about', component: lazyLoadRoute('About') },
+  { path: '/profile', name: 'profile', component: lazyLoadRoute('Profile') },
+  { path: '/personal/:code', name: 'card', component: lazyLoadRoute('Card') },
+  { path: '/admin/dashboard', name: 'dashboard', component: lazyLoadRoute('Dashboard') },
+  { path: '/signin', name: 'signin', component: lazyLoadRoute('Signin') },
+  { path: '/signup', name: 'signup', component: lazyLoadRoute('Signup') },
+  { path: '/404', name: 'error-404', component: lazyLoadRoute('Error404') }
 ]
 
 const router = createRouter({
