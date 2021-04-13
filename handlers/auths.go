@@ -53,7 +53,13 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: user, Error: nil})
+  var resUser serializers.UserSerializer
+	if err := serializers.ConvertSerializer(user, &resUser); err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }
 
 // Signin : POST #signin
@@ -90,8 +96,14 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
+  var resUser serializers.UserSerializer
+	if err := serializers.ConvertSerializer(loginVals, &resUser); err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	response := serializers.SigninResponse{
-		User:  res,
+		User:  resUser,
 		Token: token,
 	}
 

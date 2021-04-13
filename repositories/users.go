@@ -1,6 +1,9 @@
 package repositories
 
-import "github.com/michaelt0520/nfc-card/models"
+import (
+	"github.com/michaelt0520/nfc-card/errors"
+	"github.com/michaelt0520/nfc-card/models"
+)
 
 // UserRepository : struct
 type UserRepository struct{}
@@ -42,4 +45,21 @@ func (repo *UserRepository) Create(user *models.User) error {
 	}
 
 	return nil
+}
+
+// Update : Update user to db
+func (repo *UserRepository) Update(data map[string]interface{}) (*models.User, error) {
+	user, err := repo.Find(data)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, errors.RecordNotFound
+	}
+
+	if err := GetDB().Model(&user).Where("id = ?", data["id"]).Updates(data).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

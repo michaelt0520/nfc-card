@@ -1,7 +1,5 @@
 package serializers
 
-import "github.com/michaelt0520/nfc-card/models"
-
 type SignUpRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -15,6 +13,6 @@ type SigninRequest struct {
 }
 
 type SigninResponse struct {
-	User  *models.User
+	User  UserSerializer
 	Token string
 }

@@ -39,3 +39,12 @@ func (repo *CardRepository) Update(data map[string]interface{}) (*models.Card, e
 
 	return &card, nil
 }
+
+// Destroy : destroy category
+func (repo *CardRepository) Destroy(id uint) error {
+	if err := GetDB().Delete(&models.Card{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

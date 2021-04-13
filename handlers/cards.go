@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -89,7 +90,7 @@ func (h *CardHandler) Create(c *gin.Context) {
 // Update ...
 func (h *CardHandler) Update(c *gin.Context) {
 	var cardVals serializers.CardUpdateRequest
-	if err := c.BindUri(&cardVals); err != nil {
+	if err := c.ShouldBindJSON(&cardVals); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -112,4 +113,20 @@ func (h *CardHandler) Update(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: &resCard, Error: nil})
+}
+
+// Destroy ...
+func (h *CardHandler) Destroy(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
+		return
+	}
+
+	if err := h.cardRepo.Destroy(uint(id)); err != nil {
+		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: "deleted", Error: nil})
 }

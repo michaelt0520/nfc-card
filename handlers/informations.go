@@ -14,13 +14,13 @@ import (
 
 // InformationHandler : struct
 type InformationHandler struct {
-	repoSocialInfo *repositories.InformationRepository
+	repoInfo *repositories.InformationRepository
 }
 
 // NewInformationHandler ...
-func NewInformationHandler(repoSocialInfo *repositories.InformationRepository) *InformationHandler {
+func NewInformationHandler(repoInfo *repositories.InformationRepository) *InformationHandler {
 	return &InformationHandler{
-		repoSocialInfo: repoSocialInfo,
+		repoInfo: repoInfo,
 	}
 }
 
@@ -32,14 +32,14 @@ func (h *InformationHandler) Create(c *gin.Context) {
 		return
 	}
 
-	var socialValues serializers.InfoCreateRequest
-	if err := c.ShouldBindJSON(&socialValues); err != nil {
+	var infoValues serializers.InfoCreateRequest
+	if err := c.ShouldBindJSON(&infoValues); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
 	var info models.Information
-	err := serializers.ConvertSerializer(socialValues, &info)
+	err := serializers.ConvertSerializer(infoValues, &info)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -53,7 +53,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 
 	info.UserID = uint(uid)
 
-	if err := h.repoSocialInfo.Create(&info); err != nil {
+	if err := h.repoInfo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -61,21 +61,49 @@ func (h *InformationHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, serializers.Resp{Result: &info, Error: nil})
 }
 
+// Update ...
+func (h *InformationHandler) Update(c *gin.Context) {
+	var infoVals serializers.InfoUpdateRequest
+	if err := c.ShouldBindJSON(&infoVals); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	var data map[string]interface{}
+	err := serializers.ConvertSerializer(infoVals, &data)
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	resInfo, err := h.repoInfo.Update(data)
+	if err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
+		return
+	}
+	if resInfo == nil {
+		respondError(c, http.StatusNoContent, errors.RecordNotFound.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: resInfo, Error: nil})
+}
+
 // Destroy ...
 func (h *InformationHandler) Destroy(c *gin.Context) {
-	var socialValues serializers.InfoRequest
-	if err := c.ShouldBindUri(&socialValues); err != nil {
+	var infoValues serializers.InfoRequest
+	if err := c.ShouldBindUri(&infoValues); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := strconv.Atoi(socialValues.InformationID)
+	id, err := strconv.Atoi(infoValues.InformationID)
 	if err != nil || id <= 0 {
 		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
 		return
 	}
 
-	if err := h.repoSocialInfo.Destroy(uint(id)); err != nil {
+	if err := h.repoInfo.Destroy(uint(id)); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
