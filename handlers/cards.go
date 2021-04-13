@@ -33,12 +33,12 @@ func (h *CardHandler) Find(c *gin.Context) {
 	}
 
 	resCard, err := h.cardRepo.Find(cardVals.CardCode)
-	if resCard != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+	if err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 	if resCard == nil {
-		respondError(c, http.StatusNoContent, errors.RecordNotFound.Error())
+		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
@@ -46,12 +46,12 @@ func (h *CardHandler) Find(c *gin.Context) {
 	userParams["id"] = resCard.UserID
 
 	resUser, err := h.userRepo.Find(userParams)
-	if resUser != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+	if err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 	if resUser == nil {
-		respondError(c, http.StatusNoContent, errors.RecordNotFound.Error())
+		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
@@ -102,7 +102,7 @@ func (h *CardHandler) Update(c *gin.Context) {
 	}
 
 	resCard, err := h.cardRepo.Update(data)
-  if resCard != nil {
+	if resCard != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}

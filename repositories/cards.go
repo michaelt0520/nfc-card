@@ -14,7 +14,7 @@ func NewCardRepository() *CardRepository {
 func (u *CardRepository) Find(cardCode string) (*models.Card, error) {
 	var card models.Card
 
-	if err := GetDB().Where("code = ?", cardCode).Find(&card).Error; err != nil {
+	if err := GetDB().Where("code = ?", cardCode).First(&card).Error; err != nil {
 		return nil, err
 	}
 

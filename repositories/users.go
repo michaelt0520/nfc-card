@@ -15,13 +15,13 @@ func (u *UserRepository) Find(data map[string]interface{}) (*models.User, error)
 	var user models.User
 
 	if username, ok := data["username"]; ok {
-		if err := GetDB().Preload("Informations").Where("username = ?", username).Find(&user).Error; err != nil {
+		if err := GetDB().Preload("Informations").Where("username = ?", username).First(&user).Error; err != nil {
 			return nil, err
 		}
 
 		return &user, nil
 	} else {
-		if err := GetDB().Preload("Informations").Where(data).Find(&user).Error; err != nil {
+		if err := GetDB().Preload("Informations").Where(data).First(&user).Error; err != nil {
 			return nil, err
 		}
 
