@@ -12,7 +12,8 @@ const routes = [
   { path: '/admin/dashboard', name: 'dashboard', component: lazyLoadRoute('Dashboard') },
   { path: '/signin', name: 'signin', component: lazyLoadRoute('Signin') },
   { path: '/signup', name: 'signup', component: lazyLoadRoute('Signup') },
-  { path: '/404', name: 'error-404', component: lazyLoadRoute('Error404') }
+  { path: '/404', name: 'error-404', component: lazyLoadRoute('Error404') },
+  { path: '/:pathMatch(.*)*', component: lazyLoadRoute('Error404') }
 ]
 
 const router = createRouter({
