@@ -24,6 +24,13 @@ func NewCardHandler(cardRepo *repositories.CardRepository, userRepo *repositorie
 	}
 }
 
+// Index : list all cards
+func (h *CardHandler) Index(c *gin.Context) {
+	result := repositories.GetDB().Find(&models.Card{})
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
+}
+
 // Show ...
 func (h *CardHandler) Show(c *gin.Context) {
 	resCard, err := h.cardRepo.Find(c.Param("code"))

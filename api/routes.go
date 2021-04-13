@@ -18,6 +18,7 @@ func (s *Server) InitRoutes() {
 
 			cardGroup := apiV1.Group("/cards")
 			{
+				cardGroup.GET("/", s.cardHandler.Index)
 				cardGroup.GET("/:code", s.cardHandler.Show)
 				cardGroup.POST("/", s.cardHandler.Create, middlewares.Auth())
 				cardGroup.PUT("/:code", s.cardHandler.Update, middlewares.Auth())
@@ -34,6 +35,7 @@ func (s *Server) InitRoutes() {
 
 			userGroup := apiV1.Group("/users")
 			{
+				userGroup.GET("/", s.userHandler.Index)
 				userGroup.PUT("/:username", s.userHandler.Update)
 			}
 
