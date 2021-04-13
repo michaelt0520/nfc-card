@@ -65,8 +65,7 @@ export default {
         name: this.form.name,
       };
       this.signup(data);
-      console.log('1')
     },
-  }
+  },
 };
 </script>

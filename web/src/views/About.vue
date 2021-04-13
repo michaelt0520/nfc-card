@@ -24,15 +24,15 @@
 import { mapActions } from "vuex";
 
 export default {
-  name: 'About',
+  name: "About",
 
   data() {
     return {
       form: {
-        username: '',
-        password: ''
-      }
-    }
+        username: "",
+        password: "",
+      },
+    };
   },
 
   methods: {
@@ -43,10 +43,8 @@ export default {
         username: this.form.username,
         password: this.form.password,
       };
-      console.log(data)
       this.login(data);
-      console.log('1')
     },
-  }
-}
+  },
+};
 </script>
