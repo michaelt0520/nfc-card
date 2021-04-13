@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -41,17 +40,11 @@ func (h *InformationHandler) Create(c *gin.Context) {
 	var info models.Information
 	err := serializers.ConvertSerializer(infoValues, &info)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	uid, err := strconv.ParseUint(fmt.Sprintf("%v", userID), 10, 32)
-	if err != nil {
-		respondError(c, http.StatusUnauthorized, errors.ParameterInvalid.Error())
-		return
-	}
-
-	info.UserID = uint(uid)
+	info.UserID = userID.(uint)
 
 	if err := h.repoInfo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -63,6 +56,24 @@ func (h *InformationHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *InformationHandler) Update(c *gin.Context) {
+	// get info's id from params
+	id, errGetID := strconv.Atoi(c.Param("id"))
+	if errGetID != nil || id <= 0 {
+		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
+		return
+	}
+
+	// query info from database
+	info, errGetInfo := h.repoInfo.Find(uint(id))
+	if errGetInfo != nil {
+		respondError(c, http.StatusNotFound, errGetInfo.Error())
+		return
+	}
+	if info == nil {
+		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
+		return
+	}
+
 	var infoVals serializers.InfoUpdateRequest
 	if err := c.ShouldBindJSON(&infoVals); err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
@@ -72,13 +83,13 @@ func (h *InformationHandler) Update(c *gin.Context) {
 	var data map[string]interface{}
 	err := serializers.ConvertSerializer(infoVals, &data)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	resInfo, err := h.repoInfo.Update(data)
+	resInfo, err := h.repoInfo.Update(info, data)
 	if err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
+		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 	if resInfo == nil {
@@ -91,14 +102,9 @@ func (h *InformationHandler) Update(c *gin.Context) {
 
 // Destroy ...
 func (h *InformationHandler) Destroy(c *gin.Context) {
-	var infoValues serializers.InfoRequest
-	if err := c.ShouldBindUri(&infoValues); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	id, err := strconv.Atoi(infoValues.InformationID)
-	if err != nil || id <= 0 {
+	// get info's id from params
+	id, errGetID := strconv.Atoi(c.Param("id"))
+	if errGetID != nil || id <= 0 {
 		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
 		return
 	}

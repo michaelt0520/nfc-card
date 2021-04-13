@@ -11,7 +11,6 @@ type InfoCreateRequest struct {
 }
 
 type InfoUpdateRequest struct {
-	ID       uint   `json:"id"`
 	Name     string `json:"name"`
 	Data     string `json:"data"`
 	Visibled bool   `json:"visibled"`

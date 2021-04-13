@@ -11,7 +11,6 @@ type UserSerializer struct {
 }
 
 type UserUpdateSerializer struct {
-	ID        uint            `json:"id"`
 	Name      string          `json:"name"`
 	Avatar    string          `json:"avatar"`
 	Username  string          `json:"username"`

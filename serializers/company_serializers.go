@@ -1,9 +1,5 @@
 package serializers
 
-type CompanyRequest struct {
-	InformationID string `uri:"id" json:"id"`
-}
-
 type CompanyCreateRequest struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`

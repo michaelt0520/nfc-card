@@ -23,6 +23,20 @@ func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
 
 // Update ...
 func (h *UserHandler) Update(c *gin.Context) {
+	// query user from database
+	var userParams = make(map[string]interface{})
+	userParams["id"] = c.Param("username")
+
+	user, errGetUser := h.userRepo.Find(userParams)
+	if errGetUser != nil {
+		respondError(c, http.StatusNotFound, errGetUser.Error())
+		return
+	}
+	if user == nil {
+		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
+		return
+	}
+
 	var userVals serializers.UserUpdateSerializer
 	if err := c.ShouldBindJSON(&userVals); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -36,7 +50,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	res, err := h.userRepo.Update(data)
+	res, err := h.userRepo.Update(user, data)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -25,15 +24,9 @@ func NewCardHandler(cardRepo *repositories.CardRepository, userRepo *repositorie
 	}
 }
 
-// Find ...
-func (h *CardHandler) Find(c *gin.Context) {
-	var cardVals serializers.CardRequest
-	if err := c.BindUri(&cardVals); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-
-	resCard, err := h.cardRepo.Find(cardVals.CardCode)
+// Show ...
+func (h *CardHandler) Show(c *gin.Context) {
+	resCard, err := h.cardRepo.Find(c.Param("code"))
 	if err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
@@ -46,13 +39,19 @@ func (h *CardHandler) Find(c *gin.Context) {
 	var userParams = make(map[string]interface{})
 	userParams["id"] = resCard.UserID
 
-	resUser, err := h.userRepo.Find(userParams)
+	res, err := h.userRepo.Find(userParams)
 	if err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
-	if resUser == nil {
+	if res == nil {
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
+		return
+	}
+
+	var resUser serializers.UserSerializer
+	if err := serializers.ConvertSerializer(res, &resUser); err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -89,6 +88,17 @@ func (h *CardHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *CardHandler) Update(c *gin.Context) {
+	// query card from database
+	card, errGetCard := h.cardRepo.Find(c.Param("code"))
+	if errGetCard != nil {
+		respondError(c, http.StatusNotFound, errGetCard.Error())
+		return
+	}
+	if card == nil {
+		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
+		return
+	}
+
 	var cardVals serializers.CardUpdateRequest
 	if err := c.ShouldBindJSON(&cardVals); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -102,7 +112,7 @@ func (h *CardHandler) Update(c *gin.Context) {
 		return
 	}
 
-	resCard, err := h.cardRepo.Update(data)
+	resCard, err := h.cardRepo.Update(card, data)
 	if resCard != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -117,13 +127,7 @@ func (h *CardHandler) Update(c *gin.Context) {
 
 // Destroy ...
 func (h *CardHandler) Destroy(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil || id <= 0 {
-		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
-		return
-	}
-
-	if err := h.cardRepo.Destroy(uint(id)); err != nil {
+	if err := h.cardRepo.Destroy(c.Param("code")); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

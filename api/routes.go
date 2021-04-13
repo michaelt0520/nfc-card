@@ -18,14 +18,33 @@ func (s *Server) InitRoutes() {
 
 			cardGroup := apiV1.Group("/cards")
 			{
-				cardGroup.GET("/:code", s.cardHandler.Find)
+				cardGroup.GET("/:code", s.cardHandler.Show)
+				cardGroup.POST("/", s.cardHandler.Create, middlewares.Auth())
+				cardGroup.PUT("/:code", s.cardHandler.Update, middlewares.Auth())
+				cardGroup.DELETE("/:code", s.cardHandler.Create, middlewares.Auth())
 			}
 
-			socialGroup := apiV1.Group("/information")
-			socialGroup.Use(middlewares.Auth())
+			infoGroup := apiV1.Group("/informations")
+			infoGroup.Use(middlewares.Auth())
 			{
-				socialGroup.POST("/", s.infoHandler.Create)
-				socialGroup.DELETE("/:id", s.infoHandler.Destroy)
+				infoGroup.POST("/", s.infoHandler.Create)
+				infoGroup.PUT("/:id", s.infoHandler.Update)
+				infoGroup.DELETE("/:id", s.infoHandler.Destroy)
+			}
+
+			userGroup := apiV1.Group("/users")
+			{
+				userGroup.PUT("/:username", s.userHandler.Update)
+			}
+
+			companyGroup := apiV1.Group("companies")
+			companyGroup.Use(middlewares.Auth())
+			{
+				companyGroup.GET("/", s.compHandler.Index)
+				companyGroup.GET("/:id", s.compHandler.Show)
+				companyGroup.POST("/", s.compHandler.Create)
+				companyGroup.PUT("/:id", s.compHandler.Update)
+				companyGroup.DELETE("/:id", s.compHandler.Create)
 			}
 		}
 	}

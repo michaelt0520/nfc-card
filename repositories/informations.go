@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
 )
 
@@ -13,8 +12,8 @@ func NewInformationRepository() *InformationRepository {
 	return &InformationRepository{}
 }
 
-// Find : get user by username
-func (u *InformationRepository) Find(id interface{}) (*models.Information, error) {
+// Find : get info by id
+func (u *InformationRepository) Find(id uint) (*models.Information, error) {
 	var info models.Information
 
 	if err := GetDB().First(&info, id).Error; err != nil {
@@ -34,23 +33,15 @@ func (u *InformationRepository) Create(info *models.Information) error {
 }
 
 // Update : Update info to db
-func (repo *InformationRepository) Update(data map[string]interface{}) (*models.Information, error) {
-	info, err := repo.Find(data["id"])
-	if err != nil {
-		return nil, err
-	}
-	if info == nil {
-		return nil, errors.RecordNotFound
-	}
-
-	if err := GetDB().Model(&info).Where("id = ?", data["id"]).Updates(data).Error; err != nil {
+func (repo *InformationRepository) Update(record *models.Information, data map[string]interface{}) (*models.Information, error) {
+	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
 		return nil, err
 	}
 
-	return info, nil
+	return record, nil
 }
 
-// Destroy : destroy category
+// Destroy : destroy info
 func (repo *InformationRepository) Destroy(id uint) error {
 	if err := GetDB().Delete(&models.Information{}, id).Error; err != nil {
 		return err

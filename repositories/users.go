@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
 )
 
@@ -48,18 +47,19 @@ func (repo *UserRepository) Create(user *models.User) error {
 }
 
 // Update : Update user to db
-func (repo *UserRepository) Update(data map[string]interface{}) (*models.User, error) {
-	user, err := repo.Find(data)
-	if err != nil {
-		return nil, err
-	}
-	if user == nil {
-		return nil, errors.RecordNotFound
-	}
-
-	if err := GetDB().Model(&user).Where("id = ?", data["id"]).Updates(data).Error; err != nil {
+func (repo *UserRepository) Update(record *models.User, data map[string]interface{}) (*models.User, error) {
+	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
 		return nil, err
 	}
 
-	return user, nil
+	return record, nil
+}
+
+// Destroy : destroy category
+func (repo *UserRepository) Destroy(id uint) error {
+	if err := GetDB().Delete(&models.User{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

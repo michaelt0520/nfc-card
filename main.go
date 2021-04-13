@@ -54,14 +54,16 @@ func main() {
 	userRepo := repositories.NewUserRepository()
 	infoRepo := repositories.NewInformationRepository()
 	cardRepo := repositories.NewCardRepository()
+	compRepo := repositories.NewCompanyRepository()
 
 	// init Server
 	authHandler := handlers.NewAuthHandler(userRepo)
 	userHandler := handlers.NewUserHandler(userRepo)
 	socialHandler := handlers.NewInformationHandler(infoRepo)
 	cardHandler := handlers.NewCardHandler(cardRepo, userRepo)
+	compHanlder := handlers.NewCompanyHandler(compRepo)
 
-	svr := api.NewServer(r, authHandler, userHandler, socialHandler, cardHandler)
+	svr := api.NewServer(r, authHandler, userHandler, socialHandler, cardHandler, compHanlder)
 	svr.InitRoutes()
 
 	if err := r.Run(fmt.Sprintf(":%d", conf.Port)); err != nil {
