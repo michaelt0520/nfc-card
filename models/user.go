@@ -24,15 +24,16 @@ const (
 // User struct
 type User struct {
 	gorm.Model
-	Name         string         `gorm:"column:name" json:"name"`
-	Avatar       string         `gorm:"column:avatar" json:"avatar"`
-	Username     string         `gorm:"column:username;unique;not null" json:"username"`
-	Email        string         `gorm:"column:email;unique;not null" json:"email"`
-	Password     string         `gorm:"column:password" json:"password"`
-	Type         CardType       `gorm:"column:type" json:"type"`
-	Role         UserRole       `gorm:"column:role" json:"role"`
-	JWT          string         `gorm:"column:jwt" json:"jwt"`
-	CompanyID    uint           `gorm:"column:company_id" json:"company_id"`
+	Name         string   `gorm:"column:name" json:"name"`
+	Avatar       string   `gorm:"column:avatar" json:"avatar"`
+	Username     string   `gorm:"column:username;unique;not null" json:"username"`
+	Email        string   `gorm:"column:email;unique;not null" json:"email"`
+	Password     string   `gorm:"column:password" json:"password"`
+	Type         CardType `gorm:"column:type" json:"type"`
+	Role         UserRole `gorm:"column:role" json:"role"`
+	JWT          string   `gorm:"column:jwt" json:"jwt"`
+	CompanyID    uint     `gorm:"column:company_id" json:"company_id"`
+	Company      *Company
 	Cards        []*Card        `gorm:"foreignKey:UserID" json:"cards"`
 	Informations []*Information `gorm:"foreignKey:UserID" json:"informations"`
 }
@@ -60,10 +61,10 @@ func (user *User) CheckPassword(password string) error {
 
 // IsMember check role user is member
 func (user *User) IsMember() bool {
-  return user.Role == UserMember
+	return user.Role == UserMember
 }
 
 // IsAdmin check role user is admin
 func (user *User) IsAdmin() bool {
-  return user.Role == UserAdmin
+	return user.Role == UserAdmin
 }

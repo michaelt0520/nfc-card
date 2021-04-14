@@ -123,29 +123,18 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 
 // Signout : DELETE #signout
 func (h *AuthHandler) Signout(c *gin.Context) {
-  userID, ok := c.Get("UserID")
+	// get currentUser
+	user, ok := c.Get("currentUser")
 	if !ok {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
+	currentUser := user.(*models.User)
 
-  var userIDParams = make(map[string]interface{})
-	userIDParams["id"] = userID
-
-  resU, err := h.userRepo.Find(userIDParams)
-	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
-		return
-	} else if resU == nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
-
-  var userJWTParams = make(map[string]interface{})
+	var userJWTParams = make(map[string]interface{})
 	userJWTParams["jwt"] = nil
 
-  resU, errUpdate := h.userRepo.Update(resU, userJWTParams)
-	if errUpdate != nil {
+	if _, errUpdate := h.userRepo.Update(currentUser, userJWTParams); errUpdate != nil {
 		respondError(c, http.StatusInternalServerError, errUpdate.Error())
 		return
 	}
