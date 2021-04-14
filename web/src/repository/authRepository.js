@@ -1,23 +1,21 @@
 import apiCaller from './config/api-caller'
 
 const resources = {
-  signup: '/api/v1/signup',
-  login: '/api/v1/signin',
-  logout: '/api/v1/signout'
+  auth: '/api/v1'
 }
 
 Object.freeze(resources)
 
 export default {
-  login (data) {
-    return apiCaller({ method: 'POST', url: resources.login, data: data })
+  signin (data) {
+    return apiCaller({ method: 'POST', url: `${resources.auth}/signin`, data: data })
   },
 
   signup (data) {
-    return apiCaller({ method: 'POST', url: resources.signup, data: data })
+    return apiCaller({ method: 'POST', url: `${resources.auth}/signup`, data: data })
   },
 
   signout () {
-    return apiCaller({ method: 'DELETE', url: resources.logout })
+    return apiCaller({ method: 'DELETE', url: `${resources.auth}/signout` })
   }
 }

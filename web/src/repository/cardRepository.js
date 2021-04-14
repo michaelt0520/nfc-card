@@ -1,29 +1,29 @@
 import apiCaller from './config/api-caller'
 
 const resources = {
-  cards: '/api/v1/cards/',
+  cards: '/api/v1/cards/'
 }
 
 Object.freeze(resources)
 
 export default {
-  index() {
+  getCardsList() {
     return apiCaller({ method: 'GET', url: resources.cards })
   },
 
-  show(params) {
+  getCard(params) {
     return apiCaller({ method: 'GET', url: `${resources.cards}${params}` })
   },
 
-  create(data) {
+  createCard(data) {
     return apiCaller({ method: 'POST', url: resources.cards, data: data })
   },
 
-  update(data, params) {
+  updateCard(data, params) {
     return apiCaller({ method: 'PUT', url: `${resources.cards}${params}`, data: data })
   },
 
-  delete(params) {
+  deleteCard(params) {
     return apiCaller({ method: 'DELETE', url: `${resources.cards}${params}` })
   }
 }

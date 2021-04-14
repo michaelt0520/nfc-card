@@ -1,7 +1,6 @@
 import Repository from '@/repository'
 import {
   INITIAL_STATES_SET_USER,
-  CREATE_USER,
   FETCH_LIST_USERS
 } from '../mutation-types'
 
@@ -9,8 +8,8 @@ const AuthRepository = Repository.get('auth')
 const UserRepository = Repository.get('user')
 
 const actions = {
-  login ({ commit }, data) {
-    return AuthRepository.login(data)
+  signin ({ commit }, data) {
+    return AuthRepository.signin(data)
       .then(res => {
         commit(INITIAL_STATES_SET_USER, res.data.Result)
 
@@ -18,10 +17,9 @@ const actions = {
       })
   },
 
-  signup ({ commit }, data) {
+  signup (data) {
     return AuthRepository.signup(data)
       .then(res => {
-        commit(CREATE_USER, res.data.Result)
 
         return res
       })
@@ -38,8 +36,8 @@ const actions = {
       })
   },
 
-  getListUsers ({ commit }) {
-    return UserRepository.index()
+  getUsersList ({ commit }) {
+    return UserRepository.getUsersList()
       .then(res => {
         commit(FETCH_LIST_USERS, res.data.Result)
 

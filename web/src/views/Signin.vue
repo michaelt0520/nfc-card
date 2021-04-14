@@ -50,14 +50,14 @@ export default {
   },
 
   methods: {
-    ...mapActions('users', ['login']),
+    ...mapActions('users', ['signin']),
 
     onSubmit() {
       const data = {
         username: this.username,
         password: this.password
       }
-      this.login(data)
+      this.signin(data)
     }
   }
 }

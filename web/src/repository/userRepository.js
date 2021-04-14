@@ -7,11 +7,11 @@ const resources = {
 Object.freeze(resources)
 
 export default {
-  index() {
+  getUsersList() {
     return apiCaller({ method: 'GET', url: resources.users })
   },
 
-  update(data, params) {
+  updateUser(data, params) {
     return apiCaller({ method: 'PUT', url: `${resources.users}${params}`, data: data })
   }
 }

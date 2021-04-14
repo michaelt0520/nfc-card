@@ -3,9 +3,9 @@
     <table class="min-w-full bg-white">
       <thead class="bg-gray-800 text-white">
         <tr>
+          <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Logo</th>
           <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Name</th>
           <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Address</th>
-          <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Logo</th>
           <th class="text-left py-3 px-4 uppercase font-semibold text-sm">Website</th>
         </tr>
       </thead>
@@ -33,11 +33,11 @@ export default {
   },
 
   methods: {
-    ...mapActions('companies', ['getListCompanies']),
+    ...mapActions('companies', ['getCompaniesList']),
   },
 
   created() {
-    if (!(this.companies.length > 1)) this.getListCompanies()
+    if (!(this.companies.length > 1)) this.getCompaniesList()
   }
 }
 </script>
