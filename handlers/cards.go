@@ -13,14 +13,12 @@ import (
 // CardHandler : struct
 type CardHandler struct {
 	cardRepo *repositories.CardRepository
-	userRepo *repositories.UserRepository
 }
 
 // NewCardHandler ...
-func NewCardHandler(cardRepo *repositories.CardRepository, userRepo *repositories.UserRepository) *CardHandler {
+func NewCardHandler(cardRepo *repositories.CardRepository) *CardHandler {
 	return &CardHandler{
 		cardRepo: cardRepo,
-		userRepo: userRepo,
 	}
 }
 
@@ -41,31 +39,7 @@ func (h *CardHandler) Show(c *gin.Context) {
 		return
 	}
 
-	var userParams = make(map[string]interface{})
-	userParams["id"] = resCard.UserID
-
-	res, err := h.userRepo.Find(userParams)
-	if err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
-		return
-	}
-	if res == nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
-
-	var resUser serializers.UserSerializer
-	if err := serializers.ConvertSerializer(res, &resUser); err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	response := serializers.CardResponse{
-		Card: resCard,
-		User: resUser,
-	}
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: response, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: resCard, Error: nil})
 }
 
 // Create ...

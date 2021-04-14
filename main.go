@@ -65,7 +65,7 @@ func main() {
 	authHandler := handlers.NewAuthHandler(userRepo)
 	userHandler := handlers.NewUserHandler(userRepo)
 	socialHandler := handlers.NewInformationHandler(infoRepo)
-	cardHandler := handlers.NewCardHandler(cardRepo, userRepo)
+	cardHandler := handlers.NewCardHandler(cardRepo)
 	compHanlder := handlers.NewCompanyHandler(compRepo)
 
 	// init Server

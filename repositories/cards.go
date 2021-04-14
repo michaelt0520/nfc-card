@@ -14,17 +14,17 @@ func NewCardRepository() *CardRepository {
 
 // Find : get card by code
 func (u *CardRepository) All() *[]models.Card {
-  var cards []models.Card
+	var cards []models.Card
 	GetDB().Preload("User").Find(&cards)
 
-  return &cards
+	return &cards
 }
 
 // Find : get card by code
 func (u *CardRepository) Find(cardCode string) (*models.Card, error) {
 	var card models.Card
 
-	if err := GetDB().Where("code = ?", cardCode).First(&card).Error; err != nil {
+	if err := GetDB().Preload("User.Informations").Preload("User.Company").Where("code = ?", cardCode).First(&card).Error; err != nil {
 		return nil, err
 	}
 
