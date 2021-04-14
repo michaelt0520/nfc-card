@@ -15,7 +15,7 @@ import (
 
 // AuthHandler : Session Handler
 type AuthHandler struct {
-	repoUser *repositories.UserRepository
+	userRepo *repositories.UserRepository
 }
 
 const (
@@ -26,7 +26,7 @@ const (
 // NewAuthHandler : Constructor
 func NewAuthHandler(userRepo *repositories.UserRepository) *AuthHandler {
 	return &AuthHandler{
-		repoUser: userRepo,
+		userRepo: userRepo,
 	}
 }
 
@@ -47,8 +47,9 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 
 	user.Avatar = fmt.Sprintf("%s%s", os.Getenv("app_host"), DefaultAvatar)
 	user.Type = models.Personal
+	user.Role = models.UserMember
 
-	if err := h.repoUser.Create(&user); err != nil {
+	if err := h.userRepo.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -70,13 +71,13 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	var data map[string]interface{}
-	if err := serializers.ConvertSerializer(loginVals, &data); err != nil {
+	var loginData map[string]interface{}
+	if err := serializers.ConvertSerializer(loginVals, &loginData); err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	resU, err := h.repoUser.Find(data)
+	resU, err := h.userRepo.Find(loginData)
 	if err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -93,6 +94,15 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 	token, err := jwt.CreateToken(resU)
 	if err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	var userParams = make(map[string]interface{})
+	userParams["jwt"] = token
+
+	resU, errUpdate := h.userRepo.Update(resU, userParams)
+	if errUpdate != nil {
+		respondError(c, http.StatusInternalServerError, errUpdate.Error())
 		return
 	}
 
@@ -113,6 +123,32 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 
 // Signout : DELETE #signout
 func (h *AuthHandler) Signout(c *gin.Context) {
-	c.SetCookie("Authorized", "", -1, "", os.Getenv("app_host"), false, true)
+  userID, ok := c.Get("UserID")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+		return
+	}
+
+  var userIDParams = make(map[string]interface{})
+	userIDParams["id"] = userID
+
+  resU, err := h.userRepo.Find(userIDParams)
+	if err != nil {
+		respondError(c, http.StatusInternalServerError, err.Error())
+		return
+	} else if resU == nil {
+		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
+		return
+	}
+
+  var userJWTParams = make(map[string]interface{})
+	userJWTParams["jwt"] = nil
+
+  resU, errUpdate := h.userRepo.Update(resU, userJWTParams)
+	if errUpdate != nil {
+		respondError(c, http.StatusInternalServerError, errUpdate.Error())
+		return
+	}
+
 	c.JSON(http.StatusOK, serializers.Resp{Result: "logout successfully", Error: nil})
 }

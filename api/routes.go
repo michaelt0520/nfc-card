@@ -14,19 +14,19 @@ func (s *Server) InitRoutes() {
 		{
 			apiV1.POST("/signin", s.authHandler.Signin)
 			apiV1.POST("/signup", s.authHandler.Signup)
-			apiV1.DELETE("/signout", s.authHandler.Signout, middlewares.Auth())
+			apiV1.DELETE("/signout", middlewares.AllAuth(), s.authHandler.Signout)
 
 			cardGroup := apiV1.Group("/cards")
 			{
-				cardGroup.GET("/", s.cardHandler.Index)
+				cardGroup.GET("/", middlewares.AdminAuth(), s.cardHandler.Index)
 				cardGroup.GET("/:code", s.cardHandler.Show)
-				cardGroup.POST("/", s.cardHandler.Create, middlewares.Auth())
-				cardGroup.PUT("/:code", s.cardHandler.Update, middlewares.Auth())
-				cardGroup.DELETE("/:code", s.cardHandler.Destroy, middlewares.Auth())
+				cardGroup.POST("/", middlewares.AdminAuth(), s.cardHandler.Create)
+				cardGroup.PUT("/:code", middlewares.AdminAuth(), s.cardHandler.Update)
+				cardGroup.DELETE("/:code", middlewares.AdminAuth(), s.cardHandler.Destroy)
 			}
 
 			infoGroup := apiV1.Group("/informations")
-			infoGroup.Use(middlewares.Auth())
+			infoGroup.Use(middlewares.AllAuth())
 			{
 				infoGroup.POST("/", s.infoHandler.Create)
 				infoGroup.PUT("/:id", s.infoHandler.Update)
@@ -35,12 +35,12 @@ func (s *Server) InitRoutes() {
 
 			userGroup := apiV1.Group("/users")
 			{
-				userGroup.GET("/", s.userHandler.Index)
-				userGroup.PUT("/:username", s.userHandler.Update)
+				userGroup.GET("/", middlewares.AdminAuth(), s.userHandler.Index)
+				userGroup.PUT("/:username", middlewares.MemberAuth(), s.userHandler.Update)
 			}
 
 			companyGroup := apiV1.Group("companies")
-			companyGroup.Use(middlewares.Auth())
+			companyGroup.Use(middlewares.AdminAuth())
 			{
 				companyGroup.GET("/", s.compHandler.Index)
 				companyGroup.GET("/:id", s.compHandler.Show)

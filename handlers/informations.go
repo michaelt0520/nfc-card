@@ -25,11 +25,13 @@ func NewInformationHandler(repoInfo *repositories.InformationRepository) *Inform
 
 // Create ...
 func (h *InformationHandler) Create(c *gin.Context) {
-	userID, ok := c.Get("UserID")
+	// get currentUser
+	user, ok := c.Get("currentUser")
 	if !ok {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
+	currentUser := user.(models.User)
 
 	var infoValues serializers.InfoCreateRequest
 	if err := c.ShouldBindJSON(&infoValues); err != nil {
@@ -44,7 +46,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 		return
 	}
 
-	info.UserID = userID.(uint)
+	info.UserID = currentUser.ID
 
 	if err := h.repoInfo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -56,6 +58,14 @@ func (h *InformationHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *InformationHandler) Update(c *gin.Context) {
+	// get currentUser
+	user, ok := c.Get("currentUser")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+		return
+	}
+	currentUser := user.(models.User)
+
 	// get info's id from params
 	id, errGetID := strconv.Atoi(c.Param("id"))
 	if errGetID != nil || id <= 0 {
@@ -84,6 +94,11 @@ func (h *InformationHandler) Update(c *gin.Context) {
 	err := serializers.ConvertSerializer(infoVals, &data)
 	if err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	if info.UserID != currentUser.ID || currentUser.IsMember() {
+		respondError(c, http.StatusUnauthorized, "dont have permission")
 		return
 	}
 

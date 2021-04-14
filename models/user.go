@@ -6,11 +6,19 @@ import (
 )
 
 // CardType : card type
-type CardType uint32
+type CardType uint
 
 const (
 	Personal CardType = iota + 1
 	Business
+)
+
+// UserRole : user role
+type UserRole uint
+
+const (
+	UserMember UserRole = iota + 1
+	UserAdmin
 )
 
 // User struct
@@ -22,6 +30,8 @@ type User struct {
 	Email        string         `gorm:"column:email;unique;not null" json:"email"`
 	Password     string         `gorm:"column:password" json:"password"`
 	Type         CardType       `gorm:"column:type" json:"type"`
+	Role         UserRole       `gorm:"column:role" json:"role"`
+	JWT          string         `gorm:"column:jwt" json:"jwt"`
 	CompanyID    uint           `gorm:"column:company_id" json:"company_id"`
 	Cards        []*Card        `gorm:"foreignKey:UserID" json:"cards"`
 	Informations []*Information `gorm:"foreignKey:UserID" json:"informations"`
@@ -46,4 +56,14 @@ func (user *User) CheckPassword(password string) error {
 	}
 
 	return nil
+}
+
+// IsMember check role user is member
+func (user *User) IsMember() bool {
+  return user.Role == UserMember
+}
+
+// IsAdmin check role user is admin
+func (user *User) IsAdmin() bool {
+  return user.Role == UserAdmin
 }
