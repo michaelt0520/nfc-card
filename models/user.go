@@ -33,7 +33,7 @@ type User struct {
 	Role         UserRole `gorm:"column:role" json:"role"`
 	JWT          string   `gorm:"column:jwt" json:"jwt"`
 	CompanyID    uint     `gorm:"column:company_id" json:"company_id"`
-	Company      *Company
+	Company      Company
 	Cards        []*Card        `gorm:"foreignKey:UserID" json:"cards"`
 	Informations []*Information `gorm:"foreignKey:UserID" json:"informations"`
 }

@@ -4,7 +4,7 @@
       <p>ID: {{ card.ID }}</p>
       <p>Code: {{ card.code }}</p>
       <p>Activate: {{ card.activated }}</p>
-      <p>User's ID: {{ card.user_id }}</p>
+      <p>User's name: {{ card.User.name }}</p>
     </div>
   </div>
 </template>

@@ -15,7 +15,7 @@ func NewCardRepository() *CardRepository {
 // Find : get card by code
 func (u *CardRepository) All() *[]models.Card {
   var cards []models.Card
-	GetDB().Find(&cards)
+	GetDB().Preload("User").Find(&cards)
 
   return &cards
 }

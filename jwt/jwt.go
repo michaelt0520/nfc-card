@@ -26,7 +26,7 @@ func CreateToken(user *models.User) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["user_id"] = user.ID
-  atClaims["user_role"] = user.Role
+	atClaims["user_role"] = user.Role
 	atClaims["exp"] = time.Now().Add(Expired).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(os.Getenv("jwt_key")))

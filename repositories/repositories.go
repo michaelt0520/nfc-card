@@ -15,7 +15,7 @@ var db *gorm.DB
 func InitRepository(conf *config.Config) (err error) {
 	connectStr := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", conf.DBHost, conf.DBUserName, conf.DBPassword, conf.DBPort, conf.DBName)
 	connectedDb, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	if err != nil {

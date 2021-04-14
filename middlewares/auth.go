@@ -10,33 +10,39 @@ import (
 	"github.com/michaelt0520/nfc-card/repositories"
 )
 
-// Auth validate token and authorizes user
+// Auth validate token and authorizes currentUser
 func Auth(role models.UserRole) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// get token from header
 		token := strings.TrimPrefix(c.Request.Header.Get("Authorization"), "Bearer ")
 
-		repoUser := repositories.NewUserRepository()
-		user, err := repoUser.Find(map[string]interface{}{"jwt": token})
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, "invalid token")
-			c.Abort()
-			return
-		}
-
-		_, errExtract := jwt.ExtractToken(token)
+		// extract token
+		payload, errExtract := jwt.ExtractToken(token)
 		if errExtract != nil {
 			c.JSON(http.StatusUnauthorized, "invalid token")
 			c.Abort()
 			return
 		}
 
-		if role != 0 && user.Role != role {
+		// get user from token
+		repoUser := repositories.NewUserRepository()
+		currentUser, err := repoUser.Find(map[string]interface{}{"id": payload.UserID})
+
+		// valid current user with token
+		if currentUser.JWT != token || err != nil {
+			c.JSON(http.StatusUnauthorized, "invalid token")
+			c.Abort()
+			return
+		}
+
+		// check role user
+		if role != 0 && currentUser.Role != role {
 			c.JSON(http.StatusUnauthorized, "not have permission")
 			c.Abort()
 			return
 		}
 
-		c.Set("currentUser", user)
+		c.Set("currentUser", currentUser)
 		c.Next()
 	}
 }

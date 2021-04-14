@@ -117,7 +117,6 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		Token: token,
 	}
 
-	c.SetCookie("Authorized", token, ExpiredCookie, "/", os.Getenv("app_host"), false, true)
 	c.JSON(http.StatusOK, serializers.Resp{Result: response, Error: nil})
 }
 
