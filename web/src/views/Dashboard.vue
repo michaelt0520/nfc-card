@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="flex h-screen bg-b">
     <header-admin />
 
-    <div class="flex flex-row mt-16">
-      <div class="bg-gray-800 shadow-xl fixed w-48 z-10 relative bottom-0 h-screen">
+    <div class="flex flex-row mt-16 w-full">
+      <div class="bg-gray-800 shadow-xl w-48 z-10 relative bottom-0">
         <div class="fixed left-0 top-0 text-left justify-between w-48 mt-16">
           <ul class="list-reset text-white flex flex-col text-left px-2">
             <li
@@ -33,7 +33,8 @@
         <div class="flex flex-wrap">
           <card
             v-for="card in cards"
-            :key="card.id"/>
+            :card="card"
+            :key="card.ID"/>
         </div>
       </div>
 

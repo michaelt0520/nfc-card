@@ -53,7 +53,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-  var resUser serializers.UserSerializer
+	var resUser serializers.UserSerializer
 	if err := serializers.ConvertSerializer(user, &resUser); err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -96,7 +96,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-  var resUser serializers.UserSerializer
+	var resUser serializers.UserSerializer
 	if err := serializers.ConvertSerializer(resU, &resUser); err != nil {
 		respondError(c, http.StatusInternalServerError, err.Error())
 		return

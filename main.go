@@ -14,6 +14,7 @@ import (
 	"github.com/michaelt0520/nfc-card/logger"
 	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/repositories"
+	"github.com/michaelt0520/nfc-card/seeds"
 )
 
 var log *zap.Logger
@@ -31,6 +32,7 @@ func main() {
 		return
 	}
 
+	// config CORS
 	r := gin.New()
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://*", "https://*"},
@@ -50,22 +52,27 @@ func main() {
 		&models.Company{},
 	)
 
+	// Seed
+	seeds.Load(log)
+
 	// init Repository
 	userRepo := repositories.NewUserRepository()
 	infoRepo := repositories.NewInformationRepository()
 	cardRepo := repositories.NewCardRepository()
 	compRepo := repositories.NewCompanyRepository()
 
-	// init Server
+	// init Handler
 	authHandler := handlers.NewAuthHandler(userRepo)
 	userHandler := handlers.NewUserHandler(userRepo)
 	socialHandler := handlers.NewInformationHandler(infoRepo)
 	cardHandler := handlers.NewCardHandler(cardRepo, userRepo)
 	compHanlder := handlers.NewCompanyHandler(compRepo)
 
+	// init Server
 	svr := api.NewServer(r, authHandler, userHandler, socialHandler, cardHandler, compHanlder)
 	svr.InitRoutes()
 
+	// run Server
 	if err := r.Run(fmt.Sprintf(":%d", conf.Port)); err != nil {
 		log.Fatal("router.Run", zap.Error(err))
 	}
