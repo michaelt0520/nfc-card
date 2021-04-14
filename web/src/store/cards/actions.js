@@ -7,8 +7,8 @@ import {
 const CardRepository = Repository.get('card')
 
 const actions = {
-  getListCards ({ commit }) {
-    return CardRepository.index()
+  getCardsList ({ commit }) {
+    return CardRepository.getCardsList()
       .then(res => {
         commit(FETCH_LIST_CARDS, res.data.Result)
 
@@ -16,8 +16,8 @@ const actions = {
       })
   },
 
-  show ({ commit }, data) {
-    return CardRepository.show(data)
+  getCard ({ commit }, data) {
+    return CardRepository.getCard(data)
       .then(res => {
         commit(FETCH_CARD, res.data.Result)
 

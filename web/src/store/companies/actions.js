@@ -6,8 +6,8 @@ import {
 const CompanyRepository = Repository.get('company')
 
 const actions = {
-  getListCompanies ({ commit }) {
-    return CompanyRepository.index()
+  getCompaniesList ({ commit }) {
+    return CompanyRepository.getCompaniesList()
       .then(res => {
         commit(FETCH_LIST_COMPANIES, res.data.Result)
 

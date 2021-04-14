@@ -7,23 +7,23 @@ const resources = {
 Object.freeze(resources)
 
 export default {
-  index() {
+  getCompaniesList() {
     return apiCaller({ method: 'GET', url: resources.companies })
   },
 
-  show(params) {
+  showCompany(params) {
     return apiCaller({ method: 'GET', url: `${resources.companies}${params}` })
   },
 
-  create(data) {
+  createConpany(data) {
     return apiCaller({ method: 'POST', url: resources.companies, data: data })
   },
 
-  update(data, params) {
+  updateCompany(data, params) {
     return apiCaller({ method: 'PUT', url: `${resources.companies}${params}`, data: data })
   },
 
-  delete(params) {
+  deleteCompany(params) {
     return apiCaller({ method: 'DELETE', url: `${resources.companies}${params}` })
   }
 }

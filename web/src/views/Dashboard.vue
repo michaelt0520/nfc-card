@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen bg-b">
+  <div class="flex bg-b min-h-screen">
     <header-admin />
 
     <div class="flex flex-row mt-16 w-full">
@@ -95,11 +95,11 @@ export default {
   },
 
   methods: {
-    ...mapActions('cards', ['getListCards']),
+    ...mapActions('cards', ['getCardsList']),
   },
 
   created() {
-    this.getListCards()
+    this.getCardsList()
   }
 }
 </script>
