@@ -6,6 +6,8 @@ export const CREATE_INFORMATION = 'CREATE_INFORMATION'
 // users
 export const FETCH_LIST_USERS = 'FETCH_LIST_USERS'
 export const CREATE_USER = 'CREATE_USER'
+export const SIGN_OUT = 'SIGN_OUT'
+
 
 // cards
 export const FETCH_LIST_CARDS = 'FETCH_LIST_CARDS'

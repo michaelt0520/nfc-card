@@ -1,6 +1,7 @@
 import {
   INITIAL_STATES_SET_USER,
-  FETCH_LIST_USERS
+  FETCH_LIST_USERS,
+  SIGN_OUT
 } from '../mutation-types'
 
 const mutations = {
@@ -14,6 +15,14 @@ const mutations = {
 
   [FETCH_LIST_USERS](state, payload) {
     state.users = payload
+  },
+
+  [SIGN_OUT] (state) {
+    state.currentUser = {}
+    state.isAuthenticated = false
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    localStorage.removeItem('is_authenticated')
   }
 }
 

@@ -1,7 +1,8 @@
 import Repository from '@/repository'
 import {
   INITIAL_STATES_SET_USER,
-  FETCH_LIST_USERS
+  FETCH_LIST_USERS,
+  SIGN_OUT
 } from '../mutation-types'
 
 const AuthRepository = Repository.get('auth')
@@ -25,12 +26,10 @@ const actions = {
       })
   },
 
-  signout () {
+  signout ({ commit }) {
     return AuthRepository.signout()
       .then(res => {
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-        localStorage.removeItem('is_authenticated')
+        commit(SIGN_OUT)
 
         return res
       })

@@ -22,8 +22,15 @@
         <ul class="list-reset flex justify-between flex-1 md:flex-none items-center">
           <li class="flex-1 md:flex-none md:mr-3">
             <div class="relative inline-block">
-              <button @click="isInvisible = !isInvisible" class="drop-button text-white focus:outline-none"><span class="pr-2"><i class="fas fa-american-sign-language-interpreting"></i></span>
-                Hi, User
+              <button @click="isInvisible = !isInvisible" class="drop-button text-white focus:outline-none flex items-center">
+                <span v-if="currentUser.avatar" class="pr-2">
+                  <img
+                    width="20"
+                    height="20"
+                    :src="currentUser.avatar"
+                    alt="avatar">
+                </span>
+                Hi, {{ currentUser.name || 'Nobody' }}
                 <svg class="h-3 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
               </button>
               <div id="myDropdown" :class="['dropdownlist', 'absolute', 'bg-gray-800', 'text-white', 'right-0', 'mt-3', 'p-3', 'overflow-auto', 'z-30', 'w-40', { 'invisible': isInvisible }]">
@@ -41,7 +48,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'HeaderAdmin',
@@ -50,6 +57,10 @@ export default {
     return {
       isInvisible: true
     }
+  },
+
+  computed: {
+    ...mapState('users', ['currentUser'])
   },
 
   methods: {

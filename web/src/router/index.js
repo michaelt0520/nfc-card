@@ -25,7 +25,10 @@ const isAuthenticated = localStorage.getItem('is_authenticated')
 
 router.beforeEach((to, from, next) => {
   if (to.name === 'dashboard' && !isAuthenticated) next({ name: 'signin' })
-  else next()
+
+  if (to.name === 'signin' && isAuthenticated) next({ name: 'home' })
+
+  next()
 })
 
 export default router
