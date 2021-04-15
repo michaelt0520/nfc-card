@@ -15,8 +15,9 @@ type CompanyUpdateRequest struct {
 }
 
 type CompanyResponse struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
-	Logo    string `json:"logo"`
-	Website string `json:"website"`
+	Name    string         `json:"name"`
+	Address string         `json:"address"`
+	Logo    string         `json:"logo"`
+	Website string         `json:"website"`
+	Users   []UserResponse `json:"users"`
 }

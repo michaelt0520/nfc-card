@@ -14,12 +14,11 @@ func NewUserRepository() *UserRepository {
 
 // Find : get card by code
 func (u *UserRepository) All() *[]models.User {
-  var users []models.User
+	var users []models.User
 	GetDB().Preload("Company").Find(&users)
 
-  return &users
+	return &users
 }
-
 
 // Find : get user by username
 func (u *UserRepository) Find(data map[string]interface{}) (*models.User, error) {
@@ -56,12 +55,12 @@ func (repo *UserRepository) Create(user *models.User) error {
 }
 
 // Update : Update user to db
-func (repo *UserRepository) Update(record *models.User, data map[string]interface{}) (*models.User, error) {
+func (repo *UserRepository) Update(record *models.User, data map[string]interface{}) error {
 	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return record, nil
+	return nil
 }
 
 // Destroy : destroy category

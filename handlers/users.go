@@ -48,17 +48,17 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	res, err := h.userRepo.Update(user, data)
-	if err != nil {
+	if err := h.userRepo.Update(user, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
 	var resUser serializers.UserResponse
-	if err := serializers.ConvertSerializer(res, &resUser); err != nil {
+	if err := serializers.ConvertSerializer(user, &resUser); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	resUser.Type = user.TypeToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }

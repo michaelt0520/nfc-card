@@ -14,10 +14,10 @@ func NewCompanyRepository() *CompanyRepository {
 
 // Find : get card by code
 func (u *CompanyRepository) All() *[]models.Company {
-  var companies []models.Company
+	var companies []models.Company
 	GetDB().Find(&companies)
 
-  return &companies
+	return &companies
 }
 
 // Find : get company by id
@@ -41,12 +41,12 @@ func (u *CompanyRepository) Create(company *models.Company) error {
 }
 
 // Update : Update company to db
-func (repo *CompanyRepository) Update(record *models.Company, data map[string]interface{}) (*models.Company, error) {
+func (repo *CompanyRepository) Update(record *models.Company, data map[string]interface{}) error {
 	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return record, nil
+	return nil
 }
 
 // Destroy : destroy company

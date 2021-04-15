@@ -41,12 +41,12 @@ func (repo *CardRepository) Create(card *models.Card) error {
 }
 
 // Update : Update card to db
-func (repo *CardRepository) Update(record *models.Card, data map[string]interface{}) (*models.Card, error) {
+func (repo *CardRepository) Update(record *models.Card, data map[string]interface{}) error {
 	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return record, nil
+	return nil
 }
 
 // Destroy : destroy card

@@ -7,6 +7,7 @@ type UserResponse struct {
 	Avatar       string          `json:"avatar"`
 	Username     string          `json:"username"`
 	Email        string          `json:"email"`
+	Type         string          `json:"type"`
 	Company      CompanyResponse `json:"company"`
 	Informations []InfoResponse  `json:"informations"`
 }

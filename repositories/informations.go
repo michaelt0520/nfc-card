@@ -33,12 +33,12 @@ func (u *InformationRepository) Create(info *models.Information) error {
 }
 
 // Update : Update info to db
-func (repo *InformationRepository) Update(record *models.Information, data map[string]interface{}) (*models.Information, error) {
+func (repo *InformationRepository) Update(record *models.Information, data map[string]interface{}) error {
 	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return record, nil
+	return nil
 }
 
 // Destroy : destroy info

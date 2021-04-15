@@ -98,13 +98,12 @@ func (h *InformationHandler) Update(c *gin.Context) {
 		return
 	}
 
-	resInfo, err := h.repoInfo.Update(info, data)
-	if err != nil {
+	if err := h.repoInfo.Update(info, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: resInfo, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: info, Error: nil})
 }
 
 // Destroy ...

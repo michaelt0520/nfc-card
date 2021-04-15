@@ -51,13 +51,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	var resUser serializers.UserResponse
-	if err := serializers.ConvertSerializer(user, &resUser); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: "signup success", Error: nil})
 }
 
 // Signin : POST #signin
@@ -91,8 +85,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	resU, errUpdate := h.userRepo.Update(resU, map[string]interface{}{"jwt": token})
-	if errUpdate != nil {
+	if errUpdate := h.userRepo.Update(resU, map[string]interface{}{"jwt": token}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}
@@ -116,7 +109,7 @@ func (h *AuthHandler) Signout(c *gin.Context) {
 	}
 	currentUser := user.(*models.User)
 
-	if _, errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil}); errUpdate != nil {
+	if errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}

@@ -2,7 +2,6 @@ package serializers
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // Resp : struct
@@ -17,8 +16,6 @@ func ConvertSerializer(data interface{}, output interface{}) error {
 		return err
 	}
 	json.Unmarshal(marshal, &output)
-
-	fmt.Println(output)
 
 	return nil
 }

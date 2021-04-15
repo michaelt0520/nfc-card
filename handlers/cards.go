@@ -34,11 +34,12 @@ func (h *CardHandler) Show(c *gin.Context) {
 		return
 	}
 
-  var card serializers.CardResponse
+	var card serializers.CardResponse
 	if err := serializers.ConvertSerializer(resCard, &card); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	card.User.Type = resCard.User.TypeToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: card, Error: nil})
 }
@@ -88,13 +89,12 @@ func (h *CardHandler) Update(c *gin.Context) {
 		return
 	}
 
-	resCard, err := h.cardRepo.Update(card, data)
-	if err != nil {
+	if err := h.cardRepo.Update(card, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &resCard, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &card, Error: nil})
 }
 
 // Destroy ...

@@ -44,7 +44,13 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: resComp, Error: nil})
+  var company serializers.CompanyResponse
+	if err := serializers.ConvertSerializer(resComp, &company); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: company, Error: nil})
 }
 
 // Create ...
@@ -105,13 +111,12 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 	}
 
 	// update body data to company
-	resComp, err := h.compRepo.Update(company, data)
-	if err != nil {
+	if err := h.compRepo.Update(company, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &resComp, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &company, Error: nil})
 }
 
 // Destroy ...
