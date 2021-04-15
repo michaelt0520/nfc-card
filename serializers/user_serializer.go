@@ -2,15 +2,16 @@ package serializers
 
 import "github.com/michaelt0520/nfc-card/models"
 
-type UserSerializer struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	Avatar   string `json:"avatar"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+type UserResponse struct {
+	Name         string          `json:"name"`
+	Avatar       string          `json:"avatar"`
+	Username     string          `json:"username"`
+	Email        string          `json:"email"`
+	Company      CompanyResponse `json:"company"`
+	Informations []InfoResponse  `json:"informations"`
 }
 
-type UserUpdateSerializer struct {
+type UserUpdateRequest struct {
 	Name      string          `json:"name"`
 	Avatar    string          `json:"avatar"`
 	Username  string          `json:"username"`

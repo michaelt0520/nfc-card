@@ -1,7 +1,5 @@
 package serializers
 
-import "github.com/michaelt0520/nfc-card/models"
-
 type CardCreateRequest struct {
 	Code      string `json:"code"`
 	Activated bool   `json:"activated"`
@@ -14,6 +12,7 @@ type CardUpdateRequest struct {
 }
 
 type CardResponse struct {
-	Card *models.Card
-	User UserSerializer
+	Code      string       `json:"code"`
+	Activated bool         `json:"activated"`
+	User      UserResponse `json:"user"`
 }

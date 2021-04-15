@@ -6,18 +6,18 @@ import {
 
 const mutations = {
   [INITIAL_STATES_SET_USER](state, payload) {
-    state.currentUser = payload.User
+    state.currentUser = payload.user
     state.isAuthenticated = true
-    localStorage.setItem('user', JSON.stringify(payload.User))
+    localStorage.setItem('user', JSON.stringify(payload.user))
     localStorage.setItem('is_authenticated', true)
-    localStorage.setItem('token', payload.Token)
+    localStorage.setItem('token', payload.user.jwt)
   },
 
   [FETCH_LIST_USERS](state, payload) {
     state.users = payload
   },
 
-  [SIGN_OUT] (state) {
+  [SIGN_OUT](state) {
     state.currentUser = {}
     state.isAuthenticated = false
     localStorage.removeItem('user')

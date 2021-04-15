@@ -12,7 +12,15 @@ type SigninRequest struct {
 	Password string `json:"password"`
 }
 
+type UserSigninResponse struct {
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	Avatar   string `json:"avatar"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Token    string `json:"jwt"`
+}
+
 type SigninResponse struct {
-	User  UserSerializer
-	Token string
+	User UserSigninResponse `json:"user"`
 }

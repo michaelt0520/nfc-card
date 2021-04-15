@@ -35,14 +35,14 @@ func (h *InformationHandler) Create(c *gin.Context) {
 
 	var infoValues serializers.InfoCreateRequest
 	if err := c.ShouldBindJSON(&infoValues); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var info models.Information
 	err := serializers.ConvertSerializer(infoValues, &info)
 	if err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -79,21 +79,17 @@ func (h *InformationHandler) Update(c *gin.Context) {
 		respondError(c, http.StatusNotFound, errGetInfo.Error())
 		return
 	}
-	if info == nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
 
 	var infoVals serializers.InfoUpdateRequest
 	if err := c.ShouldBindJSON(&infoVals); err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var data map[string]interface{}
 	err := serializers.ConvertSerializer(infoVals, &data)
 	if err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -105,10 +101,6 @@ func (h *InformationHandler) Update(c *gin.Context) {
 	resInfo, err := h.repoInfo.Update(info, data)
 	if err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-	if resInfo == nil {
-		respondError(c, http.StatusNoContent, errors.RecordNotFound.Error())
 		return
 	}
 

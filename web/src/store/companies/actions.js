@@ -6,10 +6,10 @@ import {
 const CompanyRepository = Repository.get('company')
 
 const actions = {
-  getCompaniesList ({ commit }) {
+  getCompaniesList({ commit }) {
     return CompanyRepository.getCompaniesList()
       .then(res => {
-        commit(FETCH_LIST_COMPANIES, res.data.Result)
+        commit(FETCH_LIST_COMPANIES, res.data.result)
 
         return res
       })

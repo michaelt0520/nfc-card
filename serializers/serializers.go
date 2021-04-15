@@ -1,11 +1,14 @@
 package serializers
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Resp : struct
 type Resp struct {
-	Result interface{}
-	Error  interface{}
+	Result interface{} `json:"result"`
+	Error  interface{} `json:"error"`
 }
 
 func ConvertSerializer(data interface{}, output interface{}) error {
@@ -14,6 +17,8 @@ func ConvertSerializer(data interface{}, output interface{}) error {
 		return err
 	}
 	json.Unmarshal(marshal, &output)
+
+	fmt.Println(output)
 
 	return nil
 }

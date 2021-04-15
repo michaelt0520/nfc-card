@@ -13,3 +13,10 @@ type CompanyUpdateRequest struct {
 	Logo    string `json:"logo"`
 	Website string `json:"website"`
 }
+
+type CompanyResponse struct {
+	Name    string `json:"name"`
+	Address string `json:"address"`
+	Logo    string `json:"logo"`
+	Website string `json:"website"`
+}

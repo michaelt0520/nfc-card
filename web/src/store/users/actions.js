@@ -9,16 +9,16 @@ const AuthRepository = Repository.get('auth')
 const UserRepository = Repository.get('user')
 
 const actions = {
-  signin ({ commit }, data) {
+  signin({ commit }, data) {
     return AuthRepository.signin(data)
       .then(res => {
-        commit(INITIAL_STATES_SET_USER, res.data.Result)
+        commit(INITIAL_STATES_SET_USER, res.data.result)
 
         return res
       })
   },
 
-  signup (data) {
+  signup(data) {
     return AuthRepository.signup(data)
       .then(res => {
 
@@ -26,7 +26,7 @@ const actions = {
       })
   },
 
-  signout ({ commit }) {
+  signout({ commit }) {
     return AuthRepository.signout()
       .then(res => {
         commit(SIGN_OUT)
@@ -35,10 +35,10 @@ const actions = {
       })
   },
 
-  getUsersList ({ commit }) {
+  getUsersList({ commit }) {
     return UserRepository.getUsersList()
       .then(res => {
-        commit(FETCH_LIST_USERS, res.data.Result)
+        commit(FETCH_LIST_USERS, res.data.result)
 
         return res
       })

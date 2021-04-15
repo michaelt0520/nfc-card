@@ -18,10 +18,7 @@ type AuthHandler struct {
 	userRepo *repositories.UserRepository
 }
 
-const (
-	ExpiredCookie = 3600 * 24 * 30
-	DefaultAvatar = "/public/images/default_avatar.png"
-)
+const DefaultAvatar = "/public/images/default_avatar.png"
 
 // NewAuthHandler : Constructor
 func NewAuthHandler(userRepo *repositories.UserRepository) *AuthHandler {
@@ -34,14 +31,14 @@ func NewAuthHandler(userRepo *repositories.UserRepository) *AuthHandler {
 func (h *AuthHandler) Signup(c *gin.Context) {
 	var signupVals serializers.SignUpRequest
 	if err := c.ShouldBindJSON(&signupVals); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var user models.User
 	err := serializers.ConvertSerializer(signupVals, &user)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -54,9 +51,9 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 		return
 	}
 
-	var resUser serializers.UserSerializer
+	var resUser serializers.UserResponse
 	if err := serializers.ConvertSerializer(user, &resUser); err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -67,27 +64,24 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 func (h *AuthHandler) Signin(c *gin.Context) {
 	var loginVals serializers.SigninRequest
 	if err := c.ShouldBindJSON(&loginVals); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	var loginData map[string]interface{}
 	if err := serializers.ConvertSerializer(loginVals, &loginData); err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	resU, err := h.userRepo.Find(loginData)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
-		return
-	} else if resU == nil {
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
 	if err := resU.CheckPassword(loginVals.Password); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, errors.PasswordIncorrect.Error())
+		respondError(c, http.StatusForbidden, errors.PasswordIncorrect.Error())
 		return
 	}
 
@@ -97,27 +91,19 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	var userParams = make(map[string]interface{})
-	userParams["jwt"] = token
-
-	resU, errUpdate := h.userRepo.Update(resU, userParams)
+	resU, errUpdate := h.userRepo.Update(resU, map[string]interface{}{"jwt": token})
 	if errUpdate != nil {
-		respondError(c, http.StatusInternalServerError, errUpdate.Error())
+		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}
 
-	var resUser serializers.UserSerializer
+	var resUser serializers.UserSigninResponse
 	if err := serializers.ConvertSerializer(resU, &resUser); err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	response := serializers.SigninResponse{
-		User:  resUser,
-		Token: token,
-	}
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: response, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: serializers.SigninResponse{User: resUser}, Error: nil})
 }
 
 // Signout : DELETE #signout
@@ -130,11 +116,8 @@ func (h *AuthHandler) Signout(c *gin.Context) {
 	}
 	currentUser := user.(*models.User)
 
-	var userJWTParams = make(map[string]interface{})
-	userJWTParams["jwt"] = nil
-
-	if _, errUpdate := h.userRepo.Update(currentUser, userJWTParams); errUpdate != nil {
-		respondError(c, http.StatusInternalServerError, errUpdate.Error())
+	if _, errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil}); errUpdate != nil {
+		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}
 

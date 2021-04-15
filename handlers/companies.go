@@ -43,10 +43,6 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
-	if resComp == nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resComp, Error: nil})
 }
@@ -56,7 +52,7 @@ func (h *CompanyHandler) Create(c *gin.Context) {
 	// get create data from body
 	var compVals serializers.CompanyCreateRequest
 	if err := c.ShouldBindJSON(&compVals); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -64,7 +60,7 @@ func (h *CompanyHandler) Create(c *gin.Context) {
 	var comp models.Company
 	err := serializers.ConvertSerializer(compVals, &comp)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -92,15 +88,11 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 		respondError(c, http.StatusNotFound, errGetComp.Error())
 		return
 	}
-	if company == nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
 
 	// get data update from body
 	var compVals serializers.CompanyUpdateRequest
 	if err := c.ShouldBindJSON(&compVals); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -108,18 +100,14 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 	var data map[string]interface{}
 	err := serializers.ConvertSerializer(compVals, &data)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// update body data to company
 	resComp, err := h.compRepo.Update(company, data)
 	if err != nil {
-		respondError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	if resComp == nil {
-		respondError(c, http.StatusNoContent, errors.RecordNotFound.Error())
+		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 

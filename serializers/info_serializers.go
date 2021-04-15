@@ -15,3 +15,9 @@ type InfoUpdateRequest struct {
 	Data     string `json:"data"`
 	Visibled bool   `json:"visibled"`
 }
+
+type InfoResponse struct {
+	Name     string `json:"name"`
+	Data     string `json:"data"`
+	Visibled bool   `json:"visibled"`
+}

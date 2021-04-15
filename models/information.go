@@ -9,4 +9,5 @@ type Information struct {
 	Name     string `gorm:"column:name" json:"name"`
 	Data     string `gorm:"column:data" json:"data"`
 	Visibled bool   `gorm:"column:visibled;default:true" json:"visibled"`
+	User     User   `json:"user"`
 }
