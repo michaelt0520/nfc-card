@@ -1,16 +1,12 @@
-# Env
-export env=development
-export port=8001
-
 # App
-export app_host=http://localhost:3001
+export app_host=http://localhost:$app_port
 
 # Postgres
-export db_host=127.0.0.1
+export db_host=localhost
 export db_driver=postgres
-export db_user=
+export db_user="$(whoami)"
 export db_password=
-export db_name=
+export db_name="nfc_card_${app_env}"
 export db_port=5432
 
 # JWT

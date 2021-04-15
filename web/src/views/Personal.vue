@@ -13,7 +13,7 @@
       </div>
 
       <div class="w-full lg:w-2/5">
-        <img :src="card.User?.avatar" class="rounded-none lg:rounded-lg shadow-2xl hidden lg:block">
+        <img :src="card.user?.avatar" class="rounded-none lg:rounded-lg shadow-2xl hidden lg:block">
       </div>
     </div>
   </div>

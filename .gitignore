@@ -17,4 +17,4 @@ log.txt
 
 # ignore env
 .env
-/config/.env.sh
+/config/.env.*.sh

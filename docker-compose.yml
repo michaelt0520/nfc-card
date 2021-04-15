@@ -1,0 +1,34 @@
+version: '3.8'
+
+networks:
+  dev-network:
+    driver: bridge
+    name: dev-network
+
+services:
+  postgresql:
+    image: postgres:13
+    restart: always
+    container_name: postgresql
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: nfc_card_production
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    networks:
+      - dev-network
+
+  api:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - '80:80'
+    restart: on-failure
+    depends_on:
+      - postgresql
+    networks:
+      - dev-network

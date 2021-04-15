@@ -19,8 +19,8 @@ type Config struct {
 
 // GetConfig : ...
 func GetConfig() *Config {
-	env := os.Getenv("env")
-	port, _ := strconv.Atoi(os.Getenv("port"))
+	env := os.Getenv("app_env")
+	port, _ := strconv.Atoi(os.Getenv("app_port"))
 	dbHost := os.Getenv("db_host")
 	dbName := os.Getenv("db_name")
 	dbUserName := os.Getenv("db_user")
