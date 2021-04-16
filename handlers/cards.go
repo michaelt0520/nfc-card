@@ -23,7 +23,13 @@ func NewCardHandler(cardRepo *repositories.CardRepository) *CardHandler {
 
 // Index : list all cards
 func (h *CardHandler) Index(c *gin.Context) {
-	c.JSON(http.StatusOK, serializers.Resp{Result: h.cardRepo.All(), Error: nil})
+	var cards []serializers.CardResponse
+	if err := serializers.ConvertSerializer(h.cardRepo.All(), &cards); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: cards, Error: nil})
 }
 
 // Show ...

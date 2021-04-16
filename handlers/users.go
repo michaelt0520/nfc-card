@@ -22,7 +22,14 @@ func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
 
 // Index : list all users
 func (h *UserHandler) Index(c *gin.Context) {
-	c.JSON(http.StatusOK, serializers.Resp{Result: h.userRepo.All(), Error: nil})
+	var users []serializers.UserResponse
+
+	if err := serializers.ConvertSerializer(h.userRepo.All(), &users); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: users, Error: nil})
 }
 
 // Update ...

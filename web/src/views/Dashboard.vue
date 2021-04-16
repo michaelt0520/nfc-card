@@ -34,7 +34,7 @@
           <card
             v-for="card in cards"
             :card="card"
-            :key="card.ID"/>
+            :key="card.id"/>
         </div>
       </div>
 

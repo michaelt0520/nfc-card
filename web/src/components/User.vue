@@ -19,7 +19,7 @@
           <td class="text-left py-3 px-4">{{ user.username }}</td>
           <td class="text-left py-3 px-4 hover:text-blue-500">{{ user.email }}</td>
           <td class="text-left py-3 px-4">{{ user.type }}</td>
-          <td class="text-left py-3 px-4">{{ user.Company.name }}</td>
+          <td class="text-left py-3 px-4">{{ user.company.name }}</td>
         </tr>
       </tbody>
     </table>

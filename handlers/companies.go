@@ -25,7 +25,14 @@ func NewCompanyHandler(compRepo *repositories.CompanyRepository) *CompanyHandler
 
 // Index : list all companies
 func (h *CompanyHandler) Index(c *gin.Context) {
-	c.JSON(http.StatusOK, serializers.Resp{Result: h.compRepo.All(), Error: nil})
+	var companies []serializers.CompanyResponse
+
+	if err := serializers.ConvertSerializer(h.compRepo.All(), &companies); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: companies, Error: nil})
 }
 
 // Show ...
@@ -44,7 +51,7 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 		return
 	}
 
-  var company serializers.CompanyResponse
+	var company serializers.CompanyResponse
 	if err := serializers.ConvertSerializer(resComp, &company); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
