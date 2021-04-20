@@ -1,10 +1,10 @@
 package serializers
 
 type CompanyCreateRequest struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
-	Logo    string `json:"logo"`
-	Website string `json:"website"`
+	Name    string `json:"name" binding:"required"`
+	Address string `json:"address" binding:"required"`
+	Logo    string `json:"logo" binding:"required"`
+	Website string `json:"website" binding:"required"`
 }
 
 type CompanyUpdateRequest struct {

@@ -18,7 +18,7 @@ type AuthHandler struct {
 	userRepo *repositories.UserRepository
 }
 
-const DefaultAvatar = "/public/images/default_avatar.png"
+const DefaultAvatar = "/public/avatars/default_avatar.png"
 
 // NewAuthHandler : Constructor
 func NewAuthHandler(userRepo *repositories.UserRepository) *AuthHandler {
@@ -44,7 +44,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 
 	user.Avatar = fmt.Sprintf("%s%s", os.Getenv("app_host"), DefaultAvatar)
 	user.Type = models.Personal
-	user.Role = models.UserMember
+	user.Role = models.UserStandard
 
 	if err := h.userRepo.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())

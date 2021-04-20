@@ -1,7 +1,7 @@
 package serializers
 
 type CardCreateRequest struct {
-	Code      string `json:"code"`
+	Code      string `json:"code" binding:"required"`
 	Activated bool   `json:"activated"`
 }
 

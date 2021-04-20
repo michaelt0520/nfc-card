@@ -6,7 +6,7 @@ import "github.com/michaelt0520/nfc-card/middlewares"
 func (s *Server) InitRoutes() {
 	s.g.GET("/", s.DefaultWelcome)
 
-	s.g.Static("/public", "./static")
+	s.g.Static("/public", "./public")
 
 	apiGroup := s.g.Group("/api")
 	{
@@ -16,37 +16,74 @@ func (s *Server) InitRoutes() {
 			apiV1.POST("/signup", s.authHandler.Signup)
 			apiV1.DELETE("/signout", middlewares.AllAuth(), s.authHandler.Signout)
 
-			cardGroup := apiV1.Group("/cards")
+			uploadGroup := apiV1.Group("/upload")
 			{
-				cardGroup.GET("/", middlewares.AdminAuth(), s.cardHandler.Index)
-				cardGroup.GET("/:code", s.cardHandler.Show)
-				cardGroup.POST("/", middlewares.AdminAuth(), s.cardHandler.Create)
-				cardGroup.PUT("/:code", middlewares.AdminAuth(), s.cardHandler.Update)
-				cardGroup.DELETE("/:code", middlewares.AdminAuth(), s.cardHandler.Destroy)
+				uploadGroup.POST("/avatar", middlewares.AllAuth(), s.uploadHandler.Avatar)
+				uploadGroup.POST("/logo", middlewares.CompanyAuth(), s.uploadHandler.Logo)
 			}
 
-			infoGroup := apiV1.Group("/informations")
-			infoGroup.Use(middlewares.AllAuth())
+			userGroup := apiV1.Group("/user")
+			userGroup.Use(middlewares.StandardAuth())
 			{
-				infoGroup.POST("/", s.infoHandler.Create)
-				infoGroup.PUT("/:id", s.infoHandler.Update)
-				infoGroup.DELETE("/:id", s.infoHandler.Destroy)
+				userGroup.GET("/", s.userHandler.Show)
+				userGroup.PUT("/", s.userHandler.Update)
+
+				infoGroup := apiV1.Group("/informations")
+				{
+					infoGroup.POST("/", s.infoHandler.Create)
+					infoGroup.PUT("/:id", s.infoHandler.Update)
+					infoGroup.DELETE("/:id", s.infoHandler.Destroy)
+				}
 			}
 
-			userGroup := apiV1.Group("/users")
+			companyGroup := apiV1.Group(("/companies/:id"))
+			companyGroup.Use(middlewares.CompanyAuth())
 			{
-				userGroup.GET("/", middlewares.AdminAuth(), s.userHandler.Index)
-				userGroup.PUT("/:username", middlewares.MemberAuth(), s.userHandler.Update)
+				companyGroup.GET("/users", s.compUserHandler.Index)
+				companyGroup.POST("/users", s.compUserHandler.Create)
+				companyGroup.DELETE("/users/:username", s.compUserHandler.Destroy)
+				companyGroup.GET("/cards", s.compCardHandler.Index)
+				companyGroup.PUT("/cards/:code", s.compCardHandler.Update)
+				companyGroup.PUT("/", s.compHandler.Update)
 			}
 
-			companyGroup := apiV1.Group("companies")
-			companyGroup.Use(middlewares.AdminAuth())
+			adminGroup := apiV1.Group("/admin")
+			adminGroup.Use(middlewares.AdminAuth())
 			{
-				companyGroup.GET("/", s.compHandler.Index)
-				companyGroup.GET("/:id", s.compHandler.Show)
-				companyGroup.POST("/", s.compHandler.Create)
-				companyGroup.PUT("/:id", s.compHandler.Update)
-				companyGroup.DELETE("/:id", s.compHandler.Create)
+				userGroup := adminGroup.Group("/users")
+				{
+					userGroup.GET("/", s.adminUserHandler.Index)
+					userGroup.GET("/:username", s.adminUserHandler.Show)
+					userGroup.POST("/", s.adminUserHandler.Create)
+					userGroup.PUT("/:username", s.adminUserHandler.Update)
+					userGroup.DELETE("/:username", s.adminUserHandler.Destroy)
+
+					infoGroup := userGroup.Group("/:username/informations")
+					{
+						infoGroup.GET("/", s.adminInfoHandler.Index)
+						infoGroup.POST("/", s.adminInfoHandler.Create)
+						infoGroup.PUT("/:id", s.adminInfoHandler.Update)
+						infoGroup.DELETE("/:id", s.adminInfoHandler.Destroy)
+					}
+				}
+
+				cardGroup := adminGroup.Group("/cards")
+				{
+					cardGroup.GET("/", s.adminCardHandler.Index)
+					cardGroup.GET("/:code", s.adminCardHandler.Show)
+					cardGroup.POST("/", s.adminCardHandler.Create)
+					cardGroup.PUT("/:code", s.adminCardHandler.Update)
+					cardGroup.DELETE("/:code", s.adminCardHandler.Destroy)
+				}
+
+				companyGroup := adminGroup.Group("/companies")
+				{
+					companyGroup.GET("/", s.adminCompanyHandler.Index)
+					companyGroup.GET("/:id", s.adminCompanyHandler.Show)
+					companyGroup.POST("/", s.adminCompanyHandler.Create)
+					companyGroup.PUT("/:id", s.adminCompanyHandler.Update)
+					companyGroup.DELETE("/:id", s.adminCompanyHandler.Destroy)
+				}
 			}
 		}
 	}

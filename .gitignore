@@ -18,3 +18,9 @@ log.txt
 # ignore env
 .env
 /config/.env.*.sh
+
+/public/avatars/*
+!/public/avatars/default_avatar.png
+
+/public/logos/*
+!/public/logos/default_logo.png

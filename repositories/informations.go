@@ -13,10 +13,10 @@ func NewInformationRepository() *InformationRepository {
 }
 
 // Find : get info by id
-func (u *InformationRepository) Find(id uint) (*models.Information, error) {
+func (u *InformationRepository) Find(data map[string]interface{}) (*models.Information, error) {
 	var info models.Information
 
-	if err := GetDB().First(&info, id).Error; err != nil {
+	if err := GetDB().Where(data).First(&info).Error; err != nil {
 		return nil, err
 	}
 
@@ -42,8 +42,8 @@ func (repo *InformationRepository) Update(record *models.Information, data map[s
 }
 
 // Destroy : destroy info
-func (repo *InformationRepository) Destroy(id uint) error {
-	if err := GetDB().Delete(&models.Information{}, id).Error; err != nil {
+func (repo *InformationRepository) Destroy(record *models.Information) error {
+	if err := GetDB().Delete(&record).Error; err != nil {
 		return err
 	}
 

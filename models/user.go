@@ -40,14 +40,16 @@ var typeToString = map[CardType]string{
 type UserRole uint
 
 const (
-	UserMember UserRole = iota + 1
+	UserStandard UserRole = iota + 1
+	UserCompanyMember
 	UserAdmin
 )
 
 // map of value and uint
 var roleToString = map[UserRole]string{
-	UserMember: "Member",
-	UserAdmin:  "Admin",
+	UserStandard:      "Standard",
+	UserCompanyMember: "Company Member",
+	UserAdmin:         "Admin",
 }
 
 // HashPassword : encrypts user password
@@ -71,9 +73,14 @@ func (user *User) CheckPassword(password string) error {
 	return nil
 }
 
-// IsMember check role user is member
-func (user *User) IsMember() bool {
-	return user.Role == UserMember
+// IsStandard check role user is member
+func (user *User) IsStandard() bool {
+	return user.Role == UserStandard
+}
+
+// IsCompanyMember check role user is admin
+func (user *User) IsCompanyMember() bool {
+	return user.Role == UserCompanyMember
 }
 
 // IsAdmin check role user is admin

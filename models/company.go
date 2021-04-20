@@ -10,4 +10,5 @@ type Company struct {
 	Logo    string  `gorm:"column:logo" json:"logo"`
 	Website string  `gorm:"column:website" json:"website"`
 	Users   []*User `gorm:"foreignKey:CompanyID" json:"users"`
+	Cards   []*Card `gorm:"foreignKey:CompanyID" json:"cards"`
 }

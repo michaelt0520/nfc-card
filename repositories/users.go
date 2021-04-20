@@ -64,8 +64,8 @@ func (repo *UserRepository) Update(record *models.User, data map[string]interfac
 }
 
 // Destroy : destroy category
-func (repo *UserRepository) Destroy(id uint) error {
-	if err := GetDB().Delete(&models.User{}, id).Error; err != nil {
+func (repo *UserRepository) Destroy(record *models.User) error {
+	if err := GetDB().Delete(&record).Error; err != nil {
 		return err
 	}
 

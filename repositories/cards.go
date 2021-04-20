@@ -21,10 +21,10 @@ func (u *CardRepository) All() *[]models.Card {
 }
 
 // Find : get card by code
-func (u *CardRepository) Find(cardCode string) (*models.Card, error) {
+func (u *CardRepository) Find(data map[string]interface{}) (*models.Card, error) {
 	var card models.Card
 
-	if err := GetDB().Preload("User.Informations").Preload("User.Company").Where("code = ?", cardCode).First(&card).Error; err != nil {
+	if err := GetDB().Preload("User.Informations").Preload("User.Company").Where(data).First(&card).Error; err != nil {
 		return nil, err
 	}
 

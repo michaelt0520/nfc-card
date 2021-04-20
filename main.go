@@ -61,15 +61,42 @@ func main() {
 	cardRepo := repositories.NewCardRepository()
 	compRepo := repositories.NewCompanyRepository()
 
-	// init Handler
+	// init Auth Handler
 	authHandler := handlers.NewAuthHandler(userRepo)
+
+	// init Upload handler
+	uploadHandler := handlers.NewUploadHandler()
+
+	// init User Standart Handler
 	userHandler := handlers.NewUserHandler(userRepo)
-	socialHandler := handlers.NewInformationHandler(infoRepo)
-	cardHandler := handlers.NewCardHandler(cardRepo)
-	compHanlder := handlers.NewCompanyHandler(compRepo)
+	infoHandler := handlers.NewInformationHandler(infoRepo)
+
+	// init Company Handler
+	compUserHandler := handlers.NewCompanyUserHandler(userRepo)
+	compCardHandler := handlers.NewCompanyCardHandler(cardRepo)
+	compHandler := handlers.NewCompanyHandler(compRepo)
+
+	// init Admin Handler
+	adminUserHandler := handlers.NewAdminUserHandler(userRepo)
+	adminInfoHandler := handlers.NewAdminInformationHandler(infoRepo, userRepo)
+	adminCardHandler := handlers.NewAdminCardHandler(cardRepo)
+	adminCompHandler := handlers.NewAdminCompanyHandler(compRepo)
 
 	// init Server
-	svr := api.NewServer(r, authHandler, userHandler, socialHandler, cardHandler, compHanlder)
+	svr := api.NewServer(
+		r,
+		uploadHandler,
+		authHandler,
+		userHandler,
+		infoHandler,
+		compUserHandler,
+		compCardHandler,
+		compHandler,
+		adminUserHandler,
+		adminInfoHandler,
+		adminCardHandler,
+		adminCompHandler,
+	)
 	svr.InitRoutes()
 
 	// run Server

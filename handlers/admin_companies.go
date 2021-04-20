@@ -11,20 +11,20 @@ import (
 	"github.com/michaelt0520/nfc-card/serializers"
 )
 
-// CompanyHandler : struct
-type CompanyHandler struct {
+// AdminCompanyHandler : struct
+type AdminCompanyHandler struct {
 	compRepo *repositories.CompanyRepository
 }
 
-// NewCompanyHandler ...
-func NewCompanyHandler(compRepo *repositories.CompanyRepository) *CompanyHandler {
-	return &CompanyHandler{
+// NewAdminCompanyHandler ...
+func NewAdminCompanyHandler(compRepo *repositories.CompanyRepository) *AdminCompanyHandler {
+	return &AdminCompanyHandler{
 		compRepo: compRepo,
 	}
 }
 
 // Index : list all companies
-func (h *CompanyHandler) Index(c *gin.Context) {
+func (h *AdminCompanyHandler) Index(c *gin.Context) {
 	var companies []serializers.CompanyResponse
 
 	if err := serializers.ConvertSerializer(h.compRepo.All(), &companies); err != nil {
@@ -36,7 +36,7 @@ func (h *CompanyHandler) Index(c *gin.Context) {
 }
 
 // Show ...
-func (h *CompanyHandler) Show(c *gin.Context) {
+func (h *AdminCompanyHandler) Show(c *gin.Context) {
 	// get company's id from params
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
@@ -61,7 +61,7 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 }
 
 // Create ...
-func (h *CompanyHandler) Create(c *gin.Context) {
+func (h *AdminCompanyHandler) Create(c *gin.Context) {
 	// get create data from body
 	var compVals serializers.CompanyCreateRequest
 	if err := c.ShouldBindJSON(&compVals); err != nil {
@@ -87,7 +87,7 @@ func (h *CompanyHandler) Create(c *gin.Context) {
 }
 
 // Update ...
-func (h *CompanyHandler) Update(c *gin.Context) {
+func (h *AdminCompanyHandler) Update(c *gin.Context) {
 	// get company's id from params
 	id, errGetID := strconv.Atoi(c.Param("id"))
 	if errGetID != nil || id <= 0 {
@@ -127,7 +127,7 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 }
 
 // Destroy ...
-func (h *CompanyHandler) Destroy(c *gin.Context) {
+func (h *AdminCompanyHandler) Destroy(c *gin.Context) {
 	// get company's id from params
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {

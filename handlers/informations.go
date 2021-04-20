@@ -47,6 +47,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 	}
 
 	info.UserID = currentUser.ID
+	info.Visibled = true
 
 	if err := h.repoInfo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
@@ -74,7 +75,7 @@ func (h *InformationHandler) Update(c *gin.Context) {
 	}
 
 	// query info from database
-	info, errGetInfo := h.repoInfo.Find(uint(id))
+	info, errGetInfo := h.repoInfo.Find(map[string]interface{}{"id": id, "user_id": currentUser.ID})
 	if errGetInfo != nil {
 		respondError(c, http.StatusNotFound, errGetInfo.Error())
 		return
@@ -93,11 +94,6 @@ func (h *InformationHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if info.UserID != currentUser.ID || currentUser.IsMember() {
-		respondError(c, http.StatusUnauthorized, "dont have permission")
-		return
-	}
-
 	if err := h.repoInfo.Update(info, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
@@ -108,6 +104,14 @@ func (h *InformationHandler) Update(c *gin.Context) {
 
 // Destroy ...
 func (h *InformationHandler) Destroy(c *gin.Context) {
+	// get currentUser
+	user, ok := c.Get("currentUser")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+		return
+	}
+	currentUser := user.(models.User)
+
 	// get info's id from params
 	id, errGetID := strconv.Atoi(c.Param("id"))
 	if errGetID != nil || id <= 0 {
@@ -115,7 +119,14 @@ func (h *InformationHandler) Destroy(c *gin.Context) {
 		return
 	}
 
-	if err := h.repoInfo.Destroy(uint(id)); err != nil {
+	// query info from database
+	info, errGetInfo := h.repoInfo.Find(map[string]interface{}{"id": id, "user_id": currentUser.ID})
+	if errGetInfo != nil {
+		respondError(c, http.StatusNotFound, errGetInfo.Error())
+		return
+	}
+
+	if err := h.repoInfo.Destroy(info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
