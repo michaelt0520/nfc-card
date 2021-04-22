@@ -9,6 +9,7 @@ const routes = [
   { path: '/about', name: 'about', component: lazyLoadRoute('About') },
   { path: '/profile', name: 'profile', component: lazyLoadRoute('Profile') },
   { path: '/personal/:code', name: 'personal', component: lazyLoadRoute('Personal') },
+  { path: '/personal/:code/edit', name: 'edit', component: lazyLoadRoute('Edit') },
   { path: '/admin/dashboard', name: 'dashboard', component: lazyLoadRoute('Dashboard'), isPrivate: true },
   { path: '/signin', name: 'signin', component: lazyLoadRoute('Signin'), isPrivate: false },
   { path: '/signup', name: 'signup', component: lazyLoadRoute('Signup') },
