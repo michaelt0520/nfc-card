@@ -60,11 +60,11 @@ export default {
   },
 
   computed: {
-    ...mapState('users', ['currentUser'])
+    ...mapState('auths', ['currentUser'])
   },
 
   methods: {
-    ...mapActions('users', ['signout']),
+    ...mapActions('auths', ['signout']),
 
     onClickSignout() {
       this.signout()

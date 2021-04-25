@@ -18,6 +18,8 @@ type UserSigninResponse struct {
 	Avatar   string `json:"avatar"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	Role     string `json:"role"`
+	Type     string `json:"type"`
 	Token    string `json:"jwt"`
 }
 

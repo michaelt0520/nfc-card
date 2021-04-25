@@ -1,46 +1,26 @@
 <template>
-  <header>
-    <div>Home</div>
-  </header>
+  <div>
+    <Header />
+    <sign-up-form />
+    <price-table />
+    <contact-form />
+  </div>
 </template>
 
 <script>
-// import { mapState, mapActions } from "vuex";
+import Header from "../components/Header";
+import SignUpForm from "../components/SignUpForm";
+import PriceTable from "../components/PriceTable";
+import ContactForm from "../components/ContactForm";
 
-// export default {
-//   name: "Home",
+export default {
+  name: "Home",
 
-//   data() {
-//     return {
-//       form: {
-//         email: "",
-//         password: "",
-//         username: "",
-//         name: "",
-//       },
-//     };
-//   },
-
-//   computed: {
-//     ...mapState("users", ["user"]),
-
-//     isSignedUp() {
-//       return this.user ? this.user.email : "-1";
-//     },
-//   },
-
-//   methods: {
-//     ...mapActions("users", ["login", "signup"]),
-
-//     onSubmit() {
-//       const data = {
-//         email: this.form.email,
-//         password: this.form.password,
-//         username: this.form.username,
-//         name: this.form.name,
-//       };
-//       this.signup(data);
-//     },
-//   },
-// };
+  components: {
+    Header,
+    SignUpForm,
+    PriceTable,
+    ContactForm,
+  },
+};
 </script>

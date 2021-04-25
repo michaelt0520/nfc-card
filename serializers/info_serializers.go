@@ -13,6 +13,7 @@ type InfoUpdateRequest struct {
 }
 
 type InfoResponse struct {
+	ID       uint   `json:"id"`
 	Name     string `json:"name"`
 	Data     string `json:"data"`
 	Visibled bool   `json:"visibled"`

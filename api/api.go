@@ -10,6 +10,7 @@ import (
 // Server : struct
 type Server struct {
 	g                   *gin.Engine
+	appHandler          *handlers.AppHandler
 	uploadHandler       *handlers.UploadHandler
 	authHandler         *handlers.AuthHandler
 	userHandler         *handlers.UserHandler
@@ -26,6 +27,7 @@ type Server struct {
 // NewServer ...
 func NewServer(
 	g *gin.Engine,
+	appHandler *handlers.AppHandler,
 	uploadHandler *handlers.UploadHandler,
 	authHandler *handlers.AuthHandler,
 	userHandler *handlers.UserHandler,
@@ -40,6 +42,7 @@ func NewServer(
 
 	return &Server{
 		g:                   g,
+		appHandler:          appHandler,
 		uploadHandler:       uploadHandler,
 		authHandler:         authHandler,
 		userHandler:         userHandler,

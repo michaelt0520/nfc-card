@@ -16,6 +16,12 @@ func (s *Server) InitRoutes() {
 			apiV1.POST("/signup", s.authHandler.Signup)
 			apiV1.DELETE("/signout", middlewares.AllAuth(), s.authHandler.Signout)
 
+			appGroup := apiV1.Group("/app")
+			{
+				appGroup.GET("/card/:code", s.appHandler.ShowCard)
+				appGroup.POST("/contact", s.appHandler.CreateContact)
+			}
+
 			uploadGroup := apiV1.Group("/upload")
 			{
 				uploadGroup.POST("/avatar", middlewares.AllAuth(), s.uploadHandler.Avatar)
@@ -23,7 +29,7 @@ func (s *Server) InitRoutes() {
 			}
 
 			userGroup := apiV1.Group("/user")
-			userGroup.Use(middlewares.StandardAuth())
+			userGroup.Use(middlewares.AllAuth())
 			{
 				userGroup.GET("/", s.userHandler.Show)
 				userGroup.PUT("/", s.userHandler.Update)

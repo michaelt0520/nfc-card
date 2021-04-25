@@ -1,6 +1,5 @@
 const state = {
-  user: {},
-  users: []
+  contacts: [],
 }
 
 export default state

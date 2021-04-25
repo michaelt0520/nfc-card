@@ -1,7 +1,7 @@
 import apiCaller from './config/api-caller'
 
 const resources = {
-  cards: '/api/v1/cards/',
+  card: '/api/v1/app/card/',
   adminCards: '/api/v1/admin/cards/'
 }
 
@@ -13,7 +13,7 @@ export default {
   },
 
   getCard(params) {
-    return apiCaller({ method: 'GET', url: `${resources.adminCards}${params}` })
+    return apiCaller({ method: 'GET', url: `${resources.card}${params}` })
   },
 
   createCard(data) {

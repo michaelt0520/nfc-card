@@ -77,7 +77,7 @@ func CompanyAuth() gin.HandlerFunc {
 		compRepo := repositories.NewCompanyRepository()
 		currentCompany, err := compRepo.Find(uint(id))
 
-		if !(currentUser.CompanyID == currentCompany.ID && currentUser.Role == models.UserCompanyMember) {
+		if !(*currentUser.CompanyID == currentCompany.ID && currentUser.Role == models.UserCompanyMember) {
 			c.JSON(http.StatusUnauthorized, errors.DontHavePermission.Error())
 			c.Abort()
 			return

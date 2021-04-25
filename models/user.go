@@ -13,10 +13,12 @@ type User struct {
 	Username     string         `gorm:"column:username;unique;not null" json:"username"`
 	Email        string         `gorm:"column:email;unique;not null" json:"email"`
 	Password     string         `gorm:"column:password" json:"password"`
+	Address      string         `gorm:"column:address" json:"address"`
+	PhoneNumber  string         `gorm:"column:phone_number" json:"phone_number"`
 	Type         CardType       `gorm:"column:type" json:"type"`
 	Role         UserRole       `gorm:"column:role" json:"role"`
 	JWT          string         `gorm:"column:jwt" json:"jwt"`
-	CompanyID    uint           `gorm:"column:company_id" json:"company_id"`
+	CompanyID    *uint          `gorm:"column:company_id" json:"company_id"`
 	Cards        []*Card        `gorm:"foreignKey:UserID" json:"cards"`
 	Informations []*Information `gorm:"foreignKey:UserID" json:"informations"`
 	Company      Company        `json:"company"`
@@ -42,14 +44,16 @@ type UserRole uint
 const (
 	UserStandard UserRole = iota + 1
 	UserCompanyMember
+	UserCompanyManager
 	UserAdmin
 )
 
 // map of value and uint
 var roleToString = map[UserRole]string{
-	UserStandard:      "Standard",
-	UserCompanyMember: "Company Member",
-	UserAdmin:         "Admin",
+	UserStandard:       "Standard",
+	UserCompanyMember:  "Company Member",
+	UserCompanyManager: "Company Manager",
+	UserAdmin:          "Admin",
 }
 
 // HashPassword : encrypts user password

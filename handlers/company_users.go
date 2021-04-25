@@ -56,8 +56,9 @@ func (h *CompanyUserHandler) Create(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	user.CompanyID = currentCompany.ID
-	user.Type = models.Personal
+	user.CompanyID = &currentCompany.ID
+	user.Type = models.Business
+	user.Role = models.UserCompanyMember
 
 	if err := h.userRepo.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())

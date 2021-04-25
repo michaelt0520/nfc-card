@@ -50,6 +50,7 @@ func main() {
 		&models.Information{},
 		&models.Card{},
 		&models.Company{},
+		&models.Contact{},
 	)
 
 	// Seed
@@ -60,6 +61,10 @@ func main() {
 	infoRepo := repositories.NewInformationRepository()
 	cardRepo := repositories.NewCardRepository()
 	compRepo := repositories.NewCompanyRepository()
+	contactRepo := repositories.NewContactRepository()
+
+	// init App Handler
+	appHandler := handlers.NewAppHandler(cardRepo, contactRepo)
 
 	// init Auth Handler
 	authHandler := handlers.NewAuthHandler(userRepo)
@@ -85,6 +90,7 @@ func main() {
 	// init Server
 	svr := api.NewServer(
 		r,
+		appHandler,
 		uploadHandler,
 		authHandler,
 		userHandler,

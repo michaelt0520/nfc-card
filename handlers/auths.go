@@ -95,6 +95,8 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	resUser.Role = resU.RoleToString()
+	resUser.Type = resU.TypeToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: serializers.SigninResponse{User: resUser}, Error: nil})
 }
