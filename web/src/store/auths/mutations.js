@@ -9,7 +9,7 @@ const mutations = {
     state.isAuthenticated = true
     localStorage.setItem('user', JSON.stringify(payload.user))
     localStorage.setItem('is_authenticated', true)
-    localStorage.setItem('token', payload.user.jwt)
+    localStorage.setItem('token', `Bearer ${payload.user.jwt}`)
   },
 
   [SIGN_OUT](state) {

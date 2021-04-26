@@ -31,7 +31,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
-	currentUser := user.(models.User)
+	currentUser := user.(*models.User)
 
 	var infoValues serializers.InfoCreateRequest
 	if err := c.ShouldBindJSON(&infoValues); err != nil {
@@ -40,8 +40,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 	}
 
 	var info models.Information
-	err := serializers.ConvertSerializer(infoValues, &info)
-	if err != nil {
+	if err := serializers.ConvertSerializer(infoValues, &info); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -54,7 +53,13 @@ func (h *InformationHandler) Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &info, Error: nil})
+	var result serializers.InfoResponse
+	if err := serializers.ConvertSerializer(info, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Update ...
@@ -65,7 +70,7 @@ func (h *InformationHandler) Update(c *gin.Context) {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
-	currentUser := user.(models.User)
+	currentUser := user.(*models.User)
 
 	// get info's id from params
 	id, errGetID := strconv.Atoi(c.Param("id"))
@@ -99,7 +104,13 @@ func (h *InformationHandler) Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: info, Error: nil})
+	var result serializers.InfoResponse
+	if err := serializers.ConvertSerializer(info, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Destroy ...
@@ -110,7 +121,7 @@ func (h *InformationHandler) Destroy(c *gin.Context) {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
-	currentUser := user.(models.User)
+	currentUser := user.(*models.User)
 
 	// get info's id from params
 	id, errGetID := strconv.Atoi(c.Param("id"))

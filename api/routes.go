@@ -34,7 +34,7 @@ func (s *Server) InitRoutes() {
 				userGroup.GET("/", s.userHandler.Show)
 				userGroup.PUT("/", s.userHandler.Update)
 
-				infoGroup := apiV1.Group("/informations")
+				infoGroup := userGroup.Group("/informations")
 				{
 					infoGroup.POST("/", s.infoHandler.Create)
 					infoGroup.PUT("/:id", s.infoHandler.Update)

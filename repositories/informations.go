@@ -25,7 +25,7 @@ func (u *InformationRepository) Find(data map[string]interface{}) (*models.Infor
 
 // Create : create info
 func (u *InformationRepository) Create(info *models.Information) error {
-	if err := GetDB().Where("name = ?", info.Name).FirstOrCreate(&info).Error; err != nil {
+	if err := GetDB().Create(&info).Error; err != nil {
 		return err
 	}
 

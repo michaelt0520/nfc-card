@@ -1,7 +1,6 @@
 import { createStore, createLogger } from 'vuex'
 import auths from './auths'
 import users from './users'
-import informations from './informations'
 import cards from './cards'
 import companies from './companies'
 import contacts from './contacts'
@@ -12,7 +11,6 @@ export default createStore({
   modules: {
     auths,
     users,
-    informations,
     cards,
     companies,
     contacts
