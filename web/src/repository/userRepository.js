@@ -18,5 +18,9 @@ export default {
 
   updateCurrentUser(data) {
     return apiCaller({ method: 'PUT', url: resources.user, data: data })
-  }
+  },
+
+  updateCurrentUserPassword(data) {
+    return apiCaller({ method: 'PUT', url: `${resources.user}password`, data: data })
+  },
 }

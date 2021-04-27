@@ -80,7 +80,7 @@ import User from "../components/User";
 import Company from "../components/Company";
 
 export default {
-  name: "AdminDashboard",
+  name: "Admin",
 
   components: {
     Card,

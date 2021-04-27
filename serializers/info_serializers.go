@@ -1,9 +1,9 @@
 package serializers
 
 type InfoCreateRequest struct {
-	Name     *string `json:"name" binding:"required"`
-	Data     *string `json:"data" binding:"required"`
-	Visibled *bool   `json:"visibled"`
+	Name     string `json:"name" binding:"required"`
+	Data     string `json:"data" binding:"required"`
+	Visibled bool   `json:"visibled"`
 }
 
 type InfoUpdateRequest struct {

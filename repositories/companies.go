@@ -24,7 +24,7 @@ func (u *CompanyRepository) All() *[]models.Company {
 func (u *CompanyRepository) Find(id uint) (*models.Company, error) {
 	var company models.Company
 
-	if err := GetDB().First(&company, id).Error; err != nil {
+	if err := GetDB().Preload("Users").First(&company, id).Error; err != nil {
 		return nil, err
 	}
 

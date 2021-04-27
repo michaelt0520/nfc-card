@@ -56,8 +56,18 @@ func (repo *UserRepository) Create(user *models.User) error {
 
 // Update : Update user to db
 func (repo *UserRepository) Update(record *models.User, data map[string]interface{}) error {
-	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
-		return err
+	if password, ok := data["password"]; ok {
+		if err := record.HashPassword(password.(string)); err != nil {
+			return err
+		}
+
+		if err := GetDB().Save(&record).Error; err != nil {
+			return err
+		}
+	} else {
+		if err := GetDB().Model(&record).Updates(data).Error; err != nil {
+			return err
+		}
 	}
 
 	return nil

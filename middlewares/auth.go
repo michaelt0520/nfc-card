@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -66,25 +65,14 @@ func CompanyAuth() gin.HandlerFunc {
 			return
 		}
 
-		// get company from id
-		id, err := strconv.Atoi(c.Param("id"))
-		if err != nil || id <= 0 {
-			c.JSON(http.StatusUnauthorized, errors.ParameterInvalid.Error())
-			c.Abort()
-			return
-		}
-
-		compRepo := repositories.NewCompanyRepository()
-		currentCompany, err := compRepo.Find(uint(id))
-
-		if !(*currentUser.CompanyID == currentCompany.ID && currentUser.Role == models.UserCompanyMember) {
+		if !(currentUser.Role == models.UserCompanyManager && currentUser.Type == models.Business) {
 			c.JSON(http.StatusUnauthorized, errors.DontHavePermission.Error())
 			c.Abort()
 			return
 		}
 
 		c.Set("currentUser", currentUser)
-		c.Set("currentCompany", currentCompany)
+		c.Set("currentCompany", &currentUser.Company)
 		c.Next()
 	}
 }

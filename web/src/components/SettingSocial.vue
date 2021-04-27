@@ -11,59 +11,61 @@
         </div>
       </div>
 
-      <div class="flex mt-4 md:w-11/12 mx-auto">
-        <div class="relative inline-flex">
-          <ICOArrow
-            class="shadow w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none"
-          />
-          <select
-            class="shadow border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
-            v-model="addSocial.name"
-          >
-            <option v-for="social in socialsJson" :key="social.index">
-              {{ social.name }}
-            </option>
-          </select>
-        </div>
-        <input
-          class="shadow appearance-none border border-gray-300 rounded-full w-full py-2 px-3 mx-4 h-10 text-grey-darker"
-          placeholder="Add Information"
-          v-model="addSocial.data"
-        />
-        <button
-          class="flex-no-shrink p-2 border-2 rounded text-teal border-teal hover:text-white hover:bg-teal"
-          @click="onClickAddInfo"
-        >
-          Add
-        </button>
-      </div>
-
-      <div class="md:w-11/12 mx-auto py-5">
-        <div
-          class="flex mb-4 items-center"
-          v-for="info in socialsList"
-          :key="info.id"
-        >
-          <div class="w-full text-grey-darkest">
-            <p class="flex flex-col">
-              <label class="text-sm text-gray-400">{{ info.name }}</label>
-              {{ info.data }}
-            </p>
-          </div>
-          <label class="flex items-center">
-            <input
-              class="relative w-10 h-5 transition-all duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
-              type="checkbox"
-              :checked="info.visibled"
-              @click="onClickUpdateVisibleInfo(info)"
+      <div class="bg-white space-y-6">
+        <div class="flex pt-4 md:w-11/12 mx-auto">
+          <div class="relative inline-flex">
+            <ICOArrow
+              class="shadow w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none"
             />
-          </label>
+            <select
+              class="shadow border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
+              v-model="addSocial.name"
+            >
+              <option v-for="social in socialsJson" :key="social.index">
+                {{ social.name }}
+              </option>
+            </select>
+          </div>
+          <input
+            class="shadow appearance-none border border-gray-300 rounded-full w-full py-2 px-3 mx-4 h-10 text-grey-darker"
+            placeholder="Add Information"
+            v-model="addSocial.data"
+          />
           <button
-            class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
-            @click="onClickDeleteInfo(info.id)"
+            class="flex-no-shrink p-2 border-2 rounded text-teal border-teal hover:text-white hover:bg-teal"
+            @click="onClickAddInfo"
           >
-            <ICODelete />
+            Add
           </button>
+        </div>
+
+        <div class="md:w-11/12 mx-auto py-5">
+          <div
+            class="flex mb-4 items-center"
+            v-for="info in socialsList"
+            :key="info.id"
+          >
+            <div class="w-full text-grey-darkest">
+              <p class="flex flex-col">
+                <label class="text-sm text-gray-400">{{ info.name }}</label>
+                {{ info.data }}
+              </p>
+            </div>
+            <label class="flex items-center">
+              <input
+                class="relative w-10 h-5 transition-all duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
+                type="checkbox"
+                :checked="info.visibled"
+                @click="onClickUpdateVisibleInfo(info)"
+              />
+            </label>
+            <button
+              class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
+              @click="onClickDeleteInfo(info.id)"
+            >
+              <ICODelete />
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ export const FETCH_LIST_CARDS = 'FETCH_LIST_CARDS'
 export const FETCH_CARD = 'FETCH_CARD'
 
 // companies
+export const FETCH_COMPANY = 'FETCH_COMPANY'
 export const FETCH_LIST_COMPANIES = 'FETCH_LIST_COMPANIES'
 
 // contacts

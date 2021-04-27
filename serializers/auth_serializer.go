@@ -12,17 +12,7 @@ type SigninRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-type UserSigninResponse struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	Avatar   string `json:"avatar"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Role     string `json:"role"`
-	Type     string `json:"type"`
-	Token    string `json:"jwt"`
-}
-
 type SigninResponse struct {
-	User UserSigninResponse `json:"user"`
+	User  UserResponse `json:"user"`
+	Token string       `json:"token"`
 }

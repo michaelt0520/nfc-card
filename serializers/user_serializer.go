@@ -16,11 +16,16 @@ type UserResponse struct {
 }
 
 type UserUpdateRequest struct {
-	Name        string `json:"name" binding:"required"`
-	Avatar      string `json:"avatar" binding:"required"`
-	Email       string `json:"email" binding:"required"`
-	Address     string `json:"address" binding:"required"`
-	PhoneNumber string `json:"phone_number" binding:"required"`
+	Name        *string `json:"name,omitempty"`
+	Avatar      *string `json:"avatar,omitempty"`
+	Address     *string `json:"address,omitempty"`
+	PhoneNumber *string `json:"phone_number,omitempty"`
+}
+
+type UserUpdatePasswordRequest struct {
+	OldPassowrd          *string `json:"old_password" binding:"required"`
+	NewPassword          *string `json:"new_password" binding:"required"`
+	PasswordConfirmation *string `json:"password_confirmation" binding:"required"`
 }
 
 type AdminUserCreateRequest struct {

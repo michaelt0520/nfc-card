@@ -5,12 +5,13 @@ import (
 )
 
 var (
-	PasswordIncorrect = status.Error(1001, "Password incorrect")
-	RecordNotFound    = status.Error(1002, "Record is not found")
-	RecordInvalid     = status.Error(1003, "Record is invalid")
-	ParameterInvalid  = status.Error(1004, "Parameter is invalid")
+	RecordNotFound   = status.Error(1001, "Record is not found")
+	RecordInvalid    = status.Error(1002, "Record is invalid")
+	ParameterInvalid = status.Error(1003, "Parameter is invalid")
 
-  // Auth
-	InvalidToken       = status.Error(2001, "Invalid Token")
-	DontHavePermission = status.Error(2002, "You don't have permission")
+	// Auth
+	PasswordIncorrect             = status.Error(2001, "Password incorrect")
+	ConfirmationPasswordIncorrect = status.Error(2002, "Confirmation password incorrect")
+	InvalidToken                  = status.Error(2003, "Invalid Token")
+	DontHavePermission            = status.Error(2004, "You don't have permission")
 )

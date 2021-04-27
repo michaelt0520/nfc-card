@@ -117,7 +117,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("auths", ["signup"]),
+    ...mapActions("users", ["signup"]),
 
     onClickSignUp() {
       const data = {

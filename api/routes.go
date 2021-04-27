@@ -33,6 +33,7 @@ func (s *Server) InitRoutes() {
 			{
 				userGroup.GET("/", s.userHandler.Show)
 				userGroup.PUT("/", s.userHandler.Update)
+				userGroup.PUT("/password", s.userHandler.UpdatePassword)
 
 				infoGroup := userGroup.Group("/informations")
 				{
@@ -42,15 +43,16 @@ func (s *Server) InitRoutes() {
 				}
 			}
 
-			companyGroup := apiV1.Group(("/companies/:id"))
+			companyGroup := apiV1.Group(("/company"))
 			companyGroup.Use(middlewares.CompanyAuth())
 			{
+				companyGroup.GET("/", s.compHandler.Show)
+				companyGroup.PUT("/", s.compHandler.Update)
 				companyGroup.GET("/users", s.compUserHandler.Index)
 				companyGroup.POST("/users", s.compUserHandler.Create)
 				companyGroup.DELETE("/users/:username", s.compUserHandler.Destroy)
 				companyGroup.GET("/cards", s.compCardHandler.Index)
 				companyGroup.PUT("/cards/:code", s.compCardHandler.Update)
-				companyGroup.PUT("/", s.compHandler.Update)
 			}
 
 			adminGroup := apiV1.Group("/admin")

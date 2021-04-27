@@ -28,6 +28,7 @@
         id="password"
         type="password"
         placeholder="******************"
+        @keyup.enter="onClickSignin"
         v-model="loginPassword"
       />
     </div>
@@ -35,7 +36,6 @@
       <button
         class="bg-blue hover:bg-blue-dark text-gray-900 font-bold py-2 px-4 rounded focus:text-gray-900 hover:bg-gray-200"
         type="button"
-        @keyup.enter="onClickSignin"
         @click="onClickSignin"
       >
         Sign In
@@ -59,7 +59,7 @@ export default {
   props: {
     open: {
       type: Boolean,
-      default: false
+      default: false,
     },
   },
 
@@ -71,7 +71,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("auths", ["signin"]),
+    ...mapActions("users", ["signin"]),
 
     onClickSignin() {
       const data = {
@@ -79,7 +79,7 @@ export default {
         password: this.loginPassword,
       };
       this.signin(data);
-      this.$emit('update:open', false)
+      this.$emit("update:open", false);
     },
   },
 };

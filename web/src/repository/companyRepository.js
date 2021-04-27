@@ -1,19 +1,23 @@
 import apiCaller from './config/api-caller'
 
 const resources = {
-  companies: '/api/v1/companies/',
+  company: '/api/v1/company/',
   adminCompanies: '/api/v1/admin/companies/'
 }
 
 Object.freeze(resources)
 
 export default {
-  getCompaniesList() {
-    return apiCaller({ method: 'GET', url: resources.adminCompanies })
+  getCurrentCompany() {
+    return apiCaller({ method: 'GET', url: resources.company })
   },
 
-  showCompany(params) {
-    return apiCaller({ method: 'GET', url: `${resources.adminCompanies}${params}` })
+  updateCurrentCompany(data) {
+    return apiCaller({ method: 'PUT', url: resources.company, data: data })
+  },
+
+  getCompaniesList() {
+    return apiCaller({ method: 'GET', url: resources.adminCompanies })
   },
 
   createConpany(data) {

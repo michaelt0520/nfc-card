@@ -1,43 +1,103 @@
 <template>
   <header class="bg-gray-800 py-2 w-full fixed z-20 top-0">
     <div class="flex flex-wrap items-center">
-      <div class="flex flex-shrink md:w-1/3 justify-center md:justify-start text-white">
+      <div
+        class="flex flex-shrink md:w-1/3 justify-center md:justify-start text-white"
+      >
         <a href="#">
-          <span class="text-xl pl-2"><i class="fas fa-american-sign-language-interpreting"></i></span>
+          <span class="text-xl pl-2"
+            ><i class="fas fa-american-sign-language-interpreting"></i
+          ></span>
         </a>
       </div>
 
-      <div class="flex flex-1 md:w-1/3 justify-center md:justify-start text-white px-2">
+      <div
+        class="flex flex-1 md:w-1/3 justify-center md:justify-start text-white px-2"
+      >
         <span class="relative w-full">
-          <input type="search" placeholder="Search" class="w-full bg-gray-900 text-white transition border border-transparent focus:outline-none focus:border-gray-400 rounded py-3 px-2 pl-10 appearance-none leading-normal">
-          <div class="absolute search-icon" style="top: 1rem; left: .8rem;">
-            <svg class="fill-current pointer-events-none text-white w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                <path d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"></path>
+          <input
+            type="search"
+            placeholder="Search"
+            class="w-full bg-gray-900 text-white transition border border-transparent focus:outline-none focus:border-gray-400 rounded py-3 px-2 pl-10 appearance-none leading-normal"
+          />
+          <div class="absolute search-icon" style="top: 1rem; left: 0.8rem">
+            <svg
+              class="fill-current pointer-events-none text-white w-4 h-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33-1.42 1.42-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"
+              ></path>
             </svg>
           </div>
         </span>
       </div>
 
-      <div class="flex w-full pt-2 content-center justify-between md:w-1/3 md:justify-end">
-        <ul class="list-reset flex justify-between flex-1 md:flex-none items-center">
+      <div
+        class="flex w-full pt-2 content-center justify-between md:w-1/3 md:justify-end"
+      >
+        <ul
+          class="list-reset flex justify-between flex-1 md:flex-none items-center"
+        >
           <li class="flex-1 md:flex-none md:mr-3">
             <div class="relative inline-block">
-              <button @click="isInvisible = !isInvisible" class="drop-button text-white focus:outline-none flex items-center">
+              <button
+                @click="isInvisible = !isInvisible"
+                class="drop-button text-white focus:outline-none flex items-center"
+              >
                 <span v-if="currentUser.avatar" class="pr-2">
                   <img
                     width="20"
                     height="20"
                     :src="currentUser.avatar"
-                    alt="avatar">
+                    alt="avatar"
+                  />
                 </span>
-                Hi, {{ currentUser.name || 'Nobody' }}
-                <svg class="h-3 fill-current inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"></path></svg>
+                Hi, {{ currentUser.name || "Nobody" }}
+                <svg
+                  class="h-3 fill-current inline"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                  ></path>
+                </svg>
               </button>
-              <div id="myDropdown" :class="['dropdownlist', 'absolute', 'bg-gray-800', 'text-white', 'right-0', 'mt-3', 'p-3', 'overflow-auto', 'z-30', 'w-40', { 'invisible': isInvisible }]">
-                <a href="#" class="p-2 hover:bg-gray-500 text-white text-sm no-underline block"><i class="fa fa-user fa-fw"></i> Profile</a>
-                <a href="#" class="p-2 hover:bg-gray-500 text-white text-sm no-underline block"><i class="fa fa-cog fa-fw"></i> Settings</a>
+              <div
+                id="myDropdown"
+                :class="[
+                  'dropdownlist',
+                  'absolute',
+                  'bg-gray-800',
+                  'text-white',
+                  'right-0',
+                  'mt-3',
+                  'p-3',
+                  'overflow-auto',
+                  'z-30',
+                  'w-40',
+                  { invisible: isInvisible },
+                ]"
+              >
+                <a
+                  href="#"
+                  class="p-2 hover:bg-gray-500 text-white text-sm no-underline block"
+                  ><i class="fa fa-user fa-fw"></i> Profile</a
+                >
+                <a
+                  href="#"
+                  class="p-2 hover:bg-gray-500 text-white text-sm no-underline block"
+                  ><i class="fa fa-cog fa-fw"></i> Settings</a
+                >
                 <div class="border border-gray-200"></div>
-                <a @click="onClickSignout" href="#" class="p-2 hover:bg-gray-500 text-white text-sm no-underline block"><i class="fas fa-sign-out-alt fa-fw"></i>Log Out</a>
+                <a
+                  @click="onClickSignout"
+                  href="#"
+                  class="p-2 hover:bg-gray-500 text-white text-sm no-underline block"
+                  ><i class="fas fa-sign-out-alt fa-fw"></i>Log Out</a
+                >
               </div>
             </div>
           </li>
@@ -48,28 +108,28 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from "vuex";
 
 export default {
-  name: 'HeaderAdmin',
+  name: "HeaderAdmin",
 
   data() {
     return {
-      isInvisible: true
-    }
+      isInvisible: true,
+    };
   },
 
   computed: {
-    ...mapState('auths', ['currentUser'])
+    ...mapState("users", ["currentUser"]),
   },
 
   methods: {
-    ...mapActions('auths', ['signout']),
+    ...mapActions("users", ["signout"]),
 
     onClickSignout() {
-      this.signout()
-      this.isInvisible = true
-    }
-  }
-}
+      this.signout();
+      this.isInvisible = true;
+    },
+  },
+};
 </script>

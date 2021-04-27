@@ -1,5 +1,7 @@
 import Repository from '@/repository'
 import {
+  INITIAL_STATES_SET_USER,
+  SIGN_OUT,
   FETCH_LIST_USERS,
   FETCH_USER,
   UPDATE_USER,
@@ -8,10 +10,39 @@ import {
   DELETE_INFORMATION
 } from '../mutation-types'
 
+const AuthRepository = Repository.get('auth')
 const UserRepository = Repository.get('user')
 const InfoRepository = Repository.get('info')
+const UploadRepository = Repository.get('upload')
 
 const actions = {
+  signin({ commit }, data) {
+    return AuthRepository.signin(data)
+      .then(res => {
+        commit(INITIAL_STATES_SET_USER, res.data.result)
+
+        return res
+      })
+  },
+
+  // eslint-disable-next-line no-unused-vars
+  signup({ _commit }, data) {
+    return AuthRepository.signup(data)
+      .then(res => {
+
+        return res
+      })
+  },
+
+  signout({ commit }) {
+    return AuthRepository.signout()
+      .then(res => {
+        commit(SIGN_OUT)
+
+        return res
+      })
+  },
+
   getUsersList({ commit }) {
     return UserRepository.getUsersList()
       .then(res => {
@@ -34,6 +65,24 @@ const actions = {
     return UserRepository.updateCurrentUser(data)
       .then(res => {
         commit(UPDATE_USER, res.data.result)
+
+        return res
+      })
+  },
+
+  updateCurrentUserPassword({ commit }, data) {
+    return UserRepository.updateCurrentUserPassword(data)
+      .then(res => {
+        commit(SIGN_OUT)
+
+        return res
+      })
+  },
+
+  // eslint-disable-next-line no-unused-vars
+  createAvatar({ _commit }, data) {
+    return UploadRepository.createAvatar(data)
+      .then(res => {
 
         return res
       })
@@ -64,7 +113,7 @@ const actions = {
 
         return
       })
-  }
+  },
 }
 
 export default actions

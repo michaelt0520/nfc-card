@@ -90,7 +90,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	var resUser serializers.UserSigninResponse
+	var resUser serializers.UserResponse
 	if err := serializers.ConvertSerializer(resU, &resUser); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
@@ -98,7 +98,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 	resUser.Role = resU.RoleToString()
 	resUser.Type = resU.TypeToString()
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: serializers.SigninResponse{User: resUser}, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: serializers.SigninResponse{User: resUser, Token: token}, Error: nil})
 }
 
 // Signout : DELETE #signout

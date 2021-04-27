@@ -88,7 +88,13 @@
                       class="mt-2 leading-normal px-4 py-2 bg-blue-500 text-white text-sm rounded-full"
                       >Select Avatar</span
                     >
-                    <input type="file" class="hidden" :accept="accept" />
+                    <input
+                      type="file"
+                      ref="file"
+                      class="hidden"
+                      :accept="accept"
+                      @change="handleAvatarUpload"
+                    />
                   </label>
                 </div>
               </div>
@@ -157,29 +163,10 @@
         </div>
 
         <hr />
-        <div
-          class="md:inline-flex w-full space-y-4 md:space-y-0 p-8 text-gray-500 items-center"
-        >
-          <h2 class="md:w-4/12 max-w-sm mx-auto">Change password</h2>
-
-          <div class="md:w-2/3 mx-auto max-w-sm space-y-5">
-            <div class="w-full inline-flex border-b">
-              <div class="w-1/12 pt-2">
-                <ICOLock />
-              </div>
-              <input
-                type="password"
-                class="w-11/12 focus:outline-none focus:text-gray-600 p-2 ml-4"
-                placeholder="New"
-              />
-            </div>
-          </div>
-        </div>
-
-        <hr />
         <div class="md:inline-flex w-full pb-8 text-gray-500">
           <button
             class="text-white max-w-xs mx-auto rounded-md bg-indigo-400 py-2 px-4 inline-flex items-center focus:outline-none md:float-right"
+            @click="onClickUpdateUser"
           >
             <ICOUpdate />
             Update
@@ -195,7 +182,6 @@ import { mapActions } from "vuex";
 import ICOEmail from "@/assets/icons/ICOEmail";
 import ICOPerson from "@/assets/icons/ICOPerson";
 import ICOPhoneNumber from "@/assets/icons/ICOPhoneNumber";
-import ICOLock from "@/assets/icons/ICOLock";
 import ICOUpdate from "@/assets/icons/ICOUpdate";
 
 export default {
@@ -210,13 +196,7 @@ export default {
 
   data() {
     return {
-      updateUser: {
-        avatar: "",
-        name: "",
-        email: "",
-        address: "",
-        phone_number: "",
-      },
+      updateUser: {},
     };
   },
 
@@ -224,20 +204,35 @@ export default {
     ICOEmail,
     ICOPerson,
     ICOPhoneNumber,
-    ICOLock,
     ICOUpdate,
   },
 
   methods: {
-    ...mapActions("users", ["updateCurrentUser"]),
+    ...mapActions("users", ["updateCurrentUser", "createAvatar"]),
 
-    onClickUpdate() {
-      this.updateCurrentUser(this.updateUser);
+    onClickUpdateUser() {
+      const data = {
+        avatar: this.updateUser.avatar,
+        name: this.updateUser.name,
+        address: this.updateUser.address,
+        phone_number: this.updateUser.phone_number,
+      };
+      this.updateCurrentUser(data);
+      this.$emit('update:isDisplay', true)
+    },
+
+    handleAvatarUpload() {
+      let formData = new FormData();
+      formData.append("file", this.$refs.file.files[0]);
+
+      this.createAvatar(formData).then((res) => {
+        this.updateUser.avatar = res.data.result;
+      });
     },
   },
 
   created() {
-    this.updateUser = this.user;
+    this.updateUser = { ...this.user };
   },
 };
 </script>

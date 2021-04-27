@@ -6,6 +6,7 @@ import UserRepository from './userRepository'
 import InfoRepository from './infoRepository'
 import CompanyRepository from './companyRepository'
 import ContactRepository from './contactRepository'
+import UploadRepository from './uploadRepository'
 
 const repositories = {
   auth: AuthRepository,
@@ -13,7 +14,8 @@ const repositories = {
   info: InfoRepository,
   card: CardRepository,
   company: CompanyRepository,
-  contact: ContactRepository
+  contact: ContactRepository,
+  upload: UploadRepository,
 }
 
 export default {

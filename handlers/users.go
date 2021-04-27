@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -40,6 +38,7 @@ func (h *UserHandler) Show(c *gin.Context) {
 		return
 	}
 	resUser.Type = currentUser.TypeToString()
+	resUser.Role = currentUser.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }
@@ -79,25 +78,42 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 	resUser.Type = currentUser.TypeToString()
+	resUser.Role = currentUser.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }
 
-// Upload ...
-func (h *UserHandler) Upload(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
+// UpdatePassword : update current user's password
+func (h *UserHandler) UpdatePassword(c *gin.Context) {
+	// get currentUser
+	user, ok := c.Get("currentUser")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+		return
 	}
+	currentUser := user.(*models.User)
 
-	filename := fmt.Sprintf("./public/avatars/%s", file.Filename)
-
-	if err = c.SaveUploadedFile(file, filename); err != nil {
+	// get data from body
+	var userVals serializers.UserUpdatePasswordRequest
+	if err := c.ShouldBindJSON(&userVals); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	result := fmt.Sprintf("%s/public/avatars/%s", os.Getenv("app_host"), file.Filename)
+	if err := currentUser.CheckPassword(*userVals.OldPassowrd); err != nil {
+		respondError(c, http.StatusForbidden, errors.PasswordIncorrect.Error())
+		return
+	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
+	if *userVals.NewPassword != *userVals.PasswordConfirmation {
+		respondError(c, http.StatusUnprocessableEntity, errors.ConfirmationPasswordIncorrect.Error())
+		return
+	}
+
+	if errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil, "password": *userVals.NewPassword}); errUpdate != nil {
+		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: "Password Updated", Error: nil})
 }

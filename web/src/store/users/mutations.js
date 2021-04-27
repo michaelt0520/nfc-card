@@ -1,4 +1,6 @@
 import {
+  INITIAL_STATES_SET_USER,
+  SIGN_OUT,
   FETCH_LIST_USERS,
   FETCH_USER,
   UPDATE_USER,
@@ -8,6 +10,22 @@ import {
 } from '../mutation-types'
 
 const mutations = {
+  [INITIAL_STATES_SET_USER](state, payload) {
+    state.currentUser = payload.user
+    state.isAuthenticated = true
+    localStorage.setItem('user', JSON.stringify(payload.user))
+    localStorage.setItem('token', `Bearer ${payload.token}`)
+    localStorage.setItem('is_authenticated', true)
+  },
+
+  [SIGN_OUT](state) {
+    state.currentUser = {}
+    state.isAuthenticated = false
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+    localStorage.removeItem('is_authenticated')
+  },
+
   [FETCH_LIST_USERS](state, payload) {
     state.users = payload
   },
@@ -18,6 +36,8 @@ const mutations = {
 
   [UPDATE_USER](state, payload) {
     state.user = payload
+    state.currentUser = payload
+    localStorage.setItem('user', JSON.stringify(payload))
   },
 
   [CREATE_INFORMATION](state, payload) {

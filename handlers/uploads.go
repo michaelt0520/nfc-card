@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -35,14 +34,20 @@ func (h *UploadHandler) Avatar(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 	}
 
-	filename := fmt.Sprintf("./public/avatars/%s/%s", currentUser.Username, file.Filename)
-
-	if err = c.SaveUploadedFile(file, filename); err != nil {
+	userAvatarPath := fmt.Sprintf("./public/avatars/%v", currentUser.ID)
+	if err := os.MkdirAll(userAvatarPath, os.ModePerm); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	result := fmt.Sprintf("%s/public/avatars/%s/%s", os.Getenv("app_host"), currentUser.Username, file.Filename)
+	filename := fmt.Sprintf("%s/%s", userAvatarPath, file.Filename)
+
+	if err := c.SaveUploadedFile(file, filename); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	result := fmt.Sprintf("%s/public/avatars/%v/%s", os.Getenv("app_host"), currentUser.ID, file.Filename)
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
 }
@@ -62,14 +67,20 @@ func (h *UploadHandler) Logo(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 	}
 
-	filename := fmt.Sprintf("./public/logos/%s/%s", strconv.Itoa(int(currentCompany.ID)), file.Filename)
+	CompanyLogoPath := fmt.Sprintf("./public/logos/%v", currentCompany.ID)
+	if err := os.MkdirAll(CompanyLogoPath, os.ModePerm); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	filename := fmt.Sprintf("%s/%s", CompanyLogoPath, file.Filename)
 
 	if err = c.SaveUploadedFile(file, filename); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	result := fmt.Sprintf("%s/public/logos/%s/%s", os.Getenv("app_host"), strconv.Itoa(int(currentCompany.ID)), file.Filename)
+	result := fmt.Sprintf("%s/public/logos/%v/%s", os.Getenv("app_host"), currentCompany.ID, file.Filename)
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
 }
