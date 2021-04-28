@@ -8,12 +8,9 @@
         <div class="w-full">
           <user
             :users="company.users"
-            v-model:isClickAddUser="isClickAddUser"
           />
         </div>
       </div>
-
-      <personal-users-list v-if="isClickAddUser" />
     </div>
     <div v-else>
       <loading />
@@ -43,8 +40,7 @@ export default {
   data() {
     return {
       loaded: false,
-      activeTab: 1,
-      isClickAddUser: false,
+      activeTab: 1
     };
   },
 

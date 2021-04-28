@@ -12,7 +12,7 @@
         <button
           class="modal__close btn btn--icon"
           @click="toggle">
-          X
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" fill-rule="evenodd" d="M21 4.4L19.6 3 12 10.6 4.4 3 3 4.4l7.6 7.6L3 19.6 4.4 21l7.6-7.6 7.6 7.6 1.4-1.4-7.6-7.6z"></path></svg>
         </button>
       </div>
 
@@ -24,11 +24,11 @@
         v-if="isShowFooterDialog"
         class="modal__footer">
         <button
-          class="btn btn--lg"
+          class="text-sm bg-gray-400 mr-2 hover:bg-gray-500 text-gray-800 border font-semibold py-2 px-4 rounded-full"
           @click="toggle">{{ cancelButtonDialogText }}</button>
         <button
           @click="$emit('confirm-dialog')"
-          class="btn btn--lg btn--red-500 u-ml-8">{{ confirmButtonDialogText }}</button>
+          class="text-sm bg-green-200 hover:bg-green-300 text-gray-800 border font-semibold py-2 px-4 rounded-full">{{ confirmButtonDialogText }}</button>
       </div>
     </div>
   </div>

@@ -27,7 +27,7 @@ router.beforeEach((to, from, next) => {
   const currentUser = localStorage.getItem('user') && JSON.parse(localStorage.getItem('user'))
   const isAuthenticated = localStorage.getItem('is_authenticated')
 
-  if (to.name === 'admin' && !isAuthenticated) next({ name: 'home' })
+  if (to.name === 'admin' && (!isAuthenticated || currentUser.role !== 'Admin')) next({ name: 'home' })
 
   if (to.name === 'company' && !(currentUser.role === 'Company Manager' && currentUser.type === 'Buniness')) next({ name: 'home' })
 

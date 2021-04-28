@@ -75,7 +75,7 @@
           <div>
             <button
               class="text-sm bg-green-200 hover:bg-green-300 text-gray-800 border font-semibold py-2 px-4 rounded-full"
-              @click="$emit('update:isClickAddUser', true)"
+              @click="isOpenModal = true"
             >
               Add
             </button>
@@ -183,14 +183,66 @@
         </div>
       </div>
     </div>
+    <modal
+      v-model:open="isOpenModal"
+      header="Contacts"
+      :is-hidden-button-confirm="false">
+
+      <template v-slot:modal-body>
+        <input type="text" placeholder="Search teams or members" class="my-2 w-full text-sm bg-grey-light text-grey-darkest rounded h-10 p-3 focus:outline-none">
+        <div class="w-full">
+          <div class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded">
+            <div class="w-8 h-10 text-center py-1">
+              <p class="text-3xl p-0 text-green-dark">•</p>
+            </div>
+            <div class="w-4/5 h-10 py-3 px-1">
+              <p class="hover:text-blue-dark">Kevin Durant</p>
+            </div>
+            <div class="w-1/5 h-10 text-right p-3">
+              <p class="text-sm text-grey-dark">Member</p>
+            </div>
+          </div>
+
+          <div class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded">
+            <div class="w-8 h-10 text-center py-1">
+              <p class="text-3xl p-0 text-green-dark">•</p>
+            </div>
+            <div class="w-4/5 h-10 py-3 px-1">
+              <p class="hover:text-blue-dark">Kevin Durant</p>
+            </div>
+            <div class="w-1/5 h-10 text-right p-3">
+              <p class="text-sm text-grey-dark">Member</p>
+            </div>
+          </div>
+
+          <div class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded">
+            <div class="w-8 h-10 text-center py-1">
+              <p class="text-3xl p-0 text-green-dark">•</p>
+            </div>
+            <div class="w-4/5 h-10 py-3 px-1">
+              <p class="hover:text-blue-dark">Kevin Durant</p>
+            </div>
+            <div class="w-1/5 h-10 text-right p-3">
+              <p class="text-sm text-grey-dark">Member</p>
+            </div>
+          </div>
+        </div>
+      </template>
+    </modal>
   </body>
 </template>
 
 <script>
 // import { mapState, mapActions } from "vuex";
+import Modal from '../components/Modal'
+
 
 export default {
   name: "User",
+
+  components: {
+    Modal
+  },
 
   props: {
     users: {
@@ -198,6 +250,12 @@ export default {
       require: true,
     },
   },
+
+  data() {
+    return {
+      isOpenModal: false
+    }
+  }
 
   // computed: {
   //   ...mapState("companies", ["company"]),
