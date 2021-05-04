@@ -1,9 +1,6 @@
 package repositories
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/michaelt0520/nfc-card/models"
 	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
@@ -53,15 +50,15 @@ func (u *UserRepository) Where(result interface{}, data map[string]interface{}, 
 		return nil, err
 	}
 
-	if data["name"] != nil {
-		keyword := fmt.Sprintf("%v", data["name"])
-		keyword = strings.ToLower(keyword)
-		query.Where("lower(email) LIKE ?", fmt.Sprintf("%%%v%%", keyword))
-		query.Or("lower(name) LIKE ?", fmt.Sprintf("%%%v%%", keyword))
-		query.Or("lower(phone_number) LIKE ?", fmt.Sprintf("%%%v%%", keyword))
-	}
-
 	return query.Find(result), nil
+}
+
+func (u *UserRepository) Search(db *gorm.DB, keyword string) (*gorm.DB, error) {
+	db.Where("lower(email) LIKE ?", keyword)
+	db.Or("lower(name) LIKE ?", keyword)
+	db.Or("lower(phone_number) LIKE ?", keyword)
+
+	return db, nil
 }
 
 // Create : Save user to db

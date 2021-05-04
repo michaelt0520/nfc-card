@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -48,10 +50,19 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 	data["CompanyID"] = currentCompany.ID
 
 	var users []models.User
-	if _, err := h.userRepo.Where(&users, data, repositories.Paginate(c)); err != nil {
+	query, err := h.userRepo.Where(&users, data, repositories.Paginate(c))
+	if err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	if data["name"] != nil {
+		keyword := fmt.Sprintf("%v", data["name"])
+		keyword = fmt.Sprintf("%%%v%%", strings.ToLower(keyword))
+		query, _ = h.userRepo.Search(query, keyword)
+	}
+
+	query.Find(&users)
 
 	var result []serializers.UserResponse
 	if err := serializers.ConvertSerializer(users, &result); err != nil {
