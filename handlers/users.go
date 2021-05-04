@@ -67,7 +67,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.userRepo.Update(currentUser, data); err != nil {
+	if _, err := h.userRepo.Update(currentUser, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -110,7 +110,7 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	if errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil, "password": *userVals.NewPassword}); errUpdate != nil {
+	if _, errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil, "password": *userVals.NewPassword}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}

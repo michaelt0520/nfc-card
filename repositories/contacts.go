@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/michaelt0520/nfc-card/models"
+	"gorm.io/gorm"
 )
 
 // ContactRepository : struct
@@ -12,40 +13,74 @@ func NewContactRepository() *ContactRepository {
 	return &ContactRepository{}
 }
 
-// Find : get contact by id
-func (u *ContactRepository) Find(data map[string]interface{}) (*models.Contact, error) {
-	var contact models.Contact
+func (u *ContactRepository) ContactTable() *gorm.DB {
+	return GetDB().Model(&models.Contact{})
+}
 
-	if err := GetDB().Where(data).First(&contact).Error; err != nil {
+var _ Repository = &ContactRepository{}
+
+// Find : get card by code
+func (u *ContactRepository) All(result interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
+	query := u.ContactTable().Scopes(scopes...).Find(result)
+	if err := query.Error; err != nil {
 		return nil, err
 	}
 
-	return &contact, nil
+	return query, nil
+}
+
+// Find : get contact by id
+func (u *ContactRepository) Find(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
+	query := u.ContactTable().Scopes(scopes...).Where(data).First(result)
+	if err := query.Error; err != nil {
+		return nil, err
+	}
+
+	return query, nil
 }
 
 // Create : create contact
-func (u *ContactRepository) Create(contact *models.Contact) error {
-	if err := GetDB().Create(&contact).Error; err != nil {
-		return err
+func (u *ContactRepository) Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
+	query := u.ContactTable().Scopes(scopes...).Where(data).Find(result)
+	if err := query.Error; err != nil {
+		return nil, err
 	}
 
-	return nil
+	return query, nil
+}
+
+// Create : Save user to db
+func (u *ContactRepository) Create(model interface{}) (*gorm.DB, error) {
+	record := model.(*models.Contact)
+
+	query := u.ContactTable().Create(record)
+	if err := query.Error; err != nil {
+		return nil, err
+	}
+
+	return query, nil
 }
 
 // Update : Update contact to db
-func (repo *ContactRepository) Update(record *models.Contact, data map[string]interface{}) error {
-	if err := GetDB().Model(&record).Updates(data).Error; err != nil {
-		return err
+func (u *ContactRepository) Update(model interface{}, data map[string]interface{}) (*gorm.DB, error) {
+	record := model.(*models.Contact)
+
+	query := u.ContactTable().Model(record).Updates(data)
+	if err := query.Error; err != nil {
+		return nil, err
 	}
 
-	return nil
+	return query, nil
 }
 
 // Destroy : destroy contact
-func (repo *ContactRepository) Destroy(record *models.Contact) error {
-	if err := GetDB().Delete(&record).Error; err != nil {
-		return err
+func (u *ContactRepository) Destroy(model interface{}) (*gorm.DB, error) {
+	record := model.(*models.Contact)
+
+	query := u.ContactTable().Delete(record)
+	if err := query.Error; err != nil {
+		return nil, err
 	}
 
-	return nil
+	return query, nil
 }

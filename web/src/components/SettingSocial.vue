@@ -91,7 +91,7 @@ export default {
   data() {
     return {
       addSocial: {
-        name: "",
+        name: "Facebook",
         data: "",
       },
 

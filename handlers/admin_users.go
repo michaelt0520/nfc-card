@@ -28,7 +28,7 @@ func NewAdminUserHandler(userRepo *repositories.UserRepository) *AdminUserHandle
 func (h *AdminUserHandler) Index(c *gin.Context) {
 	var users []serializers.UserResponse
 
-	if err := serializers.ConvertSerializer(h.userRepo.All(), &users); err != nil {
+	if _, err := h.userRepo.All(&users); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -38,9 +38,8 @@ func (h *AdminUserHandler) Index(c *gin.Context) {
 
 // Show : Get user by username
 func (h *AdminUserHandler) Show(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 	}
 
@@ -69,7 +68,7 @@ func (h *AdminUserHandler) Create(c *gin.Context) {
 		return
 	}
 
-	if err := h.userRepo.Create(&user); err != nil {
+	if _, err := h.userRepo.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -79,9 +78,8 @@ func (h *AdminUserHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *AdminUserHandler) Update(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 	}
 
@@ -98,7 +96,7 @@ func (h *AdminUserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.userRepo.Update(user, data); err != nil {
+	if _, err := h.userRepo.Update(&user, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -135,14 +133,13 @@ func (h *AdminUserHandler) Upload(c *gin.Context) {
 
 // Delete : soft delete user
 func (h *AdminUserHandler) Destroy(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
-	if err := h.userRepo.Destroy(user); err != nil {
+	if _, err := h.userRepo.Destroy(&user); err != nil {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}

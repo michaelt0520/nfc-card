@@ -4,6 +4,7 @@ import {
   FETCH_LIST_USERS,
   FETCH_USER,
   UPDATE_USER,
+  SEARCH_USERS,
   CREATE_INFORMATION,
   UPDATE_INFORMATION,
   DELETE_INFORMATION
@@ -56,6 +57,10 @@ const mutations = {
     if (index < 0) return
 
     state.user.informations.splice(index, 1)
+  },
+
+  [SEARCH_USERS](state, payload) {
+    state.searchUsers = payload
   }
 }
 

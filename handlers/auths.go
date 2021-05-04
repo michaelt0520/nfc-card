@@ -46,7 +46,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 	user.Type = models.Personal
 	user.Role = models.UserStandard
 
-	if err := h.userRepo.Create(&user); err != nil {
+	if _, err := h.userRepo.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -62,14 +62,9 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	var loginData map[string]interface{}
-	if err := serializers.ConvertSerializer(loginVals, &loginData); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	resU, err := h.userRepo.Find(loginData)
-	if err != nil {
+	var resU models.User
+	if _, err := h.userRepo.Find(&resU, map[string]interface{}{"username": loginVals.Username}); err != nil {
+		fmt.Println(err.Error())
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
@@ -79,13 +74,13 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.CreateToken(resU)
+	token, err := jwt.CreateToken(&resU)
 	if err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	if errUpdate := h.userRepo.Update(resU, map[string]interface{}{"jwt": token}); errUpdate != nil {
+	if _, errUpdate := h.userRepo.Update(&resU, map[string]interface{}{"jwt": token}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}
@@ -111,7 +106,7 @@ func (h *AuthHandler) Signout(c *gin.Context) {
 	}
 	currentUser := user.(*models.User)
 
-	if errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil}); errUpdate != nil {
+	if _, errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}

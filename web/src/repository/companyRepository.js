@@ -2,6 +2,8 @@ import apiCaller from './config/api-caller'
 
 const resources = {
   company: '/api/v1/company/',
+  users: '/api/v1/company/users',
+  cards: '/api/v1/company/cards',
   adminCompanies: '/api/v1/admin/companies/'
 }
 
@@ -14,6 +16,14 @@ export default {
 
   updateCurrentCompany(data) {
     return apiCaller({ method: 'PUT', url: resources.company, data: data })
+  },
+
+  getCurrentCompanyUsers(params) {
+    return apiCaller({ method: 'GET', url: resources.users, params: params })
+  },
+
+  getCurrentCompanyCards(params) {
+    return apiCaller({ method: 'GET', url: resources.cards, params: params })
   },
 
   getCompaniesList() {

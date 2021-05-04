@@ -1,7 +1,7 @@
 import apiCaller from './config/api-caller'
 
 const resources = {
-  card: '/api/v1/app/card/',
+  card: '/api/v1/app/cards/',
   adminCards: '/api/v1/admin/cards/'
 }
 

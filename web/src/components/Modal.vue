@@ -1,18 +1,28 @@
 <template>
-  <div
-    :class="['modal-wrapper', { 'active': open }]">
-    <span
-      class="modal-overlay"
-      @click="toggle"></span>
+  <div :class="['modal-wrapper', { active: open }]">
+    <span class="modal-overlay" @click="toggle"></span>
 
     <div class="modal">
       <div
-        :class="['modal__head', { 'u-d-block u-text-center': isShowCenteredHeader }]">
+        :class="[
+          'modal__head',
+          { 'u-d-block u-text-center': isShowCenteredHeader },
+        ]"
+      >
         <h3 class="headline--sm">{{ header }}</h3>
-        <button
-          class="modal__close btn btn--icon"
-          @click="toggle">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" fill-rule="evenodd" d="M21 4.4L19.6 3 12 10.6 4.4 3 3 4.4l7.6 7.6L3 19.6 4.4 21l7.6-7.6 7.6 7.6 1.4-1.4-7.6-7.6z"></path></svg>
+        <button class="modal__close btn btn--icon" @click="toggle">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+          >
+            <path
+              fill="currentColor"
+              fill-rule="evenodd"
+              d="M21 4.4L19.6 3 12 10.6 4.4 3 3 4.4l7.6 7.6L3 19.6 4.4 21l7.6-7.6 7.6 7.6 1.4-1.4-7.6-7.6z"
+            ></path>
+          </svg>
         </button>
       </div>
 
@@ -20,72 +30,71 @@
         <slot name="modal-body"></slot>
       </div>
 
-      <div
-        v-if="isShowFooterDialog"
-        class="modal__footer">
+      <div v-if="isShowFooterModal" class="modal__footer">
         <button
-          class="text-sm bg-gray-400 mr-2 hover:bg-gray-500 text-gray-800 border font-semibold py-2 px-4 rounded-full"
-          @click="toggle">{{ cancelButtonDialogText }}</button>
+          class="text-sm bg-gray-300 mr-2 hover:bg-gray-400 text-gray-800 border font-semibold py-2 px-4 rounded-full"
+          @click="toggle"
+        >
+          {{ cancelButtonModalText }}
+        </button>
         <button
-          @click="$emit('confirm-dialog')"
-          class="text-sm bg-green-200 hover:bg-green-300 text-gray-800 border font-semibold py-2 px-4 rounded-full">{{ confirmButtonDialogText }}</button>
+          @click="$emit('confirm-modal')"
+          class="text-sm bg-blue-300 hover:bg-blue-400 text-gray-800 border font-semibold py-2 px-4 rounded-full"
+        >
+          {{ confirmButtonModalText }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'Modal',
+  name: "Modal",
 
   props: {
     open: {
       type: Boolean,
-      default: false
+      default: false,
     },
 
     header: {
       type: String,
-      require: true
+      require: true,
     },
 
-    cancelButtonDialogText: {
+    cancelButtonModalText: {
       type: String,
-      default: 'Cancel'
-      // default: function () {
-      //   return this.$t('modal.cancel')
-      // }
+      default: "Cancel",
     },
 
-    confirmButtonDialogText: {
+    confirmButtonModalText: {
       type: String,
-      default: 'Confirm'
+      default: "Confirm",
     },
 
     isHiddenButtonConfirm: {
       type: Boolean,
-      default: true
+      default: true,
     },
 
-    isShowFooterDialog: {
+    isShowFooterModal: {
       type: Boolean,
-      default: true
+      default: true,
     },
 
     isShowCenteredHeader: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   methods: {
     toggle() {
-      console.log('object')
-      this.$emit('update:open', !this.open)
-    }
-  }
-}
+      this.$emit("update:open", !this.open);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -198,5 +207,4 @@ export default {
     // }
   }
 }
-
 </style>

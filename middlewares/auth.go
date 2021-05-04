@@ -24,14 +24,15 @@ func BasicAuth(c *gin.Context) *models.User {
 
 	// get user from token
 	userRepo := repositories.NewUserRepository()
-	currentUser, err := userRepo.Find(map[string]interface{}{"id": payload.UserID})
+	var currentUser models.User
+	_, err := userRepo.Find(&currentUser, map[string]interface{}{"id": payload.UserID})
 
 	// valid current user with token
 	if currentUser.JWT != token || err != nil {
 		return nil
 	}
 
-	return currentUser
+	return &currentUser
 }
 
 // StandardAuth authorize user role

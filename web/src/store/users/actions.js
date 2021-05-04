@@ -5,6 +5,7 @@ import {
   FETCH_LIST_USERS,
   FETCH_USER,
   UPDATE_USER,
+  SEARCH_USERS,
   CREATE_INFORMATION,
   UPDATE_INFORMATION,
   DELETE_INFORMATION
@@ -114,6 +115,15 @@ const actions = {
         return
       })
   },
+
+  searchUser({ commit }, params) {
+    return UserRepository.searchUser(params)
+      .then(res => {
+        commit(SEARCH_USERS, res.data.result)
+
+        return res
+      })
+  }
 }
 
 export default actions

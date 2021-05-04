@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,14 +25,28 @@ func NewCompanyUserHandler(userRepo *repositories.UserRepository) *CompanyUserHa
 
 // Index : list all users
 func (h *CompanyUserHandler) Index(c *gin.Context) {
-	var users []serializers.UserResponse
+	// get currentCompany
+	company, ok := c.Get("currentCompany")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+		return
+	}
+	currentCompany := company.(*models.Company)
 
-	if err := serializers.ConvertSerializer(h.userRepo.All(), &users); err != nil {
+	query := c.Query("q")
+	var users []models.User
+	if err := h.userRepo.UserTable().Where("company_id = ?", currentCompany.ID, sql.Named("query", query)).Find(&users).Error; err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: users, Error: nil})
+	var result []serializers.UserResponse
+	if err := serializers.ConvertSerializer(users, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Create : create user
@@ -60,7 +75,7 @@ func (h *CompanyUserHandler) Create(c *gin.Context) {
 	user.Type = models.Business
 	user.Role = models.UserCompanyMember
 
-	if err := h.userRepo.Create(&user); err != nil {
+	if _, err := h.userRepo.Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -79,16 +94,35 @@ func (h *CompanyUserHandler) Destroy(c *gin.Context) {
 	currentCompany := company.(*models.Company)
 
 	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username, "company_id": currentCompany.ID})
-	if err != nil {
+	var user models.User
+	if _, err := h.userRepo.Where(&user, map[string]interface{}{"username": username, "company_id": currentCompany.ID}); err != nil {
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
-	if err := h.userRepo.Destroy(user); err != nil {
+	if _, err := h.userRepo.Destroy(&user); err != nil {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: "user deleted", Error: nil})
+}
+
+// ShowPersonalUsers
+func (h *CompanyUserHandler) ShowPersonalUsers(c *gin.Context) {
+	query := c.Query("q")
+
+	var users []models.User
+	if err := h.userRepo.UserTable().Where("role = ? and (name like '%@query%' or email like '%@query%' or phone_number like '%@query%')", models.Personal, sql.Named("query", query)).Find(&users).Error; err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var result []serializers.UserResponse
+	if err := serializers.ConvertSerializer(users, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
 }

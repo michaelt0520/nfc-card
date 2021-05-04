@@ -1,5 +1,7 @@
 const state = {
   company: {},
+  users: [],
+  cards: [],
   companies: []
 }
 

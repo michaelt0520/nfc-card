@@ -34,8 +34,7 @@ func (seed *Seed) LoadInformationSeed() {
 	}
 
 	for _, info := range infos {
-		err := infoRepo.Create(&info)
-		if err != nil {
+		if _, err := infoRepo.Create(&info); err != nil {
 			seed.log.Error("failed to load seed: Information", zap.Error(err))
 		}
 	}

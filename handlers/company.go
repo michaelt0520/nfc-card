@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -33,14 +32,8 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 	}
 	currentCompany := company.(*models.Company)
 
-	company, err := h.compRepo.Find(currentCompany.ID)
-	if err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
-
 	var result serializers.CompanyResponse
-	if err := serializers.ConvertSerializer(company, &result); err != nil {
+	if err := serializers.ConvertSerializer(currentCompany, &result); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -50,19 +43,13 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 
 // Update ...
 func (h *CompanyHandler) Update(c *gin.Context) {
-	// get company's id from params
-	id, errGetID := strconv.Atoi(c.Param("id"))
-	if errGetID != nil || id <= 0 {
-		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
+	// get currentCompany
+	company, ok := c.Get("currentCompany")
+	if !ok {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}
-
-	// query company from database
-	company, errGetComp := h.compRepo.Find(uint(id))
-	if errGetComp != nil {
-		respondError(c, http.StatusNotFound, errGetComp.Error())
-		return
-	}
+	currentCompany := company.(*models.Company)
 
 	// get data update from body
 	var compVals serializers.CompanyUpdateRequest
@@ -73,14 +60,13 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 
 	// binding to map
 	var data map[string]interface{}
-	err := serializers.ConvertSerializer(compVals, &data)
-	if err != nil {
+	if err := serializers.ConvertSerializer(compVals, &data); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// update body data to company
-	if err := h.compRepo.Update(company, data); err != nil {
+	if _, err := h.compRepo.Update(currentCompany, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

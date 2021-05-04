@@ -10,6 +10,7 @@ export const FETCH_LIST_USERS = 'FETCH_LIST_USERS'
 export const FETCH_USER = 'FETCH_USER'
 export const SIGN_OUT = 'SIGN_OUT'
 export const UPDATE_USER = 'UPDATE_USER'
+export const SEARCH_USERS = 'SEARCH_USERS'
 
 
 // cards
@@ -18,7 +19,10 @@ export const FETCH_CARD = 'FETCH_CARD'
 
 // companies
 export const FETCH_COMPANY = 'FETCH_COMPANY'
+export const FETCH_COMPANY_USERS = 'FETCH_COMPANY_USERS'
+export const FETCH_COMPANY_CARDS = 'FETCH_COMPANY_CARDS'
 export const FETCH_LIST_COMPANIES = 'FETCH_LIST_COMPANIES'
+export const UPDATE_COMPANY = 'UPDATE_COMPANY'
 
 // contacts
 export const FETCH_LIST_CONTACTS = 'FETCH_LIST_CONTACTS'

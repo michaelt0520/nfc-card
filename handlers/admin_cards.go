@@ -24,18 +24,19 @@ func NewAdminCardHandler(cardRepo *repositories.CardRepository) *AdminCardHandle
 // Index : list all cards
 func (h *AdminCardHandler) Index(c *gin.Context) {
 	var cards []serializers.CardResponse
-	if err := serializers.ConvertSerializer(h.cardRepo.All(), &cards); err != nil {
+
+	if _, err := h.cardRepo.All(&cards); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: cards, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &cards, Error: nil})
 }
 
 // Show ...
 func (h *AdminCardHandler) Show(c *gin.Context) {
-	resCard, err := h.cardRepo.Find(map[string]interface{}{"code": c.Param("code")})
-	if err != nil {
+	var resCard models.Card
+	if _, err := h.cardRepo.Find(&resCard, map[string]interface{}{"code": c.Param("code")}); err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
@@ -48,7 +49,7 @@ func (h *AdminCardHandler) Show(c *gin.Context) {
 	card.User.Type = resCard.User.TypeToString()
 	card.User.Role = resCard.User.RoleToString()
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: card, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &card, Error: nil})
 }
 
 // Create ...
@@ -65,10 +66,9 @@ func (h *AdminCardHandler) Create(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
 	card.Activated = true
 
-	if err := h.cardRepo.Create(&card); err != nil {
+	if _, err := h.cardRepo.Create(&card); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -78,10 +78,9 @@ func (h *AdminCardHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *AdminCardHandler) Update(c *gin.Context) {
-	// query card from database
-	card, errGetCard := h.cardRepo.Find(map[string]interface{}{"code": c.Param("code")})
-	if errGetCard != nil {
-		respondError(c, http.StatusNotFound, errGetCard.Error())
+	var card models.Card
+	if _, err := h.cardRepo.Find(&card, map[string]interface{}{"code": c.Param("code")}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -98,7 +97,7 @@ func (h *AdminCardHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.cardRepo.Update(card, data); err != nil {
+	if _, err := h.cardRepo.Update(card, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -108,7 +107,13 @@ func (h *AdminCardHandler) Update(c *gin.Context) {
 
 // Destroy ...
 func (h *AdminCardHandler) Destroy(c *gin.Context) {
-	if err := h.cardRepo.Destroy(c.Param("code")); err != nil {
+	var card models.Card
+	if _, err := h.cardRepo.Find(&card, map[string]interface{}{"code": c.Param("code")}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	if _, err := h.cardRepo.Destroy(&card); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

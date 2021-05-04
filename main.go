@@ -64,7 +64,7 @@ func main() {
 	contactRepo := repositories.NewContactRepository()
 
 	// init App Handler
-	appHandler := handlers.NewAppHandler(cardRepo, contactRepo)
+	appHandler := handlers.NewAppHandler(cardRepo, contactRepo, userRepo)
 
 	// init Auth Handler
 	authHandler := handlers.NewAuthHandler(userRepo)

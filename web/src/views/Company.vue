@@ -7,8 +7,20 @@
         <company-side-bar v-model:activeTab="activeTab" :logo="company.logo" />
         <div class="w-full">
           <user
-            :users="company.users"
+            v-if="activeTab === 1"
+            :users="users"
+            :invite-users="searchUsers"
+            @search-user-input="searchUserInput"
+            @search-invite-user-input="searchInviteUserInput"
+            @select-users-per-page="selectUsersPerPage"
           />
+          <card
+            v-if="activeTab === 2"
+            :cards="cards"
+            @search-card-input="searchCardInput"
+            @select-cards-per-page="selectCardsPerPage"
+          />
+          <setting-company v-if="activeTab === 3" :company="company" />
         </div>
       </div>
     </div>
@@ -24,40 +36,95 @@ import Header from "@/components/Header";
 import CompanySideBar from "../components/CompanySideBar";
 import Loading from "@/components/Loading";
 import User from "@/components/User";
-import PersonalUsersList from "@/components/PersonalUsersList";
+import Debounce from "@/mixins/debounce";
+import Card from "@/components/Card";
+import SettingCompany from "@/components/SettingCompany";
 
 export default {
   name: "Company",
+
+  data() {
+    return {
+      loaded: false,
+      activeTab: 1,
+    };
+  },
+
+  mixins: [Debounce],
 
   components: {
     Header,
     CompanySideBar,
     Loading,
     User,
-    PersonalUsersList,
-  },
-
-  data() {
-    return {
-      loaded: false,
-      activeTab: 1
-    };
+    Card,
+    SettingCompany,
   },
 
   computed: {
-    ...mapState("companies", ["company"]),
+    ...mapState("companies", ["company", "users", "cards"]),
+    ...mapState("users", ["searchUsers"]),
   },
 
   methods: {
-    ...mapActions("companies", ["getCurrentCompany"]),
+    ...mapActions("companies", [
+      "getCurrentCompany",
+      "getCurrentCompanyUsers",
+      "getCurrentCompanyCards",
+    ]),
+
+    ...mapActions("users", ["searchUser"]),
+
+    searchUserInput(fillterBy, event) {
+      const value = event.target.value.trim();
+      if (!value) return;
+
+      this.handleDebounceSearch(
+        this.getCurrentCompanyUsers,
+        { [fillterBy]: value },
+        1000
+      );
+    },
+
+    searchCardInput(event) {
+      const value = event.target.value.trim();
+      if (!value) return;
+
+      this.handleDebounceSearch(
+        this.getCurrentCompanyCards,
+        { code: value },
+        1000
+      );
+    },
+
+    searchInviteUserInput(event) {
+      const value = event.target.value.trim();
+      if (!value) return;
+
+      this.handleDebounceSearch(this.searchUser, { email: value }, 500);
+    },
+
+    selectUsersPerPage(event) {
+      if (!event.target.value) return;
+
+      this.getCurrentCompanyUsers({ per_page: event.target.value });
+    },
+
+    selectCardsPerPage(event) {
+      if (!event.target.value) return;
+
+      this.getCurrentCompanyCards({ per_page: event.target.value });
+    },
   },
 
-  created() {
-    this.getCurrentCompany().then(() => {
-      setTimeout(() => {
-        this.loaded = true;
-      }, 500);
-    });
+  async created() {
+    await this.getCurrentCompany();
+    await this.getCurrentCompanyUsers();
+    await this.getCurrentCompanyCards();
+
+    setTimeout(() => {
+      this.loaded = true;
+    }, 500);
   },
 };
 </script>

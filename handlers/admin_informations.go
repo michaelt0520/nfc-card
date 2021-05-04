@@ -27,11 +27,9 @@ func NewAdminInformationHandler(infoRepo *repositories.InformationRepository, us
 
 // Index : list all info of user
 func (h *AdminInformationHandler) Index(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 	}
 
 	var infos []serializers.InfoResponse
@@ -45,11 +43,9 @@ func (h *AdminInformationHandler) Index(c *gin.Context) {
 
 // Create ...
 func (h *AdminInformationHandler) Create(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 	}
 
 	var infoValues serializers.InfoCreateRequest
@@ -67,7 +63,7 @@ func (h *AdminInformationHandler) Create(c *gin.Context) {
 	info.UserID = user.ID
 	info.Visibled = true
 
-	if err := h.infoRepo.Create(&info); err != nil {
+	if _, err := h.infoRepo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -77,11 +73,9 @@ func (h *AdminInformationHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *AdminInformationHandler) Update(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 	}
 
 	// get info's id from params
@@ -92,8 +86,8 @@ func (h *AdminInformationHandler) Update(c *gin.Context) {
 	}
 
 	// query info from database
-	info, errGetInfo := h.infoRepo.Find(map[string]interface{}{"id": id, "user_id": user.ID})
-	if errGetInfo != nil {
+  var info models.Information
+	if _, errGetInfo := h.infoRepo.Find(&info, map[string]interface{}{"id": id, "user_id": user.ID}); errGetInfo != nil {
 		respondError(c, http.StatusNotFound, errGetInfo.Error())
 		return
 	}
@@ -110,21 +104,19 @@ func (h *AdminInformationHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.infoRepo.Update(info, data); err != nil {
+	if _, err := h.infoRepo.Update(&info, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: info, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &info, Error: nil})
 }
 
 // Destroy ...
 func (h *AdminInformationHandler) Destroy(c *gin.Context) {
-	username := c.Param("username")
-	user, err := h.userRepo.Find(map[string]interface{}{"username": username})
-	if err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
+	var user models.User
+	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
+		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 	}
 
 	// get info's id from params
@@ -135,13 +127,13 @@ func (h *AdminInformationHandler) Destroy(c *gin.Context) {
 	}
 
 	// query info from database
-	info, errGetInfo := h.infoRepo.Find(map[string]interface{}{"id": id, "user_id": user.ID})
-	if errGetInfo != nil {
-		respondError(c, http.StatusNotFound, errGetInfo.Error())
+  var info models.Information
+	if _, err := h.infoRepo.Find(&info, map[string]interface{}{"id": id, "user_id": user.ID}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	if err := h.infoRepo.Destroy(info); err != nil {
+	if _, err := h.infoRepo.Destroy(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

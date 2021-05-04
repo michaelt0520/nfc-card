@@ -2,6 +2,7 @@ import apiCaller from './config/api-caller'
 
 const resources = {
   user: '/api/v1/user/',
+  users: '/api/v1/app/users',
   adminUsers: '/api/v1/admin/users/'
 }
 
@@ -14,6 +15,10 @@ export default {
 
   getUsersList() {
     return apiCaller({ method: 'GET', url: resources.adminUsers })
+  },
+
+  searchUser(params) {
+    return apiCaller({ method: 'GET', url: resources.users, params: params })
   },
 
   updateCurrentUser(data) {

@@ -16,3 +16,7 @@ type CardResponse struct {
 	Activated bool         `json:"activated"`
 	User      UserResponse `json:"user"`
 }
+
+type CardParametersRequest struct {
+	Code *string `form:"code" json:"code,omitempty"`
+}

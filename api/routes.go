@@ -18,7 +18,8 @@ func (s *Server) InitRoutes() {
 
 			appGroup := apiV1.Group("/app")
 			{
-				appGroup.GET("/card/:code", s.appHandler.ShowCard)
+				appGroup.GET("/cards/:code", s.appHandler.ShowCard)
+				appGroup.GET("/users", s.appHandler.SearchUser)
 				appGroup.POST("/contact", s.appHandler.CreateContact)
 			}
 
@@ -50,6 +51,7 @@ func (s *Server) InitRoutes() {
 				companyGroup.PUT("/", s.compHandler.Update)
 				companyGroup.GET("/users", s.compUserHandler.Index)
 				companyGroup.POST("/users", s.compUserHandler.Create)
+				companyGroup.GET("/users/personal", s.compUserHandler.ShowPersonalUsers)
 				companyGroup.DELETE("/users/:username", s.compUserHandler.Destroy)
 				companyGroup.GET("/cards", s.compCardHandler.Index)
 				companyGroup.PUT("/cards/:code", s.compCardHandler.Update)

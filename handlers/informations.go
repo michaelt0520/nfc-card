@@ -48,7 +48,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 	info.UserID = currentUser.ID
 	info.Visibled = true
 
-	if err := h.repoInfo.Create(&info); err != nil {
+	if _, err := h.repoInfo.Create(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -80,9 +80,9 @@ func (h *InformationHandler) Update(c *gin.Context) {
 	}
 
 	// query info from database
-	info, errGetInfo := h.repoInfo.Find(map[string]interface{}{"id": id, "user_id": currentUser.ID})
-	if errGetInfo != nil {
-		respondError(c, http.StatusNotFound, errGetInfo.Error())
+  var info models.Information
+	if _, err := h.repoInfo.Find(&info, map[string]interface{}{"id": id, "user_id": currentUser.ID}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -99,7 +99,7 @@ func (h *InformationHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.repoInfo.Update(info, data); err != nil {
+	if _, err := h.repoInfo.Update(&info, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -131,13 +131,13 @@ func (h *InformationHandler) Destroy(c *gin.Context) {
 	}
 
 	// query info from database
-	info, errGetInfo := h.repoInfo.Find(map[string]interface{}{"id": id, "user_id": currentUser.ID})
-	if errGetInfo != nil {
-		respondError(c, http.StatusNotFound, errGetInfo.Error())
+  var info models.Information
+	if _, err := h.repoInfo.Find(&info, map[string]interface{}{"id": id, "user_id": currentUser.ID}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	if err := h.repoInfo.Destroy(info); err != nil {
+	if _, err := h.repoInfo.Destroy(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

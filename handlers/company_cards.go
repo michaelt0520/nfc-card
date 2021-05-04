@@ -32,13 +32,33 @@ func (h *CompanyCardHandler) Index(c *gin.Context) {
 	}
 	currentCompany := company.(*models.Company)
 
-	var cards []serializers.CardResponse
-	if err := serializers.ConvertSerializer(currentCompany.Cards, &cards); err != nil {
+	// get parameters
+	var paramVals serializers.CardParametersRequest
+	if err := c.ShouldBind(&paramVals); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: cards, Error: nil})
+	var data map[string]interface{}
+	if err := serializers.ConvertSerializer(paramVals, &data); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	data["company_id"] = currentCompany.ID
+
+	var cards []models.Card
+	if _, err := h.cardRepo.Where(&cards, data, repositories.Paginate(c)); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var result []serializers.CardResponse
+	if err := serializers.ConvertSerializer(cards, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &cards, Error: nil})
 }
 
 // Update ...
@@ -51,13 +71,10 @@ func (h *CompanyCardHandler) Update(c *gin.Context) {
 	}
 	currentCompany := company.(*models.Company)
 
-	// get card code from params
-	cardCode := c.Param("code")
-
 	// query card from database
-	card, errGetCard := h.cardRepo.Find(map[string]interface{}{"code": cardCode, "company_id": currentCompany.ID})
-	if errGetCard != nil {
-		respondError(c, http.StatusNotFound, errGetCard.Error())
+	var card models.Card
+	if _, err := h.cardRepo.Where(&card, map[string]interface{}{"code": c.Param("code"), "company_id": currentCompany.ID}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -74,7 +91,7 @@ func (h *CompanyCardHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.cardRepo.Update(card, data); err != nil {
+	if _, err := h.cardRepo.Update(&card, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

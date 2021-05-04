@@ -27,12 +27,12 @@ func NewAdminCompanyHandler(compRepo *repositories.CompanyRepository) *AdminComp
 func (h *AdminCompanyHandler) Index(c *gin.Context) {
 	var companies []serializers.CompanyResponse
 
-	if err := serializers.ConvertSerializer(h.compRepo.All(), &companies); err != nil {
+	if _, err := h.compRepo.All(&companies); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: companies, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &companies, Error: nil})
 }
 
 // Show ...
@@ -45,19 +45,13 @@ func (h *AdminCompanyHandler) Show(c *gin.Context) {
 	}
 
 	// query company by id
-	resComp, err := h.compRepo.Find(uint(id))
-	if err != nil {
+	var company serializers.CompanyResponse
+	if _, err := h.compRepo.Find(&company, map[string]interface{}{"id": id}); err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	var company serializers.CompanyResponse
-	if err := serializers.ConvertSerializer(resComp, &company); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: company, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &company, Error: nil})
 }
 
 // Create ...
@@ -78,7 +72,7 @@ func (h *AdminCompanyHandler) Create(c *gin.Context) {
 	}
 
 	// save to db
-	if err := h.compRepo.Create(&comp); err != nil {
+	if _, err := h.compRepo.Create(&comp); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -96,9 +90,9 @@ func (h *AdminCompanyHandler) Update(c *gin.Context) {
 	}
 
 	// query company from database
-	company, errGetComp := h.compRepo.Find(uint(id))
-	if errGetComp != nil {
-		respondError(c, http.StatusNotFound, errGetComp.Error())
+	var company models.Company
+	if _, err := h.compRepo.Find(&company, map[string]interface{}{"id": id}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -118,7 +112,7 @@ func (h *AdminCompanyHandler) Update(c *gin.Context) {
 	}
 
 	// update body data to company
-	if err := h.compRepo.Update(company, data); err != nil {
+	if _, err := h.compRepo.Update(&company, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -135,8 +129,15 @@ func (h *AdminCompanyHandler) Destroy(c *gin.Context) {
 		return
 	}
 
+	// query company from database
+	var company models.Company
+	if _, err := h.compRepo.Find(&company, map[string]interface{}{"id": id}); err != nil {
+		respondError(c, http.StatusNotFound, err.Error())
+		return
+	}
+
 	// update delete company to db
-	if err := h.compRepo.Destroy(uint(id)); err != nil {
+	if _, err := h.compRepo.Destroy(&company); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

@@ -8,7 +8,7 @@ import (
 
 // LoadCardSeed : constructor card seed data
 func (seed *Seed) LoadCardSeed() {
-	cardRepo := repositories.CardRepository{}
+	cardRepo := repositories.NewCardRepository()
 
 	cards := []models.Card{
 		{Code: "1TAP001", Activated: true, UserID: models.ConvertPointerUint(1), CompanyID: models.ConvertPointerUint(1)},
@@ -36,7 +36,7 @@ func (seed *Seed) LoadCardSeed() {
 	}
 
 	for _, card := range cards {
-		err := cardRepo.Create(&card)
+		_, err := cardRepo.Create(&card)
 		if err != nil {
 			seed.log.Error("failed to load seed: Card", zap.Error(err))
 		}

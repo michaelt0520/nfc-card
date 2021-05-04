@@ -5,19 +5,21 @@ type CompanyCreateRequest struct {
 	Address string `json:"address" binding:"required"`
 	Logo    string `json:"logo" binding:"required"`
 	Website string `json:"website" binding:"required"`
+	Hotline string `json:"hotline" binding:"required"`
 }
 
 type CompanyUpdateRequest struct {
+	Name    string `json:"name,omitempty"`
+	Address string `json:"address,omitempty"`
+	Logo    string `json:"logo,omitempty"`
+	Website string `json:"website,omitempty"`
+	Hotline string `json:"hotline,omitempty"`
+}
+
+type CompanyResponse struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`
 	Logo    string `json:"logo"`
 	Website string `json:"website"`
-}
-
-type CompanyResponse struct {
-	Name    string         `json:"name"`
-	Address string         `json:"address"`
-	Logo    string         `json:"logo"`
-	Website string         `json:"website"`
-	Users   []UserResponse `json:"users"`
+	Hotline string `json:"hotline"`
 }
