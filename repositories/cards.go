@@ -1,6 +1,9 @@
 package repositories
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/michaelt0520/nfc-card/models"
 	"gorm.io/gorm"
 )
@@ -42,12 +45,17 @@ func (u *CardRepository) Find(result interface{}, data map[string]interface{}, s
 
 // Where :
 func (u *CardRepository) Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.CardTable().Scopes(scopes...).Preload("User.Informations").Preload("User.Company").Where(data).Find(result)
+	query := u.CardTable().Scopes(scopes...).Preload("User.Informations").Preload("User.Company").Where("company_id", data["company_id"])
 	if err := query.Error; err != nil {
 		return nil, err
 	}
 
-	return query, nil
+	if data["code"] != nil {
+		code := fmt.Sprintf("%v", data["code"])
+		query.Where("lower(code) LIKE ?", fmt.Sprintf("%%%v%%", strings.ToLower(code)))
+	}
+
+	return query.Find(result), nil
 }
 
 // Create : Save card to db
