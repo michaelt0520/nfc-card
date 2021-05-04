@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/michaelt0520/nfc-card/models"
+	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
 )
 
@@ -45,7 +46,10 @@ func (u *CardRepository) Find(result interface{}, data map[string]interface{}, s
 
 // Where :
 func (u *CardRepository) Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.CardTable().Scopes(scopes...).Preload("User.Informations").Preload("User.Company").Where("company_id", data["company_id"])
+	var fields models.Card
+	mapstructure.Decode(data, &fields)
+
+	query := u.CardTable().Scopes(scopes...).Preload("User.Informations").Preload("User.Company").Where(fields, "company_id")
 	if err := query.Error; err != nil {
 		return nil, err
 	}

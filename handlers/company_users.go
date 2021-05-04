@@ -33,9 +33,22 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 	}
 	currentCompany := company.(*models.Company)
 
-	query := c.Query("q")
+	// get parameters
+	var paramVals serializers.UserParametersRequest
+	if err := c.ShouldBind(&paramVals); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var data map[string]interface{}
+	if err := serializers.ConvertSerializer(paramVals, &data); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	data["CompanyID"] = currentCompany.ID
+
 	var users []models.User
-	if err := h.userRepo.UserTable().Where("company_id = ?", currentCompany.ID, sql.Named("query", query)).Find(&users).Error; err != nil {
+	if _, err := h.userRepo.Where(&users, data, repositories.Paginate(c)); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
