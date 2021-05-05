@@ -34,15 +34,6 @@ func GetDB() *gorm.DB {
 	return db
 }
 
-type Repository interface {
-	All(result interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error)
-	Find(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error)
-	Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error)
-	Create(model interface{}) (*gorm.DB, error)
-	Update(model interface{}, data map[string]interface{}) (*gorm.DB, error)
-	Destroy(model interface{}) (*gorm.DB, error)
-}
-
 func Paginate(c *gin.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page, _ := strconv.Atoi(c.Query("page"))

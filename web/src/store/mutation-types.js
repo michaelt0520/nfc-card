@@ -9,6 +9,7 @@ export const DELETE_INFORMATION = 'DELETE_INFORMATION'
 export const FETCH_LIST_USERS = 'FETCH_LIST_USERS'
 export const FETCH_USER = 'FETCH_USER'
 export const SIGN_OUT = 'SIGN_OUT'
+export const CREATE_USER = 'CREATE_USER'
 export const UPDATE_USER = 'UPDATE_USER'
 export const SEARCH_USERS = 'SEARCH_USERS'
 
@@ -16,6 +17,8 @@ export const SEARCH_USERS = 'SEARCH_USERS'
 // cards
 export const FETCH_LIST_CARDS = 'FETCH_LIST_CARDS'
 export const FETCH_CARD = 'FETCH_CARD'
+export const CREATE_CARD = 'CREATE_CARD'
+export const UPDATE_CARD = 'UPDATE_CARD'
 
 // companies
 export const FETCH_COMPANY = 'FETCH_COMPANY'
@@ -23,6 +26,7 @@ export const FETCH_COMPANY_USERS = 'FETCH_COMPANY_USERS'
 export const FETCH_COMPANY_CARDS = 'FETCH_COMPANY_CARDS'
 export const FETCH_LIST_COMPANIES = 'FETCH_LIST_COMPANIES'
 export const UPDATE_COMPANY = 'UPDATE_COMPANY'
+export const CREATE_COMPANY = 'CREATE_COMPANY'
 
 // contacts
 export const FETCH_LIST_CONTACTS = 'FETCH_LIST_CONTACTS'

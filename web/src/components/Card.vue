@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 sm:px-8">
       <div class="py-8">
         <div>
-          <h2 class="text-2xl font-semibold leading-tight">Users</h2>
+          <h2 class="text-2xl font-semibold leading-tight">Cards</h2>
         </div>
         <div class="my-2 flex sm:flex-row flex-col justify-between">
           <div class="flex flex-row">
@@ -52,6 +52,14 @@
               />
             </div>
           </div>
+          <div v-if="isShowButtonAdd">
+            <button
+              class="text-sm bg-green-400 hover:bg-green-500 text-gray-800 font-semibold py-2 px-4 rounded"
+              @click="$emit('update:isOpenModal', true)"
+            >
+              Add
+            </button>
+          </div>
         </div>
         <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
           <div
@@ -75,6 +83,11 @@
                   >
                     Status
                   </th>
+                  <th
+                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -89,6 +102,15 @@
                   <td
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
+                    <!-- <select
+                      class="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                      :value="card.user?.name"
+                      @input="$emit('onChangeCardUser', $event)"
+                    >
+                      <option>10</option>
+                      <option>20</option>
+                      <option>50</option>
+                    </select> -->
                     <p class="text-gray-900 whitespace-no-wrap">
                       {{ card.user?.name }}
                     </p>
@@ -98,15 +120,31 @@
                   >
                     <span
                       class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-                      :class="[card.activated ? 'text-green-900': 'text-red-900']"
+                      :class="[
+                        card.activated ? 'text-green-900' : 'text-red-900',
+                      ]"
                     >
                       <span
                         aria-hidden
                         class="absolute inset-0 opacity-50 rounded-full"
-                        :class="[card.activated ? 'bg-green-200': 'bg-red-200']"
+                        :class="[
+                          card.activated ? 'bg-green-200' : 'bg-red-200',
+                        ]"
                       ></span>
-                      <span class="relative">Activate</span>
+                      <span class="relative">{{ card.activated ? 'Activate' : 'Deactivate' }}</span>
                     </span>
+                  </td>
+                  <td
+                    class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
+                  >
+                    <label class="flex items-center">
+                      <input
+                        class="relative w-10 h-5 transition-all duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
+                        type="checkbox"
+                        :checked="card.activated"
+                        @click="$emit('on-click-update-activate-card', card, { activated: !card.activated })"
+                      />
+                    </label>
                   </td>
                 </tr>
               </tbody>
@@ -146,6 +184,35 @@ export default {
       type: Array,
       require: true,
     },
+
+    isShowButtonAdd: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
+
+<style>
+input:before {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  transform: scale(1.1);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+  background-color: white;
+  transition: 0.2s ease-in-out;
+}
+
+input:checked {
+  background-color: #7f9cf5;
+}
+
+input:checked:before {
+  left: 1.25rem;
+}
+</style>

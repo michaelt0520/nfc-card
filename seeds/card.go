@@ -36,8 +36,7 @@ func (seed *Seed) LoadCardSeed() {
 	}
 
 	for _, card := range cards {
-		_, err := cardRepo.Create(&card)
-		if err != nil {
+		if err := cardRepo.Create(&card); err != nil {
 			seed.log.Error("failed to load seed: Card", zap.Error(err))
 		}
 	}

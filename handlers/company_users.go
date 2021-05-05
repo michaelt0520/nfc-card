@@ -49,8 +49,8 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
-// Create : create user
-func (h *CompanyUserHandler) Create(c *gin.Context) {
+// Update : remove user from company
+func (h *CompanyUserHandler) Update(c *gin.Context) {
 	// get currentCompany
 	company, ok := c.Get("currentCompany")
 	if !ok {
@@ -59,53 +59,23 @@ func (h *CompanyUserHandler) Create(c *gin.Context) {
 	}
 	currentCompany := company.(*models.Company)
 
-	var createVals serializers.CompanyUserCreateRequest
-	if err := c.ShouldBindJSON(&createVals); err != nil {
+	var filterUser = map[string]interface{}{
+		"company_id": currentCompany.ID,
+		"username":   c.Param("username"),
+	}
+
+	var user []models.User
+	if errUser := h.userRepo.Find(&user, filterUser); errUser != nil {
+		respondError(c, http.StatusUnauthorized, errUser.Error())
+		return
+	}
+
+	if err := repositories.GetDB().Model(&currentCompany).Association("Users").Delete(user); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	var user models.User
-	err := serializers.ConvertSerializer(createVals, &user)
-	if err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-	user.CompanyID = &currentCompany.ID
-	user.Type = models.Business
-	user.Role = models.UserCompanyMember
-
-	if _, err := h.userRepo.Create(&user); err != nil {
-		respondError(c, http.StatusUnprocessableEntity, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: "create success", Error: nil})
-}
-
-// Delete : soft delete user
-func (h *CompanyUserHandler) Destroy(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
-		return
-	}
-	currentCompany := company.(*models.Company)
-
-	username := c.Param("username")
-	var user models.User
-	if _, err := h.userRepo.Where(&user, map[string]interface{}{"username": username, "company_id": currentCompany.ID}); err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
-		return
-	}
-
-	if _, err := h.userRepo.Destroy(&user); err != nil {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, serializers.Resp{Result: "user deleted", Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: "removed", Error: nil})
 }
 
 // ShowPersonalUsers

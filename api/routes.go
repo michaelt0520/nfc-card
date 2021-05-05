@@ -50,9 +50,8 @@ func (s *Server) InitRoutes() {
 				companyGroup.GET("/", s.compHandler.Show)
 				companyGroup.PUT("/", s.compHandler.Update)
 				companyGroup.GET("/users", s.compUserHandler.Index)
-				companyGroup.POST("/users", s.compUserHandler.Create)
 				companyGroup.GET("/users/personal", s.compUserHandler.ShowPersonalUsers)
-				companyGroup.DELETE("/users/:username", s.compUserHandler.Destroy)
+				companyGroup.PUT("/users/:username", s.compUserHandler.Update)
 				companyGroup.GET("/cards", s.compCardHandler.Index)
 				companyGroup.PUT("/cards/:code", s.compCardHandler.Update)
 			}

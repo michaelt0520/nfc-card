@@ -195,7 +195,7 @@ export default {
       formData.append("file", this.$refs.file.files[0]);
 
       this.createLogo(formData).then((res) => {
-        this.updateCompany.avatar = res.data.result;
+        this.updateCompany.logo = res.data.result;
       });
     },
   },

@@ -17,7 +17,7 @@ func (seed *Seed) LoadCompanySeed() {
 	}
 
 	for _, company := range companies {
-		if _, err := compRepo.Create(&company); err != nil {
+		if err := compRepo.Create(&company); err != nil {
 			seed.log.Error("failed to load seed: Company", zap.Error(err))
 		}
 	}

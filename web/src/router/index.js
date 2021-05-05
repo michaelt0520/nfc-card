@@ -29,7 +29,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.name === 'admin' && (!isAuthenticated || currentUser.role !== 'Admin')) next({ name: 'home' })
 
-  if (to.name === 'company' && !(currentUser.role === 'Company Manager' && currentUser.type === 'Buniness')) next({ name: 'home' })
+  if (to.name === 'company' && !(isAuthenticated && currentUser.role === 'Company Manager' && currentUser.type === 'Buniness')) next({ name: 'home' })
 
   if (to.name === 'setting' && !isAuthenticated) next({ name: 'home' })
 

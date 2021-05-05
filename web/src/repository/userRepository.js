@@ -3,6 +3,7 @@ import apiCaller from './config/api-caller'
 const resources = {
   user: '/api/v1/user/',
   users: '/api/v1/app/users',
+  companyUsers: '/api/v1/company/users',
   adminUsers: '/api/v1/admin/users/'
 }
 
@@ -11,10 +12,6 @@ Object.freeze(resources)
 export default {
   getCurrentUser() {
     return apiCaller({ method: 'GET', url: resources.user })
-  },
-
-  getUsersList() {
-    return apiCaller({ method: 'GET', url: resources.adminUsers })
   },
 
   searchUser(params) {
@@ -28,4 +25,20 @@ export default {
   updateCurrentUserPassword(data) {
     return apiCaller({ method: 'PUT', url: `${resources.user}password`, data: data })
   },
+
+  getCurrentCompanyUsers(params) {
+    return apiCaller({ method: 'GET', url: resources.companyUsers, params: params })
+  },
+
+  updateCompanyUser(data, params) {
+    return apiCaller({ method: 'PUT', url: `${resources.companyUsers}/${params}`, data: data })
+  },
+
+  getUsersList(params) {
+    return apiCaller({ method: 'GET', url: resources.adminUsers, params: params })
+  },
+
+  createUser(data) {
+    return apiCaller({ method: 'POST', url: resources.adminUsers, data: data })
+  }
 }

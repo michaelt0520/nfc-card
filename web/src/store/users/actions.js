@@ -4,6 +4,7 @@ import {
   SIGN_OUT,
   FETCH_LIST_USERS,
   FETCH_USER,
+  CREATE_USER,
   UPDATE_USER,
   SEARCH_USERS,
   CREATE_INFORMATION,
@@ -44,8 +45,8 @@ const actions = {
       })
   },
 
-  getUsersList({ commit }) {
-    return UserRepository.getUsersList()
+  getUsersList({ commit }, params) {
+    return UserRepository.getUsersList(params)
       .then(res => {
         commit(FETCH_LIST_USERS, res.data.result)
 
@@ -120,6 +121,15 @@ const actions = {
     return UserRepository.searchUser(params)
       .then(res => {
         commit(SEARCH_USERS, res.data.result)
+
+        return res
+      })
+  },
+
+  createUser({  commit }, data) {
+    return UserRepository.createUser(data)
+      .then(res => {
+        commit(CREATE_USER, res.data.result)
 
         return res
       })

@@ -3,7 +3,6 @@ package serializers
 type CompanyCreateRequest struct {
 	Name    string `json:"name" binding:"required"`
 	Address string `json:"address" binding:"required"`
-	Logo    string `json:"logo" binding:"required"`
 	Website string `json:"website" binding:"required"`
 	Hotline string `json:"hotline" binding:"required"`
 }

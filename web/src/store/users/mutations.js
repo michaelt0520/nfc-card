@@ -3,6 +3,7 @@ import {
   SIGN_OUT,
   FETCH_LIST_USERS,
   FETCH_USER,
+  CREATE_USER,
   UPDATE_USER,
   SEARCH_USERS,
   CREATE_INFORMATION,
@@ -61,6 +62,10 @@ const mutations = {
 
   [SEARCH_USERS](state, payload) {
     state.searchUsers = payload
+  },
+
+  [CREATE_USER](state, payload) {
+    state.users.push(payload)
   }
 }
 

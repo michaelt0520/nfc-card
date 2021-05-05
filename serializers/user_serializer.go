@@ -3,6 +3,7 @@ package serializers
 import "github.com/michaelt0520/nfc-card/models"
 
 type UserResponse struct {
+	ID           uint            `json:"id"`
 	Name         string          `json:"name"`
 	Avatar       string          `json:"avatar"`
 	Username     string          `json:"username"`
@@ -29,7 +30,6 @@ type UserUpdatePasswordRequest struct {
 }
 
 type AdminUserCreateRequest struct {
-	Avatar      string          `json:"avatar" binding:"required"`
 	Email       string          `json:"email" binding:"required"`
 	Password    string          `json:"password" binding:"required"`
 	Username    string          `json:"username" binding:"required"`
@@ -38,13 +38,4 @@ type AdminUserCreateRequest struct {
 	PhoneNumber string          `json:"phone_number"`
 	Type        models.CardType `json:"type" binding:"required"`
 	Role        models.UserRole `json:"role" binding:"required"`
-}
-
-type CompanyUserCreateRequest struct {
-	Avatar   string          `json:"avatar" binding:"required"`
-	Email    string          `json:"email" binding:"required"`
-	Password string          `json:"password" binding:"required"`
-	Username string          `json:"username" binding:"required"`
-	Name     string          `json:"name" binding:"required"`
-	Type     models.CardType `json:"type" binding:"required"`
 }

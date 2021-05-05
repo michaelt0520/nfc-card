@@ -1,5 +1,5 @@
 <template>
-  <body class="antialiased font-sans bg-gray-200">
+  <div class="antialiased font-sans bg-gray-200">
     <div class="container mx-auto px-4 sm:px-8">
       <div class="py-8">
         <div>
@@ -33,14 +33,6 @@
               </div>
             </div>
             <div class="relative">
-              <select
-                class="h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
-                v-model="fillterBy"
-              >
-                <option value="name">Name</option>
-                <option value="email">Email</option>
-                <option value="phone_number">Phone number</option>
-              </select>
               <div
                 class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
               >
@@ -71,14 +63,14 @@
               <input
                 placeholder="Search"
                 class="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
-                @input="$emit('search-user-input', fillterBy, $event)"
+                @input="$emit('search-user-input', $event)"
               />
             </div>
           </div>
           <div>
             <button
-              class="text-sm bg-green-200 hover:bg-green-300 text-gray-800 border font-semibold py-2 px-4 rounded-full"
-              @click="isOpenModal = true"
+              class="text-sm bg-green-400 hover:bg-green-500 text-gray-800 font-semibold py-2 px-4 rounded"
+              @click="$emit('update:isOpenModal', true)"
             >
               Add
             </button>
@@ -110,6 +102,11 @@
                     class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                   >
                     Status
+                  </th>
+                  <th
+                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -160,6 +157,17 @@
                       <span class="relative">Activate</span>
                     </span>
                   </td>
+                  <td
+                    class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
+                    v-if="$route.name === 'company'"
+                  >
+                    <button
+                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
+                      @click="$emit('on-click-remove-user-from-company', user)"
+                    >
+                      <ICODelete />
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -183,54 +191,14 @@
         </div>
       </div>
     </div>
-
-    <modal
-      v-model:open="isOpenModal"
-      header="Invite"
-      :is-hidden-button-confirm="false"
-      @confirm-modal="confirmModal"
-    >
-      <template #modal-body>
-        <input
-          type="text"
-          placeholder="Search teams or members"
-          class="my-2 w-full text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
-          @input="$emit('search-invite-user-input', $event)"
-        />
-        <div class="w-full">
-          <div
-            class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded"
-            v-for="inviteUser in inviteUsers"
-            :key="inviteUser.index"
-          >
-            <div class="w-8 h-10 text-center py-1">
-              <p class="text-3xl p-0 text-green-dark">•</p>
-            </div>
-            <div class="w-4/5 h-10 py-3 px-1">
-              <p class="hover:text-blue-dark">{{ inviteUser.name }}</p>
-            </div>
-            <div class="w-1/5 h-10 text-right p-3">
-              <p class="text-sm text-grey-dark">{{ inviteUser.email }}</p>
-            </div>
-          </div>
-        </div>
-      </template>
-    </modal>
-  </body>
+  </div>
 </template>
 
 <script>
-import Modal from "@/components/Modal";
+import ICODelete from "@/assets/icons/ICODelete";
 
 export default {
   name: "User",
-
-  data() {
-    return {
-      isOpenModal: false,
-      fillterBy: "name",
-    };
-  },
 
   props: {
     users: {
@@ -238,17 +206,38 @@ export default {
       require: true,
     },
 
-    inviteUsers: {
-      type: Array,
+    isOpenModal: {
+      type: Boolean,
+      default: false,
     },
   },
 
   components: {
-    Modal,
-  },
-
-  methods: {
-    confirmModal() {},
+    ICODelete,
   },
 };
 </script>
+
+<style>
+input:before {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  transform: scale(1.1);
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+  background-color: white;
+  transition: 0.2s ease-in-out;
+}
+
+input:checked {
+  background-color: #7f9cf5;
+}
+
+input:checked:before {
+  left: 1.25rem;
+}
+</style>

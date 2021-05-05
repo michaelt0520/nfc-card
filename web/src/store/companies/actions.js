@@ -4,10 +4,15 @@ import {
   FETCH_COMPANY_USERS,
   FETCH_COMPANY_CARDS,
   FETCH_LIST_COMPANIES,
-  UPDATE_COMPANY
+  UPDATE_COMPANY,
+  CREATE_COMPANY,
+  UPDATE_CARD,
+  UPDATE_USER
 } from '../mutation-types'
 
 const CompanyRepository = Repository.get('company')
+const UserRepository = Repository.get('user')
+const CardRepository = Repository.get('card')
 const UploadRepository = Repository.get('upload')
 
 const actions = {
@@ -21,7 +26,7 @@ const actions = {
   },
 
   getCurrentCompanyUsers({ commit }, params) {
-    return CompanyRepository.getCurrentCompanyUsers(params)
+    return UserRepository.getCurrentCompanyUsers(params)
       .then(res => {
         commit(FETCH_COMPANY_USERS, res.data.result)
 
@@ -30,7 +35,7 @@ const actions = {
   },
 
   getCurrentCompanyCards({ commit }, params) {
-    return CompanyRepository.getCurrentCompanyCards(params)
+    return CardRepository.getCurrentCompanyCards(params)
       .then(res => {
         commit(FETCH_COMPANY_CARDS, res.data.result)
 
@@ -56,10 +61,37 @@ const actions = {
       })
   },
 
-  getCompaniesList({ commit }) {
-    return CompanyRepository.getCompaniesList()
+  getCompaniesList({ commit }, params) {
+    return CompanyRepository.getCompaniesList(params)
       .then(res => {
         commit(FETCH_LIST_COMPANIES, res.data.result)
+
+        return res
+      })
+  },
+
+  createCompany({ commit }, data) {
+    return CompanyRepository.createConpany(data)
+      .then(res => {
+        commit(CREATE_COMPANY, res.data.result)
+
+        return res
+      })
+  },
+
+  updateCard({ commit }, data) {
+    return CardRepository.updateCompanyCard(data.body, data.params)
+      .then(res => {
+        commit(UPDATE_CARD, res.data.result)
+
+        return res
+      })
+  },
+
+  updateCompanyUser({ commit }, data) {
+    return UserRepository.updateCompanyUser(null, data.params)
+      .then(res => {
+        commit(UPDATE_USER, data.params)
 
         return res
       })

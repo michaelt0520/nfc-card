@@ -30,8 +30,7 @@ func (seed *Seed) LoadUserSeed() {
 	}
 
 	for _, user := range users {
-		_, err := repoUser.Create(&user)
-		if err != nil {
+		if err := repoUser.Create(&user); err != nil {
 			seed.log.Error("failed to load seed: User", zap.Error(err))
 		}
 	}
