@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -33,12 +35,34 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 	}
 	currentCompany := company.(*models.Company)
 
-	query := c.Query("q")
-	var users []models.User
-	if err := h.userRepo.UserTable().Where("company_id = ?", currentCompany.ID, sql.Named("query", query)).Find(&users).Error; err != nil {
+	// get parameters
+	var paramVals serializers.UserParametersRequest
+	if err := c.ShouldBind(&paramVals); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	var data map[string]interface{}
+	if err := serializers.ConvertSerializer(paramVals, &data); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	data["CompanyID"] = currentCompany.ID
+
+	var users []models.User
+	query, err := h.userRepo.Where(&users, data, repositories.Paginate(c))
+	if err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if data["name"] != nil {
+		keyword := fmt.Sprintf("%v", data["name"])
+		keyword = fmt.Sprintf("%%%v%%", strings.ToLower(keyword))
+		query, _ = h.userRepo.Search(query, keyword)
+	}
+
+	query.Find(&users)
 
 	var result []serializers.UserResponse
 	if err := serializers.ConvertSerializer(users, &result); err != nil {

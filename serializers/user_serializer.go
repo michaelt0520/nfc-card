@@ -48,3 +48,8 @@ type CompanyUserCreateRequest struct {
 	Name     string          `json:"name" binding:"required"`
 	Type     models.CardType `json:"type" binding:"required"`
 }
+
+type UserParametersRequest struct {
+	Keyword *string `form:"keyword" json:"keyword"`
+	Name    *string `form:"name" json:"name"`
+}

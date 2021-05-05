@@ -44,7 +44,7 @@ func (h *CompanyCardHandler) Index(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	data["company_id"] = currentCompany.ID
+	data["CompanyID"] = currentCompany.ID
 
 	var cards []models.Card
 	if _, err := h.cardRepo.Where(&cards, data, repositories.Paginate(c)); err != nil {

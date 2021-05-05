@@ -6,6 +6,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
+	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	go.uber.org/automaxprocs v1.4.0 // indirect
 	go.uber.org/zap v1.16.0

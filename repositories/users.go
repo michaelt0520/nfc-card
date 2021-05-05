@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/michaelt0520/nfc-card/models"
+	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
 )
 
@@ -41,12 +42,23 @@ func (u *UserRepository) Find(result interface{}, data map[string]interface{}, s
 
 // Where :
 func (u *UserRepository) Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.UserTable().Scopes(scopes...).Preload("Company").Preload("Informations").Where(data).Find(result)
+	var fields models.User
+	mapstructure.Decode(data, &fields)
+
+	query := u.UserTable().Scopes(scopes...).Preload("Company").Preload("Informations").Where(fields, "company_id")
 	if err := query.Error; err != nil {
 		return nil, err
 	}
 
-	return query, nil
+	return query.Find(result), nil
+}
+
+func (u *UserRepository) Search(db *gorm.DB, keyword string) (*gorm.DB, error) {
+	db.Where("lower(email) LIKE ?", keyword)
+	db.Or("lower(name) LIKE ?", keyword)
+	db.Or("lower(phone_number) LIKE ?", keyword)
+
+	return db, nil
 }
 
 // Create : Save user to db
