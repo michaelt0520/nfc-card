@@ -1,5 +1,5 @@
 <template>
-  <div class="min-w-full">
+  <div class="min-w-full fixed top-0 z-50">
     <div class="antialiased bg-gray-100 dark-mode:bg-gray-900">
       <div
         class="w-full text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800"

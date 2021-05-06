@@ -1,5 +1,28 @@
 import axios from 'axios'
 
+axios.interceptors.response.use(
+  function (response) {
+    alertTimeOut('#alert-success')
+
+    return response
+  },
+
+  function (error) {
+    alertTimeOut('#alert-error')
+
+    return Promise.reject(error)
+  }
+)
+
+const alertTimeOut = id => {
+  const alertEl = document.querySelector(id)
+  alertEl.classList.remove('hidden')
+
+  setTimeout(() => {
+    alertEl.classList.add('hidden')
+  }, 1500)
+}
+
 export default function apiCaller(
   payload = {
     params: null,
