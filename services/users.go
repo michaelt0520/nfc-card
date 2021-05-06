@@ -52,8 +52,8 @@ func (s *UserService) FindOneWithScopes(result *models.User, filter map[string]i
 	return nil
 }
 
-func (s *UserService) FindMany(result *[]models.User, filter map[string]interface{}) error {
-	if err := s.userRepo.Where(result, queries.BuildWhere(queries.BuildUserQueries(filter))); err != nil {
+func (s *UserService) FindMany(result *[]models.User, filter map[string]interface{}, c *gin.Context) error {
+	if err := s.userRepo.Where(result, queries.BuildWhere(queries.BuildUserQueries(filter)), queries.Paginate(c)); err != nil {
 		return err
 	}
 

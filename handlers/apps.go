@@ -87,7 +87,7 @@ func (h *AppHandler) SearchUser(c *gin.Context) {
 	}
 
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
