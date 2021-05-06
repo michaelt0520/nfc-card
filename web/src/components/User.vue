@@ -159,13 +159,21 @@
                   </td>
                   <td
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
-                    v-if="$route.name === 'company'"
                   >
                     <button
+                      v-if="$route.name === 'company'"
                       class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
                       @click="$emit('on-click-remove-user-from-company', user)"
                     >
                       <ICODelete />
+                    </button>
+
+                    <button
+                      v-if="$route.name === 'admin'"
+                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-green"
+                      @click="xxx(user)"
+                    >
+                      <ICOEdit />
                     </button>
                   </td>
                 </tr>
@@ -191,11 +199,24 @@
         </div>
       </div>
     </div>
+
+    <modal
+      v-model:open="isOpenModalEditUser"
+      header="Edit user">
+
+      <template #modal-body>
+        <p>Name: <input type="text" :placeholder="userName"></p>
+        <p>Email: {{ email }}</p>
+        <p>Phone: {{ phone }}</p>
+      </template>
+    </modal>
   </div>
 </template>
 
 <script>
 import ICODelete from "@/assets/icons/ICODelete";
+import ICOEdit from "@/assets/icons/ICOEdit";
+import Modal from '../components/Modal';
 
 export default {
   name: "User",
@@ -212,9 +233,30 @@ export default {
     },
   },
 
+  data() {
+    return {
+      isOpenModalEditUser: false,
+      userName: '',
+      email: '',
+      phone: ''
+    }
+  },
+
   components: {
     ICODelete,
+    ICOEdit,
+    Modal
   },
+
+
+  methods: {
+    xxx(event) {
+      this.userName = event.name
+      this.email = event.email
+      this.phone = event.phone_number
+      this.isOpenModalEditUser = true
+    }
+  }
 };
 </script>
 
