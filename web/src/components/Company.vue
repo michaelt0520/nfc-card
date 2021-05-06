@@ -1,5 +1,5 @@
 <template>
-  <body class="antialiased font-sans bg-gray-200">
+  <div class="antialiased font-sans bg-gray-200">
     <div class="container mx-auto px-4 sm:px-8">
       <div class="py-8">
         <div>
@@ -83,6 +83,11 @@
                   >
                     Website
                   </th>
+                  <th
+                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  >
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -91,6 +96,7 @@
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
                     <div class="flex items-center">
+                      {{ company.id }}
                       <div class="flex-shrink-0 w-10 h-10">
                         <img
                           class="w-full h-full rounded-full"
@@ -119,6 +125,23 @@
                       {{ company.website }}
                     </p>
                   </td>
+                  <td
+                    class="flex flex-row px-5 py-5 border-b border-gray-200 bg-white text-sm"
+                  >
+                    <button
+                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-green"
+                      @click="onShowEditCompanyModal(company)"
+                    >
+                      <ICOEdit />
+                    </button>
+
+                    <button
+                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
+                      @click="$emit('on-click-remove-company', company)"
+                    >
+                      <ICODelete />
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -145,10 +168,50 @@
         </div>
       </div>
     </div>
-  </body>
+    <modal
+      v-if="$route.name === 'admin'"
+      v-model:open="isOpenModalEditCompany"
+      header="Edit company"
+      @confirm-modal="$emit('on-confirm-edit-company', editCompany)"
+    >
+      <template #modal-body>
+        <div class="flex flex-row items-center justify-between py-4">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            placeholder="name"
+            class="w-4/5 text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
+            v-model="editCompany.name"
+          />
+        </div>
+        <div class="flex flex-row items-center justify-between py-4">
+          <label for="address">Address</label>
+          <input
+            type="text"
+            placeholder="Address"
+            class="w-4/5 text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
+            v-model="editCompany.address"
+          />
+        </div>
+        <div class="flex flex-row items-center justify-between py-4">
+          <label for="website">Homepage Website</label>
+          <input
+            type="text"
+            placeholder="Homepage website"
+            class="w-4/5 text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
+            v-model="editCompany.website"
+          />
+        </div>
+      </template>
+    </modal>
+  </div>
 </template>
 
 <script>
+import ICODelete from "@/assets/icons/ICODelete";
+import ICOEdit from "@/assets/icons/ICOEdit";
+import Modal from "@/components/Modal";
+
 export default {
   name: "Company",
 
@@ -161,6 +224,27 @@ export default {
     isShowButtonAdd: {
       type: Boolean,
       default: false,
+    },
+  },
+
+  components: {
+    ICODelete,
+    ICOEdit,
+    Modal,
+  },
+
+  data() {
+    return {
+      isOpenModalEditCompany: false,
+      editCompany: {},
+    };
+  },
+
+  methods: {
+    onShowEditCompanyModal(company) {
+      console.log(company);
+      this.editCompany = { ...company };
+      this.isOpenModalEditCompany = true;
     },
   },
 };

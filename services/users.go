@@ -36,8 +36,23 @@ func (s *UserService) GetCurrentUser(c *gin.Context) (*models.User, error) {
 	return &user, nil
 }
 
+func (s *UserService) GetCurrentUserWithPreloads(c *gin.Context, preloadData map[string]interface{}) (*models.User, error) {
+	userID := c.MustGet("user_id")
+
+	var filterUser = map[string]interface{}{
+		"id = ?": userID,
+	}
+
+	var user models.User
+	if err := s.userRepo.Find(&user, queries.BuildWhere(filterUser), queries.BuildPreload(preloadData)); err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func (s *UserService) FindOne(result *models.User, filter map[string]interface{}) error {
-	if err := s.userRepo.Find(result, queries.BuildWhere(queries.BuildUserQueries(filter))); err != nil {
+	if err := s.userRepo.Find(result, queries.BuildWhere(queries.BuildQueries(filter))); err != nil {
 		return err
 	}
 
@@ -45,7 +60,7 @@ func (s *UserService) FindOne(result *models.User, filter map[string]interface{}
 }
 
 func (s *UserService) FindOneWithScopes(result *models.User, filter map[string]interface{}, preloadData map[string]interface{}) error {
-	if err := s.userRepo.Find(result, queries.BuildWhere(queries.BuildUserQueries(filter)), queries.BuildPreload(preloadData)); err != nil {
+	if err := s.userRepo.Find(result, queries.BuildWhere(queries.BuildQueries(filter)), queries.BuildPreload(preloadData)); err != nil {
 		return err
 	}
 
@@ -53,7 +68,15 @@ func (s *UserService) FindOneWithScopes(result *models.User, filter map[string]i
 }
 
 func (s *UserService) FindMany(result *[]models.User, filter map[string]interface{}, c *gin.Context) error {
-	if err := s.userRepo.Where(result, queries.BuildWhere(queries.BuildUserQueries(filter)), queries.Paginate(c)); err != nil {
+	if err := s.userRepo.Where(result, queries.BuildWhere(queries.BuildQueries(filter)), queries.Paginate(c)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *UserService) AddCardToUser(user *models.User, card *models.Card) error {
+	if err := s.userRepo.UserTable().Model(&user).Association("Cards").Append(card); err != nil {
 		return err
 	}
 
@@ -61,7 +84,15 @@ func (s *UserService) FindMany(result *[]models.User, filter map[string]interfac
 }
 
 func (s *UserService) AddInformationToUser(user *models.User, info *models.Information) error {
-	if err := s.userRepo.UserTable().Model(&user).Association("Informations").Append(&info); err != nil {
+	if err := s.userRepo.UserTable().Model(&user).Association("Informations").Append(info); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *UserService) GetInformationsFromUser(user *models.User, result *models.Information) error {
+	if err := s.userRepo.UserTable().Model(&user).Association("Informations").Find(&result); err != nil {
 		return err
 	}
 
@@ -70,6 +101,14 @@ func (s *UserService) AddInformationToUser(user *models.User, info *models.Infor
 
 func (s *UserService) GetInformationFromUser(user *models.User, id string, result *models.Information) error {
 	if err := s.userRepo.UserTable().Model(&user).Association("Informations").Find(&result, id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *UserService) RemoveCardFromUser(user *models.User, card *models.Card) error {
+	if err := s.userRepo.UserTable().Model(user).Association("Cards").Delete(card); err != nil {
 		return err
 	}
 

@@ -129,14 +129,14 @@
                 <div class="bg-white shadow-md rounded flex flex-col">
                   <div class="flex flex-col justify-items-start">
                     <button
-                      v-if="currentUser.role == 'Admin'"
+                      v-if="currentUser.role === 4"
                       class="bg-blue hover:bg-blue-dark text-gray-900 font-bold py-2 px-4 rounded focus:text-gray-900 hover:bg-gray-200"
                       type="button"
                     >
                       <router-link to="/admin"> Admin </router-link>
                     </button>
                     <button
-                      v-if="currentUser.role == 'Company Manager'"
+                      v-if="currentUser.role === 3"
                       class="bg-blue hover:bg-blue-dark text-gray-900 font-bold py-2 px-4 rounded focus:text-gray-900 hover:bg-gray-200"
                       type="button"
                     >

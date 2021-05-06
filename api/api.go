@@ -15,6 +15,7 @@ type Server struct {
 	authHandler         *handlers.AuthHandler
 	userHandler         *handlers.UserHandler
 	infoHandler         *handlers.InformationHandler
+	cardHandler         *handlers.CardHandler
 	compUserHandler     *handlers.CompanyUserHandler
 	compCardHandler     *handlers.CompanyCardHandler
 	compHandler         *handlers.CompanyHandler
@@ -32,6 +33,7 @@ func NewServer(
 	authHandler *handlers.AuthHandler,
 	userHandler *handlers.UserHandler,
 	infoHandler *handlers.InformationHandler,
+	cardHandler *handlers.CardHandler,
 	compUserHandler *handlers.CompanyUserHandler,
 	compCardHandler *handlers.CompanyCardHandler,
 	compHandler *handlers.CompanyHandler,
@@ -47,6 +49,7 @@ func NewServer(
 		authHandler:         authHandler,
 		userHandler:         userHandler,
 		infoHandler:         infoHandler,
+		cardHandler:         cardHandler,
 		compUserHandler:     compUserHandler,
 		compCardHandler:     compCardHandler,
 		compHandler:         compHandler,

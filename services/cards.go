@@ -52,3 +52,39 @@ func (s *CardService) FindOneWithScopes(result *models.Card, filter map[string]i
 
 	return nil
 }
+
+func (s *CardService) RemoveCard(filter map[string]interface{}) error {
+	var preloadData = map[string]interface{}{
+		"User":    nil,
+		"Company": nil,
+	}
+
+	var card models.Card
+	if err := s.cardRepo.Find(&card, queries.BuildWhere(queries.BuildCardQueries(filter)), queries.BuildPreload(preloadData)); err != nil {
+		return err
+	}
+
+	var cardUser models.User
+	if err := s.cardRepo.CardTable().Model(&card).Association("User").Find(&cardUser); err != nil {
+		return err
+	}
+
+	var cardCompany models.Company
+	if err := s.cardRepo.CardTable().Model(&card).Association("Company").Find(&cardCompany); err != nil {
+		return err
+	}
+
+	if err := s.cardRepo.CardTable().Model(&card).Association("User").Delete(&cardUser); err != nil {
+		return err
+	}
+
+	if err := s.cardRepo.CardTable().Model(&card).Association("Company").Delete(&cardCompany); err != nil {
+		return err
+	}
+
+	if err := s.cardRepo.Destroy(&card); err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -30,6 +30,10 @@ export default {
     return apiCaller({ method: 'GET', url: resources.companyUsers, params: params })
   },
 
+  createCompanyUser(data) {
+    return apiCaller({ method: 'POST', url: resources.companyUsers, data: data })
+  },
+
   updateCompanyUser(data, params) {
     return apiCaller({ method: 'PUT', url: `${resources.companyUsers}/${params}`, data: data })
   },
@@ -40,5 +44,9 @@ export default {
 
   createUser(data) {
     return apiCaller({ method: 'POST', url: resources.adminUsers, data: data })
+  },
+
+  updateUser(data, params) {
+    return apiCaller({ method: 'PUT', url: `${resources.adminUsers}${params}`, data: data })
   }
 }

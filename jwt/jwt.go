@@ -33,6 +33,7 @@ func CreateToken(user *models.User) (string, error) {
 	atClaims["user_role"] = user.Role
 	atClaims["user_type"] = user.Type
 	atClaims["exp"] = time.Now().Add(Expired).Unix()
+
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(os.Getenv("jwt_key")))
 	if err != nil {
@@ -49,10 +50,7 @@ func ExtractToken(tokenString string) (*PayLoad, error) {
 	}
 	claim, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
-		companyID, err := strconv.ParseUint(fmt.Sprintf("%.f", claim["company_id"]), 10, 32)
-		if err != nil {
-			return nil, err
-		}
+		companyID, _ := strconv.ParseUint(fmt.Sprintf("%.f", claim["company_id"]), 10, 32)
 
 		userID, err := strconv.ParseUint(fmt.Sprintf("%.f", claim["user_id"]), 10, 32)
 		if err != nil {

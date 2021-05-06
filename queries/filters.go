@@ -1,14 +1,18 @@
 package queries
 
-func BuildUserQueries(data map[string]interface{}) map[string]interface{} {
+func BuildQueries(data map[string]interface{}) map[string]interface{} {
 	_filters := make(map[string]interface{})
+
+	if data["id"] != nil {
+		_filters["id = ?"] = data["id"]
+	}
 
 	if data["name"] != nil && data["name"] != "" {
 		_filters["name like ?"] = "%" + data["name"].(string) + "%"
 	}
 
-	if data["email"] != nil && data["email"] != "" {
-		_filters["email like ?"] = "%" + data["email"].(string) + "%"
+	if data["email"] != nil {
+		_filters["email = ?"] = data["email"]
 	}
 
 	if data["phone_number"] != nil && data["phone_number"] != "" {
@@ -59,6 +63,56 @@ func BuildCardQueries(data map[string]interface{}) map[string]interface{} {
 
 	if data["activated"] != nil {
 		_filters["activated = ?"] = data["activated"]
+	}
+
+	return _filters
+}
+
+func BuildFinds(data map[string]interface{}) map[string]interface{} {
+	_filters := make(map[string]interface{})
+
+	if data["id"] != nil {
+		_filters["id = ?"] = data["id"]
+	}
+
+	if data["name"] != nil {
+		_filters["name = ?"] = data["name"]
+	}
+
+	if data["email"] != nil {
+		_filters["email = ?"] = data["email"]
+	}
+
+	if data["phone_number"] != nil {
+		_filters["phone_number = ?"] = data["phone_number"]
+	}
+
+	if data["username"] != nil {
+		_filters["username = ?"] = data["username"]
+	}
+
+	if data["company_id"] != nil {
+		_filters["company_id = ?"] = data["company_id"]
+	}
+
+	if data["user_id"] != nil {
+		_filters["user_id = ?"] = data["user_id"]
+	}
+
+	if data["card_id"] != nil {
+		_filters["card_id = ?"] = data["card_id"]
+	}
+
+	if data["type"] != nil {
+		_filters["type = ?"] = data["type"]
+	}
+
+	if data["role"] != nil {
+		_filters["role = ?"] = data["role"]
+	}
+
+	if data["jwt"] != nil {
+		_filters["jwt = ?"] = data["jwt"]
 	}
 
 	return _filters

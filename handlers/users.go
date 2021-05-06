@@ -23,7 +23,12 @@ func NewUserHandler(userSrv *services.UserService) *UserHandler {
 
 // Show : show current user
 func (h *UserHandler) Show(c *gin.Context) {
-	currentUser, err := h.userSrv.GetCurrentUser(c)
+	var preloadData = map[string]interface{}{
+		"Informations": nil,
+		"Cards":        nil,
+	}
+
+	currentUser, err := h.userSrv.GetCurrentUserWithPreloads(c, preloadData)
 	if err != nil {
 		respondError(c, http.StatusUnauthorized, err.Error())
 		return
@@ -34,8 +39,6 @@ func (h *UserHandler) Show(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	resUser.Type = currentUser.TypeToString()
-	resUser.Role = currentUser.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }
@@ -71,8 +74,6 @@ func (h *UserHandler) Update(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	resUser.Type = currentUser.TypeToString()
-	resUser.Role = currentUser.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }

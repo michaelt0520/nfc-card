@@ -1,5 +1,5 @@
 <template>
-  <body class="antialiased font-sans bg-gray-200">
+  <div class="antialiased font-sans bg-gray-200">
     <div class="container mx-auto px-4 sm:px-8">
       <div class="py-8">
         <div>
@@ -102,18 +102,19 @@
                   <td
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
-                    <!-- <select
+                    <select
                       class="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                      :value="card.user?.name"
-                      @input="$emit('onChangeCardUser', $event)"
+                      :value="card.user.id"
+                      @input="$emit('on-change-card-user', card, $event)"
                     >
-                      <option>10</option>
-                      <option>20</option>
-                      <option>50</option>
-                    </select> -->
-                    <p class="text-gray-900 whitespace-no-wrap">
-                      {{ card.user?.name }}
-                    </p>
+                      <option
+                        v-for="user in users"
+                        :key="user.index"
+                        :value="user.id"
+                      >
+                        {{ user.name }}
+                      </option>
+                    </select>
                   </td>
                   <td
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
@@ -131,20 +132,33 @@
                           card.activated ? 'bg-green-200' : 'bg-red-200',
                         ]"
                       ></span>
-                      <span class="relative">{{ card.activated ? 'Activate' : 'Deactivate' }}</span>
+                      <span class="relative">{{
+                        card.activated ? "Activate" : "Deactivate"
+                      }}</span>
                     </span>
                   </td>
                   <td
-                    class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
+                    class="flex flex-row px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
                     <label class="flex items-center">
                       <input
                         class="relative w-10 h-5 transition-all duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
                         type="checkbox"
                         :checked="card.activated"
-                        @click="$emit('on-click-update-activate-card', card, { activated: !card.activated })"
+                        @click="
+                          $emit('on-click-update-activate-card', card, {
+                            activated: !card.activated,
+                          })
+                        "
                       />
                     </label>
+                    <button
+                     v-if="$route.name === 'admin'"
+                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
+                      @click="$emit('on-click-remove-card', card)"
+                    >
+                      <ICODelete />
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -172,10 +186,35 @@
         </div>
       </div>
     </div>
-  </body>
+
+    <modal v-model:open="isOpenModalEditCard" header="Edit card">
+      <template #modal-body>
+        <div class="flex flex-row items-center justify-between py-4">
+          <label for="code">Code</label>
+          <input
+            type="text"
+            placeholder="Code"
+            class="w-4/5 text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
+            v-model="updateCard.code"
+          />
+        </div>
+        <div class="flex flex-row items-center justify-between py-4">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            placeholder="Full name"
+            class="w-4/5 text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
+            v-model="updateCard.user.name"
+          />
+        </div>
+      </template>
+    </modal>
+  </div>
 </template>
 
 <script>
+import ICODelete from "@/assets/icons/ICODelete";
+
 export default {
   name: "Card",
 
@@ -185,10 +224,30 @@ export default {
       require: true,
     },
 
+    users: {
+      type: Array,
+    },
+
     isShowButtonAdd: {
       type: Boolean,
       default: false,
     },
+  },
+
+  data() {
+    return {
+      updateCard: {
+        code: "",
+        user: {
+          id: 0,
+          name: "",
+        },
+      },
+    };
+  },
+
+  components: {
+    ICODelete,
   },
 };
 </script>

@@ -61,6 +61,7 @@ func (h *AdminCompanyHandler) Show(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
@@ -124,7 +125,13 @@ func (h *AdminCompanyHandler) Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &company, Error: nil})
+	var result serializers.CompanyResponse
+	if err := serializers.ConvertSerializer(company, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Destroy ...

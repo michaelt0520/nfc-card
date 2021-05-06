@@ -2,7 +2,9 @@ import Repository from '@/repository'
 import {
   FETCH_CARD,
   FETCH_LIST_CARDS,
-  CREATE_CARD
+  CREATE_CARD,
+  UPDATE_CARD,
+  DELETE_CARD
 } from '../mutation-types'
 
 const CardRepository = Repository.get('card')
@@ -34,6 +36,24 @@ const actions = {
         return res
       })
   },
+
+  updateCard({ commit }, data) {
+    return CardRepository.updateAdminCard(data.body, data.params)
+      .then(res => {
+        commit(UPDATE_CARD, res.data.result)
+
+        return res
+      })
+  },
+
+  deleteCard({ commit }, data) {
+    return CardRepository.deleteAdminCard(data)
+      .then(res => {
+        commit(DELETE_CARD, data)
+
+        return res
+      })
+  }
 }
 
 export default actions

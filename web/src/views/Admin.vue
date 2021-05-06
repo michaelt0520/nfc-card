@@ -13,14 +13,19 @@
             @search-user-input="searchUserInput"
             @search-invite-user-input="searchInviteUserInput"
             @select-users-per-page="selectUsersPerPage"
+            @on-confirm-edit-user="onConfirmEditUser"
           />
           <card
             v-if="activeTab === 2"
             :cards="cards"
+            :users="users"
             :is-show-button-add="true"
             v-model:isOpenModal="isOpenModalAddCard"
             @search-card-input="searchCardInput"
             @select-cards-per-page="selectCardsPerPage"
+            @on-click-update-activate-card="onToggleCard"
+            @on-change-card-user="onChangeCardUser"
+            @on-click-remove-card="onClickRemoveCard"
           />
           <company
             v-if="activeTab === 3"
@@ -29,6 +34,8 @@
             v-model:isOpenModal="isOpenModalAddCompany"
             @select-companies-per-page="selectCompaniesPerPage"
             @select-company-input="searchCompanyInput"
+            @on-confirm-edit-company="onConfirmEditCompany"
+            @on-click-remove-company="onClickRemoveCompany"
           />
 
           <modal
@@ -253,9 +260,19 @@ export default {
   },
 
   methods: {
-    ...mapActions("users", ["getUsersList", "createUser"]),
-    ...mapActions("cards", ["getCardsList", "createCard"]),
-    ...mapActions("companies", ["getCompaniesList", "createCompany"]),
+    ...mapActions("users", ["getUsersList", "createUser", "updateUser"]),
+    ...mapActions("cards", [
+      "getCardsList",
+      "createCard",
+      "updateCard",
+      "deleteCard",
+    ]),
+    ...mapActions("companies", [
+      "getCompaniesList",
+      "createCompany",
+      "updateCompany",
+      "deleteCompany",
+    ]),
 
     searchUserInput(event) {
       const value = event.target.value.trim();
@@ -321,6 +338,58 @@ export default {
         this.isOpenModalAddUser = false;
         this.user = {};
       });
+    },
+
+    onConfirmEditUser(user) {
+      if (user === {}) return;
+
+      const data = {
+        params: user.username,
+        body: user,
+      };
+
+      this.updateUser(data);
+    },
+
+    onToggleCard(card, value) {
+      const data = {
+        params: card.code,
+        body: value,
+      };
+      this.updateCard(data);
+    },
+
+    onChangeCardUser(card, event) {
+      const data = {
+        params: card.code,
+        body: {
+          user_id: event.target.value,
+        },
+      };
+      this.updateCard(data);
+    },
+
+    onConfirmEditCompany(company) {
+      if (company === {}) return;
+
+      const data = {
+        params: company.id,
+        body: company,
+      };
+
+      this.updateCompany(data);
+    },
+
+    onClickRemoveCompany(company) {
+      if (company === {}) return;
+
+      this.deleteCompany(company.id);
+    },
+
+    onClickRemoveCard(card) {
+      if (card === {}) return;
+
+      this.deleteCard(card.code);
     },
   },
 

@@ -42,6 +42,13 @@ func (s *Server) InitRoutes() {
 					infoGroup.PUT("/:id", s.infoHandler.Update)
 					infoGroup.DELETE("/:id", s.infoHandler.Destroy)
 				}
+
+				cardGroup := userGroup.Group("/cards")
+				{
+					cardGroup.POST("/", s.cardHandler.Create)
+					cardGroup.PUT("/:code", s.cardHandler.Update)
+					cardGroup.DELETE("/:code", s.cardHandler.Destroy)
+				}
 			}
 
 			companyGroup := apiV1.Group(("/company"))
@@ -50,7 +57,7 @@ func (s *Server) InitRoutes() {
 				companyGroup.GET("/", s.compHandler.Show)
 				companyGroup.PUT("/", s.compHandler.Update)
 				companyGroup.GET("/users", s.compUserHandler.Index)
-				companyGroup.GET("/users/personal", s.compUserHandler.ShowPersonalUsers)
+				companyGroup.POST("/users", s.compUserHandler.Create)
 				companyGroup.PUT("/users/:username", s.compUserHandler.Update)
 				companyGroup.GET("/cards", s.compCardHandler.Index)
 				companyGroup.PUT("/cards/:code", s.compCardHandler.Update)

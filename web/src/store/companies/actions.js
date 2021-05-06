@@ -4,9 +4,12 @@ import {
   FETCH_COMPANY_USERS,
   FETCH_COMPANY_CARDS,
   FETCH_LIST_COMPANIES,
-  UPDATE_COMPANY,
+  UPDATE_CURRENT_COMPANY,
   CREATE_COMPANY,
+  UPDATE_COMPANY,
+  DELETE_COMPANY,
   UPDATE_CARD,
+  CREATE_USER,
   UPDATE_USER
 } from '../mutation-types'
 
@@ -46,7 +49,7 @@ const actions = {
   updateCurrentCompany({ commit }, data) {
     return CompanyRepository.updateCurrentCompany(data)
       .then(res => {
-        commit(UPDATE_COMPANY, res.data.result)
+        commit(UPDATE_CURRENT_COMPANY, res.data.result)
 
         return res
       })
@@ -88,10 +91,37 @@ const actions = {
       })
   },
 
+  createCompanyUser({ commit }, data) {
+    return UserRepository.createCompanyUser(data)
+      .then(res => {
+        commit(CREATE_USER, res.data.result)
+
+        return res
+      })
+  },
+
   updateCompanyUser({ commit }, data) {
     return UserRepository.updateCompanyUser(null, data.params)
       .then(res => {
         commit(UPDATE_USER, data.params)
+
+        return res
+      })
+  },
+
+  updateCompany({ commit }, data) {
+    return CompanyRepository.updateCompany(data.body, data.params)
+      .then(res => {
+        commit(UPDATE_COMPANY, res.data.result)
+
+        return res
+      })
+  },
+
+  deleteCompany({ commit }, data) {
+    return CompanyRepository.deleteCompany(data)
+      .then(res => {
+        commit(DELETE_COMPANY, data)
 
         return res
       })

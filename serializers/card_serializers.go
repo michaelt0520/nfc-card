@@ -6,8 +6,8 @@ type CardCreateRequest struct {
 }
 
 type CardUpdateRequest struct {
-	UserID    *uint `json:"user_id,omitempty"`
-	Activated *bool `json:"activated,omitempty"`
+	UserID    *string `json:"user_id,omitempty"`
+	Activated *bool   `json:"activated,omitempty"`
 }
 
 type CardResponse struct {

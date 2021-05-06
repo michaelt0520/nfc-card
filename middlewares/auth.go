@@ -11,26 +11,26 @@ import (
 )
 
 // BasicAuth check basic auth
-func BasicAuth(c *gin.Context) *jwt.PayLoad {
+func BasicAuth(c *gin.Context) (*jwt.PayLoad, error) {
 	// get token from header
 	token := strings.TrimPrefix(c.Request.Header.Get("Authorization"), "Bearer ")
 
 	// extract token
 	payload, errExtract := jwt.ExtractToken(token)
 	if errExtract != nil {
-		return nil
+		return nil, errExtract
 	}
 
 	c.Set("user_id", payload.UserID)
 
-	return payload
+	return payload, nil
 }
 
 // StandardAuth authorize user role
 func StandardAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		payload := BasicAuth(c)
-		if payload == nil {
+		payload, err := BasicAuth(c)
+		if err != nil {
 			c.JSON(http.StatusUnauthorized, errors.InvalidToken.Error())
 			c.Abort()
 			return
@@ -49,8 +49,8 @@ func StandardAuth() gin.HandlerFunc {
 // CompanyAuth authorize company
 func CompanyAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		payload := BasicAuth(c)
-		if payload == nil {
+		payload, err := BasicAuth(c)
+		if err != nil {
 			c.JSON(http.StatusUnauthorized, errors.InvalidToken.Error())
 			c.Abort()
 			return
@@ -70,8 +70,8 @@ func CompanyAuth() gin.HandlerFunc {
 // AdminAuth authorize user role
 func AdminAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		payload := BasicAuth(c)
-		if payload == nil {
+		payload, err := BasicAuth(c)
+		if err != nil {
 			c.JSON(http.StatusUnauthorized, errors.InvalidToken.Error())
 			c.Abort()
 			return
@@ -90,9 +90,8 @@ func AdminAuth() gin.HandlerFunc {
 // AllAuth authorize except role
 func AllAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		payload := BasicAuth(c)
-		if payload == nil {
-			c.JSON(http.StatusUnauthorized, errors.InvalidToken.Error())
+		if _, err := BasicAuth(c); err != nil {
+			c.JSON(http.StatusUnauthorized, err.Error())
 			c.Abort()
 			return
 		}

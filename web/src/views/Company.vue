@@ -19,9 +19,11 @@
           <card
             v-if="activeTab === 2"
             :cards="cards"
+            :users="users"
             @search-card-input="searchCardInput"
             @select-cards-per-page="selectCardsPerPage"
             @on-click-update-activate-card="onUpdateCard"
+            @on-change-card-user="onChangeCardUser"
           />
 
           <setting-company v-if="activeTab === 3" :company="company" />
@@ -30,36 +32,15 @@
             v-model:open="isOpenModalInviteUser"
             header="Invite"
             :is-hidden-button-confirm="false"
-            @confirm-modal="confirmModal"
+            @confirm-modal="onConfirmInviteUser"
           >
             <template #modal-body>
               <input
                 type="text"
                 placeholder="Search teams or members"
                 class="my-2 w-full text-sm bg-gray-200 text-gray-800 rounded h-10 p-3 focus:outline-none"
-                @input="searchInviteUserInput($event)"
+                v-model="inviteUserEmail"
               />
-              <div class="w-full">
-                <div
-                  class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded"
-                  v-for="inviteUser in inviteUsers"
-                  :key="inviteUser.index"
-                >
-                  <div class="w-8 h-10 text-center py-1">
-                    <p class="text-3xl p-0 text-green-dark">•</p>
-                  </div>
-                  <div class="w-4/5 h-10 py-3 px-1">
-                    <p class="hover:text-blue-dark">
-                      {{ inviteUser.name }}
-                    </p>
-                  </div>
-                  <div class="w-1/5 h-10 text-right p-3">
-                    <p class="text-sm text-grey-dark">
-                      {{ inviteUser.email }}
-                    </p>
-                  </div>
-                </div>
-              </div>
             </template>
           </modal>
         </div>
@@ -90,6 +71,7 @@ export default {
       loaded: false,
       activeTab: 1,
       isOpenModalInviteUser: false,
+      inviteUserEmail: "",
     };
   },
 
@@ -107,7 +89,6 @@ export default {
 
   computed: {
     ...mapState("companies", ["company", "users", "cards"]),
-    ...mapState("users", ["searchUsers"]),
   },
 
   methods: {
@@ -116,10 +97,9 @@ export default {
       "getCurrentCompanyUsers",
       "getCurrentCompanyCards",
       "updateCard",
+      "createCompanyUser",
       "updateCompanyUser",
     ]),
-
-    ...mapActions("users", ["searchUser"]),
 
     searchUserInput(event) {
       const value = event.target.value.trim();
@@ -143,11 +123,12 @@ export default {
       );
     },
 
-    searchInviteUserInput(event) {
-      const value = event.target.value.trim();
-      if (!value) return;
+    onConfirmInviteUser() {
+      if (this.inviteUserEmail === "") return;
 
-      this.handleDebounceSearch(this.searchUser, { email: value }, 500);
+      this.createCompanyUser({ email: this.inviteUserEmail }).then(() => {
+        (this.isOpenModalInviteUser = false), (this.inviteUserEmail = "");
+      });
     },
 
     selectUsersPerPage(event) {
@@ -172,6 +153,16 @@ export default {
 
     onClickRemoveCompanyUser(user) {
       this.updateCompanyUser({ params: user.username });
+    },
+
+    onChangeCardUser(card, event) {
+      const data = {
+        params: card.code,
+        body: {
+          user_id: event.target.value,
+        },
+      };
+      this.updateCard(data);
     },
   },
 

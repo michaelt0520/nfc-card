@@ -5,6 +5,7 @@
     <div v-if="loaded">
       <setting-profile :user="user" />
       <setting-password />
+      <setting-card :cards-list="user.cards" />
       <setting-social :socials-list="user.informations" />
     </div>
     <div v-else>
@@ -18,6 +19,7 @@ import { mapState, mapActions } from "vuex";
 import Header from "@/components/Header";
 import SettingSocial from "@/components/SettingSocial";
 import SettingProfile from "@/components/SettingProfile";
+import SettingCard from "@/components/SettingCard";
 import SettingPassword from "@/components/SettingPassword";
 import Loading from "@/components/Loading";
 
@@ -28,6 +30,7 @@ export default {
     Header,
     SettingProfile,
     SettingSocial,
+    SettingCard,
     SettingPassword,
     Loading,
   },

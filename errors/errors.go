@@ -14,4 +14,10 @@ var (
 	ConfirmationPasswordIncorrect = status.Error(2002, "Confirmation password incorrect")
 	InvalidToken                  = status.Error(2003, "Invalid Token")
 	DontHavePermission            = status.Error(2004, "You don't have permission")
+
+	// Deactivated
+	DeactivatedCard = status.Error(3001, "Card is deactivated")
+
+	DontExecuteYourSelf = status.Error(4001, "Dont execute yourself")
+	UseableCard         = status.Error(4002, "Card has been used")
 )

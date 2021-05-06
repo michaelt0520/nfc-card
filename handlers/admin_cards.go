@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,8 +29,12 @@ func (h *AdminCardHandler) Index(c *gin.Context) {
 		"code": paramQuery,
 	}
 
+	var preloadData = map[string]interface{}{
+		"User": nil,
+	}
+
 	var cards []models.Card
-	if err := h.cardSrv.FindMany(&cards, filterCard, c); err != nil {
+	if err := h.cardSrv.FindManyWithScopes(&cards, filterCard, preloadData, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -65,8 +70,6 @@ func (h *AdminCardHandler) Show(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	result.User.Type = card.User.TypeToString()
-	result.User.Role = card.User.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
@@ -125,7 +128,15 @@ func (h *AdminCardHandler) Update(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &card, Error: nil})
+	var result serializers.CardResponse
+	if err := serializers.ConvertSerializer(card, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	fmt.Println(result)
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Destroy ...
@@ -135,13 +146,7 @@ func (h *AdminCardHandler) Destroy(c *gin.Context) {
 		"code": paramQuery,
 	}
 
-	var card models.Card
-	if err := h.cardSrv.FindOne(&card, filterCard); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	if err := h.cardSrv.Repo().Destroy(&card); err != nil {
+	if err := h.cardSrv.RemoveCard(filterCard); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

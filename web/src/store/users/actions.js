@@ -5,16 +5,21 @@ import {
   FETCH_LIST_USERS,
   FETCH_USER,
   CREATE_USER,
+  UPDATE_CURRENT_USER,
   UPDATE_USER,
   SEARCH_USERS,
   CREATE_INFORMATION,
   UPDATE_INFORMATION,
-  DELETE_INFORMATION
+  DELETE_INFORMATION,
+  ADD_CARD,
+  UPDATE_CARD,
+  REMOVE_CARD
 } from '../mutation-types'
 
 const AuthRepository = Repository.get('auth')
 const UserRepository = Repository.get('user')
 const InfoRepository = Repository.get('info')
+const CardRepository = Repository.get('card')
 const UploadRepository = Repository.get('upload')
 
 const actions = {
@@ -66,7 +71,7 @@ const actions = {
   updateCurrentUser({ commit }, data) {
     return UserRepository.updateCurrentUser(data)
       .then(res => {
-        commit(UPDATE_USER, res.data.result)
+        commit(UPDATE_CURRENT_USER, res.data.result)
 
         return res
       })
@@ -126,10 +131,46 @@ const actions = {
       })
   },
 
-  createUser({  commit }, data) {
+  createUser({ commit }, data) {
     return UserRepository.createUser(data)
       .then(res => {
         commit(CREATE_USER, res.data.result)
+
+        return res
+      })
+  },
+
+  updateUser({ commit }, data) {
+    return UserRepository.updateUser(data.body, data.params)
+      .then(res => {
+        commit(UPDATE_USER, res.data.result)
+
+        return res
+      })
+  },
+
+  addCard({ commit }, data) {
+    return CardRepository.addCard(data)
+      .then(res => {
+        commit(ADD_CARD, res.data.result)
+
+        return res
+      })
+  },
+
+  updateCard({ commit }, data) {
+    return CardRepository.updateCard(data.body, data.params)
+      .then(res => {
+        commit(UPDATE_CARD, res.data.result)
+
+        return res
+      })
+  },
+
+  removeCard({ commit }, data) {
+    return CardRepository.removeCard(data)
+      .then(res => {
+        commit(REMOVE_CARD, data)
 
         return res
       })

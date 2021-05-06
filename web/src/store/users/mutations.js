@@ -4,11 +4,15 @@ import {
   FETCH_LIST_USERS,
   FETCH_USER,
   CREATE_USER,
+  UPDATE_CURRENT_USER,
   UPDATE_USER,
   SEARCH_USERS,
   CREATE_INFORMATION,
   UPDATE_INFORMATION,
-  DELETE_INFORMATION
+  DELETE_INFORMATION,
+  ADD_CARD,
+  UPDATE_CARD,
+  REMOVE_CARD
 } from '../mutation-types'
 
 const mutations = {
@@ -36,7 +40,7 @@ const mutations = {
     state.user = payload
   },
 
-  [UPDATE_USER](state, payload) {
+  [UPDATE_CURRENT_USER](state, payload) {
     state.user = payload
     state.currentUser = payload
     localStorage.setItem('user', JSON.stringify(payload))
@@ -66,6 +70,31 @@ const mutations = {
 
   [CREATE_USER](state, payload) {
     state.users.push(payload)
+  },
+
+  [UPDATE_USER](state, payload) {
+    const index = state.users.findIndex(user => user.id === payload.id)
+    if (index < 0) return
+
+    state.users[index] = payload
+  },
+
+  [ADD_CARD](state, payload) {
+    state.user.cards.push(payload)
+  },
+
+  [UPDATE_CARD](state, payload) {
+    const index = state.user.cards.findIndex(card => card.code === payload.code)
+    if (index < 0) return
+
+    state.user.cards[index] = payload
+  },
+
+  [REMOVE_CARD](state, payload) {
+    const index = state.user.cards.findIndex(cards => cards.code === payload)
+    if (index < 0) return
+
+    state.user.cards.splice(index, 1)
   }
 }
 

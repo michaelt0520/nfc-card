@@ -68,7 +68,6 @@ func (h *AdminUserHandler) Show(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	result.Type = user.TypeToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
 }
@@ -109,7 +108,7 @@ func (h *AdminUserHandler) Update(c *gin.Context) {
 	}
 
 	// get data from body
-	var userVals serializers.UserUpdateRequest
+	var userVals serializers.AdminUserUpdateRequest
 	if err := c.ShouldBindJSON(&userVals); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
@@ -131,8 +130,6 @@ func (h *AdminUserHandler) Update(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	resUser.Type = user.TypeToString()
-	resUser.Role = user.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
 }

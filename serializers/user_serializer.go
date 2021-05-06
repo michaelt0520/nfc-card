@@ -10,10 +10,11 @@ type UserResponse struct {
 	Email        string          `json:"email"`
 	Address      string          `json:"address"`
 	PhoneNumber  string          `json:"phone_number"`
-	Type         string          `json:"type"`
-	Role         string          `json:"role"`
+	Type         models.CardType `json:"type"`
+	Role         models.UserRole `json:"role"`
 	Company      CompanyResponse `json:"company"`
 	Informations []InfoResponse  `json:"informations"`
+	Cards        []CardResponse  `json:"cards"`
 }
 
 type UserUpdateRequest struct {
@@ -21,6 +22,18 @@ type UserUpdateRequest struct {
 	Avatar      *string `json:"avatar,omitempty"`
 	Address     *string `json:"address,omitempty"`
 	PhoneNumber *string `json:"phone_number,omitempty"`
+}
+
+type AdminUserUpdateRequest struct {
+	Name        *string          `json:"name,omitempty"`
+	Email       *string          `json:"email,omitempty"`
+	Username    *string          `json:"username,omitempty"`
+	Password    *string          `json:"password,omitempty"`
+	Avatar      *string          `json:"avatar,omitempty"`
+	Address     *string          `json:"address,omitempty"`
+	PhoneNumber *string          `json:"phone_number,omitempty"`
+	Type        *models.CardType `json:"type,omitempty"`
+	Role        *models.UserRole `json:"role,omitempty"`
 }
 
 type UserUpdatePasswordRequest struct {

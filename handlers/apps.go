@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/serializers"
 	"github.com/michaelt0520/nfc-card/services"
@@ -32,8 +33,9 @@ func (h *AppHandler) ShowCard(c *gin.Context) {
 	}
 
 	var preloadData = map[string]interface{}{
-		"User":         nil,
-		"User.Company": nil,
+		"User":              nil,
+		"User.Informations": nil,
+		"User.Company":      nil,
 	}
 
 	var resCard models.Card
@@ -42,13 +44,16 @@ func (h *AppHandler) ShowCard(c *gin.Context) {
 		return
 	}
 
+	if resCard.Activated == false {
+		respondError(c, http.StatusNotFound, errors.DeactivatedCard.Error())
+		return
+	}
+
 	var card serializers.CardResponse
 	if err := serializers.ConvertSerializer(resCard, &card); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	card.User.Type = resCard.User.TypeToString()
-	card.User.Role = resCard.User.RoleToString()
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: &card, Error: nil})
 }

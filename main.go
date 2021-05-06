@@ -67,7 +67,7 @@ func main() {
 	// init services
 	userSrv := services.NewUserService(userRepo)
 	infoSrv := services.NewInformationService(infoRepo)
-	compSrv := services.NewCompanyService(compRepo)
+	compSrv := services.NewCompanyService(compRepo, userRepo)
 	cardSrv := services.NewCardService(cardRepo)
 	contactSrv := services.NewContactService(contactRepo)
 
@@ -77,6 +77,7 @@ func main() {
 	uploadHandler := handlers.NewUploadHandler(userSrv, compSrv)
 	userHandler := handlers.NewUserHandler(userSrv)
 	infoHandler := handlers.NewInformationHandler(userSrv, infoSrv)
+  cardHandler := handlers.NewCardHandler(userSrv, cardSrv)
 	compUserHandler := handlers.NewCompanyUserHandler(compSrv, userSrv)
 	compCardHandler := handlers.NewCompanyCardHandler(compSrv, cardSrv)
 	compHandler := handlers.NewCompanyHandler(compSrv)
@@ -93,6 +94,7 @@ func main() {
 		authHandler,
 		userHandler,
 		infoHandler,
+    cardHandler,
 		compUserHandler,
 		compCardHandler,
 		compHandler,
