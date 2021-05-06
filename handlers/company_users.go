@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
 	"github.com/michaelt0520/nfc-card/services"
 )
@@ -39,7 +38,7 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 	}
 
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -72,7 +71,7 @@ func (h *CompanyUserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := repositories.GetDB().Model(&currentCompany).Association("Users").Delete(user); err != nil {
+	if err := h.compSrv.RemoveUserFromCompany(currentCompany, &user); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -89,7 +88,7 @@ func (h *CompanyUserHandler) ShowPersonalUsers(c *gin.Context) {
 	}
 
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}

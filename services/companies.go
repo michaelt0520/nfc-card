@@ -51,3 +51,11 @@ func (s *CompanyService) FindMany(result *[]models.Company, filter map[string]in
 
 	return nil
 }
+
+func (s *CompanyService) RemoveUserFromCompany(company *models.Company, user *models.User) error {
+	if err := s.compRepo.CompanyTable().Model(company).Association("Users").Delete(user); err != nil {
+		return err
+	}
+
+	return nil
+}
