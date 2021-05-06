@@ -6,28 +6,31 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/michaelt0520/nfc-card/errors"
-	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // UploadHandler : struct
-type UploadHandler struct{}
+type UploadHandler struct {
+	userSrv *services.UserService
+	compSrv *services.CompanyService
+}
 
 // NewUploadHandler ...
-func NewUploadHandler() *UploadHandler {
-	return &UploadHandler{}
+func NewUploadHandler(userSrv *services.UserService, compSrv *services.CompanyService) *UploadHandler {
+	return &UploadHandler{
+		userSrv: userSrv,
+		compSrv: compSrv,
+	}
 }
 
 // Avatar : upload avatar
 func (h *UploadHandler) Avatar(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentUser := user.(*models.User)
 
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -54,13 +57,11 @@ func (h *UploadHandler) Avatar(c *gin.Context) {
 
 // Logo : upload company logo
 func (h *UploadHandler) Logo(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentCompany := company.(*models.Company)
 
 	file, err := c.FormFile("file")
 	if err != nil {

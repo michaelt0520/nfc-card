@@ -2,9 +2,7 @@ package repositories
 
 import (
 	"fmt"
-	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -32,24 +30,4 @@ func InitRepository(conf *config.Config) (err error) {
 // GetDB : getter
 func GetDB() *gorm.DB {
 	return db
-}
-
-func Paginate(c *gin.Context) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		page, _ := strconv.Atoi(c.Query("page"))
-		if page == 0 {
-			page = 1
-		}
-
-		pageSize, _ := strconv.Atoi(c.Query("per_page"))
-		switch {
-		case pageSize > 100:
-			pageSize = 100
-		case pageSize <= 0:
-			pageSize = 10
-		}
-
-		offset := (page - 1) * pageSize
-		return db.Offset(offset).Limit(pageSize)
-	}
 }

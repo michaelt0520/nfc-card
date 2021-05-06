@@ -4,33 +4,29 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/michaelt0520/nfc-card/errors"
-	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // CompanyHandler : struct
 type CompanyHandler struct {
-	compRepo *repositories.CompanyRepository
+	compSrv *services.CompanyService
 }
 
 // NewCompanyHandler ...
-func NewCompanyHandler(compRepo *repositories.CompanyRepository) *CompanyHandler {
+func NewCompanyHandler(compSrv *services.CompanyService) *CompanyHandler {
 	return &CompanyHandler{
-		compRepo: compRepo,
+		compSrv: compSrv,
 	}
 }
 
 // Show : show current user
 func (h *CompanyHandler) Show(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentCompany := company.(*models.Company)
 
 	var result serializers.CompanyResponse
 	if err := serializers.ConvertSerializer(currentCompany, &result); err != nil {
@@ -43,13 +39,11 @@ func (h *CompanyHandler) Show(c *gin.Context) {
 
 // Update ...
 func (h *CompanyHandler) Update(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentCompany := company.(*models.Company)
 
 	// get data update from body
 	var compVals serializers.CompanyUpdateRequest
@@ -66,10 +60,10 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 	}
 
 	// update body data to company
-	if _, err := h.compRepo.Update(currentCompany, data); err != nil {
+	if err := h.compSrv.Repo().Update(currentCompany, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &company, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &currentCompany, Error: nil})
 }

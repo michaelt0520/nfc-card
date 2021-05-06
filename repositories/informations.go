@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/michaelt0520/nfc-card/interfaces"
 	"github.com/michaelt0520/nfc-card/models"
 	"gorm.io/gorm"
 )
@@ -17,70 +18,54 @@ func (u *InformationRepository) InformationTable() *gorm.DB {
 	return GetDB().Model(&models.Information{})
 }
 
-var _ Repository = &InformationRepository{}
-
-// Find : get card by code
-func (u *InformationRepository) All(result interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.InformationTable().Scopes(scopes...).Preload("User").Find(result)
-	if err := query.Error; err != nil {
-		return nil, err
-	}
-
-	return query, nil
-}
+var _ interfaces.IInformationRepository = &InformationRepository{}
 
 // Find : get info by id
-func (u *InformationRepository) Find(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.InformationTable().Scopes(scopes...).Preload("User").Where(data).First(result)
+func (u *InformationRepository) Find(result *models.Information, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	query := u.InformationTable().Scopes(scopes...).First(result)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }
 
 // Where :
-func (u *InformationRepository) Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.InformationTable().Scopes(scopes...).Preload("User").Where(data).Find(result)
+func (u *InformationRepository) Where(result *[]models.Information, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	query := u.InformationTable().Scopes(scopes...).Find(result)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }
 
 // Create : Save user to db
-func (u *InformationRepository) Create(model interface{}) (*gorm.DB, error) {
-	record := model.(*models.Information)
-
-	query := u.InformationTable().Create(record)
+func (u *InformationRepository) Create(model *models.Information) error {
+	query := u.InformationTable().Create(model)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }
 
 // Update : Update info to db
-func (u *InformationRepository) Update(model interface{}, data map[string]interface{}) (*gorm.DB, error) {
-	record := model.(*models.Information)
-
-	query := u.InformationTable().Model(record).Updates(data)
+func (u *InformationRepository) Update(model *models.Information, data map[string]interface{}) error {
+	query := u.InformationTable().Model(model).Updates(data)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }
 
 // Destroy : destroy info
-func (u *InformationRepository) Destroy(model interface{}) (*gorm.DB, error) {
-	record := model.(*models.Information)
-
-	query := u.InformationTable().Delete(record)
+func (u *InformationRepository) Destroy(model *models.Information) error {
+	query := u.InformationTable().Delete(model)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }

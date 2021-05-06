@@ -15,6 +15,7 @@ import (
 	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/seeds"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 var log *zap.Logger
@@ -63,29 +64,26 @@ func main() {
 	compRepo := repositories.NewCompanyRepository()
 	contactRepo := repositories.NewContactRepository()
 
-	// init App Handler
-	appHandler := handlers.NewAppHandler(cardRepo, contactRepo, userRepo)
+	// init services
+	userSrv := services.NewUserService(userRepo)
+	infoSrv := services.NewInformationService(infoRepo)
+	compSrv := services.NewCompanyService(compRepo)
+	cardSrv := services.NewCardService(cardRepo)
+	contactSrv := services.NewContactService(contactRepo)
 
-	// init Auth Handler
-	authHandler := handlers.NewAuthHandler(userRepo)
-
-	// init Upload handler
-	uploadHandler := handlers.NewUploadHandler()
-
-	// init User Standart Handler
-	userHandler := handlers.NewUserHandler(userRepo)
-	infoHandler := handlers.NewInformationHandler(infoRepo)
-
-	// init Company Handler
-	compUserHandler := handlers.NewCompanyUserHandler(userRepo)
-	compCardHandler := handlers.NewCompanyCardHandler(cardRepo)
-	compHandler := handlers.NewCompanyHandler(compRepo)
-
-	// init Admin Handler
-	adminUserHandler := handlers.NewAdminUserHandler(userRepo)
-	adminInfoHandler := handlers.NewAdminInformationHandler(infoRepo, userRepo)
-	adminCardHandler := handlers.NewAdminCardHandler(cardRepo)
-	adminCompHandler := handlers.NewAdminCompanyHandler(compRepo)
+	// init Handler
+	appHandler := handlers.NewAppHandler(cardSrv, contactSrv, userSrv)
+	authHandler := handlers.NewAuthHandler(userSrv)
+	uploadHandler := handlers.NewUploadHandler(userSrv, compSrv)
+	userHandler := handlers.NewUserHandler(userSrv)
+	infoHandler := handlers.NewInformationHandler(userSrv, infoSrv)
+	compUserHandler := handlers.NewCompanyUserHandler(compSrv, userSrv)
+	compCardHandler := handlers.NewCompanyCardHandler(compSrv, cardSrv)
+	compHandler := handlers.NewCompanyHandler(compSrv)
+	adminUserHandler := handlers.NewAdminUserHandler(userSrv)
+	adminInfoHandler := handlers.NewAdminInformationHandler(userSrv, infoSrv)
+	adminCardHandler := handlers.NewAdminCardHandler(cardSrv)
+	adminCompHandler := handlers.NewAdminCompanyHandler(compSrv)
 
 	// init Server
 	svr := api.NewServer(

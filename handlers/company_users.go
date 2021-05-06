@@ -1,41 +1,45 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // CompanyUserHandler : struct
 type CompanyUserHandler struct {
-	userRepo *repositories.UserRepository
+	compSrv *services.CompanyService
+	userSrv *services.UserService
 }
 
 // NewCompanyUserHandler ...
-func NewCompanyUserHandler(userRepo *repositories.UserRepository) *CompanyUserHandler {
+func NewCompanyUserHandler(compSrv *services.CompanyService, userSrv *services.UserService) *CompanyUserHandler {
 	return &CompanyUserHandler{
-		userRepo: userRepo,
+		compSrv: compSrv,
+		userSrv: userSrv,
 	}
 }
 
 // Index : list all users
 func (h *CompanyUserHandler) Index(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentCompany := company.(*models.Company)
 
-	query := c.Query("q")
+	paramQuery := c.Query("q")
+	var filterUser = map[string]interface{}{
+		"company_id": currentCompany.ID,
+		"name":       paramQuery,
+	}
+
 	var users []models.User
-	if err := h.userRepo.UserTable().Where("company_id = ?", currentCompany.ID, sql.Named("query", query)).Find(&users).Error; err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -51,21 +55,19 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 
 // Update : remove user from company
 func (h *CompanyUserHandler) Update(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentCompany := company.(*models.Company)
 
 	var filterUser = map[string]interface{}{
 		"company_id": currentCompany.ID,
 		"username":   c.Param("username"),
 	}
 
-	var user []models.User
-	if errUser := h.userRepo.Find(&user, filterUser); errUser != nil {
+	var user models.User
+	if errUser := h.userSrv.FindOne(&user, filterUser); errUser != nil {
 		respondError(c, http.StatusUnauthorized, errUser.Error())
 		return
 	}
@@ -80,10 +82,14 @@ func (h *CompanyUserHandler) Update(c *gin.Context) {
 
 // ShowPersonalUsers
 func (h *CompanyUserHandler) ShowPersonalUsers(c *gin.Context) {
-	query := c.Query("q")
+	paramQuery := c.Query("q")
+	var filterUser = map[string]interface{}{
+		"role": models.Personal,
+		"name": paramQuery,
+	}
 
 	var users []models.User
-	if err := h.userRepo.UserTable().Where("role = ? and (name like '%@query%' or email like '%@query%' or phone_number like '%@query%')", models.Personal, sql.Named("query", query)).Find(&users).Error; err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}

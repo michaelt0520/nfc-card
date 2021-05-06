@@ -6,9 +6,9 @@ import (
 )
 
 type IUserRepository interface {
-	All(scopes ...func(db *gorm.DB) *gorm.DB) (*[]models.User, error)
-	Find(scopes ...func(db *gorm.DB) *gorm.DB) (*models.User, error)
-	Create(model *models.User, scopes ...func(db *gorm.DB) *gorm.DB) error
-	Update(model *models.User, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) error
-	Destroy(model *models.User, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Find(result *models.User, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Where(result *[]models.User, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Create(model *models.User) error
+	Update(model *models.User, data map[string]interface{}) error
+	Destroy(model *models.User) error
 }

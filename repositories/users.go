@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/michaelt0520/nfc-card/interfaces"
 	"github.com/michaelt0520/nfc-card/models"
 	"gorm.io/gorm"
 )
@@ -17,21 +18,11 @@ func (u *UserRepository) UserTable() *gorm.DB {
 	return GetDB().Model(&models.User{})
 }
 
-// var _ Repository = &UserRepository{}
-
-// Find : get card by code
-func (u *UserRepository) All(result interface{}) error {
-	query := u.UserTable().Preload("Company").Find(result)
-	if err := query.Error; err != nil {
-		return err
-	}
-
-	return nil
-}
+var _ interfaces.IUserRepository = &UserRepository{}
 
 // Find : get user
-func (u *UserRepository) Find(result interface{}, data map[string]interface{}) error {
-	query := u.UserTable().Preload("Company").Preload("Informations").Where(data).First(result)
+func (u *UserRepository) Find(result *models.User, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	query := u.UserTable().Scopes(scopes...).First(result)
 	if err := query.Error; err != nil {
 		return err
 	}
@@ -40,8 +31,8 @@ func (u *UserRepository) Find(result interface{}, data map[string]interface{}) e
 }
 
 // Where :
-func (u *UserRepository) Where(result interface{}, data map[string]interface{}) error {
-	query := u.UserTable().Preload("Company").Preload("Informations").Where(data).Find(result)
+func (u *UserRepository) Where(result *[]models.User, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	query := u.UserTable().Scopes(scopes...).Find(result)
 	if err := query.Error; err != nil {
 		return err
 	}
@@ -50,13 +41,12 @@ func (u *UserRepository) Where(result interface{}, data map[string]interface{}) 
 }
 
 // Create : Save user to db
-func (u *UserRepository) Create(model interface{}) error {
-	record := model.(*models.User)
-	if err := record.HashPassword(record.Password); err != nil {
+func (u *UserRepository) Create(model *models.User) error {
+	if err := model.HashPassword(model.Password); err != nil {
 		return err
 	}
 
-	query := u.UserTable().Where("email = ?", record.Email).Or("username = ?", record.Username).FirstOrCreate(record)
+	query := u.UserTable().Where("email = ?", model.Email).Or("username = ?", model.Username).FirstOrCreate(model)
 	if err := query.Error; err != nil {
 		return err
 	}
@@ -65,21 +55,19 @@ func (u *UserRepository) Create(model interface{}) error {
 }
 
 // Update : Update user to db
-func (u *UserRepository) Update(model interface{}, data map[string]interface{}) error {
-	record := model.(*models.User)
-
+func (u *UserRepository) Update(model *models.User, data map[string]interface{}) error {
 	var query *gorm.DB
 	if password, ok := data["password"]; ok {
-		if err := record.HashPassword(password.(string)); err != nil {
+		if err := model.HashPassword(password.(string)); err != nil {
 			return err
 		}
 
-		query = u.UserTable().Save(record)
+		query = u.UserTable().Save(model)
 		if err := query.Error; err != nil {
 			return err
 		}
 	} else {
-		query = u.UserTable().Model(record).Updates(data)
+		query = u.UserTable().Model(model).Updates(data)
 		if err := query.Error; err != nil {
 			return err
 		}
@@ -89,10 +77,8 @@ func (u *UserRepository) Update(model interface{}, data map[string]interface{}) 
 }
 
 // Destroy : destroy category
-func (u *UserRepository) Destroy(model interface{}) error {
-	record := model.(*models.User)
-
-	query := u.UserTable().Delete(record)
+func (u *UserRepository) Destroy(model *models.User) error {
+	query := u.UserTable().Delete(model)
 	if err := query.Error; err != nil {
 		return err
 	}

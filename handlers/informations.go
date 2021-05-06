@@ -2,36 +2,34 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // InformationHandler : struct
 type InformationHandler struct {
-	repoInfo *repositories.InformationRepository
+	userSrv *services.UserService
+	infoSrv *services.InformationService
 }
 
 // NewInformationHandler ...
-func NewInformationHandler(repoInfo *repositories.InformationRepository) *InformationHandler {
+func NewInformationHandler(userSrv *services.UserService, infoSrv *services.InformationService) *InformationHandler {
 	return &InformationHandler{
-		repoInfo: repoInfo,
+		userSrv: userSrv,
+		infoSrv: infoSrv,
 	}
 }
 
 // Create ...
 func (h *InformationHandler) Create(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentUser := user.(*models.User)
 
 	var infoValues serializers.InfoCreateRequest
 	if err := c.ShouldBindJSON(&infoValues); err != nil {
@@ -45,10 +43,7 @@ func (h *InformationHandler) Create(c *gin.Context) {
 		return
 	}
 
-	info.UserID = currentUser.ID
-	info.Visibled = true
-
-	if _, err := h.repoInfo.Create(&info); err != nil {
+	if err := h.userSrv.AddInformationToUser(currentUser, &info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -64,24 +59,15 @@ func (h *InformationHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *InformationHandler) Update(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
-		return
-	}
-	currentUser := user.(*models.User)
-
-	// get info's id from params
-	id, errGetID := strconv.Atoi(c.Param("id"))
-	if errGetID != nil || id <= 0 {
-		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	// query info from database
-  var info models.Information
-	if _, err := h.repoInfo.Find(&info, map[string]interface{}{"id": id, "user_id": currentUser.ID}); err != nil {
+	infoID := c.Param("id")
+	var info models.Information
+	if err := h.userSrv.GetInformationFromUser(currentUser, infoID, &info); err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
@@ -93,13 +79,12 @@ func (h *InformationHandler) Update(c *gin.Context) {
 	}
 
 	var data map[string]interface{}
-	err := serializers.ConvertSerializer(infoVals, &data)
-	if err != nil {
+	if err := serializers.ConvertSerializer(infoVals, &data); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if _, err := h.repoInfo.Update(&info, data); err != nil {
+	if err := h.infoSrv.Repo().Update(&info, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -115,29 +100,20 @@ func (h *InformationHandler) Update(c *gin.Context) {
 
 // Destroy ...
 func (h *InformationHandler) Destroy(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
-		return
-	}
-	currentUser := user.(*models.User)
-
-	// get info's id from params
-	id, errGetID := strconv.Atoi(c.Param("id"))
-	if errGetID != nil || id <= 0 {
-		respondError(c, http.StatusBadRequest, errors.ParameterInvalid.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	// query info from database
-  var info models.Information
-	if _, err := h.repoInfo.Find(&info, map[string]interface{}{"id": id, "user_id": currentUser.ID}); err != nil {
+	infoID := c.Param("id")
+	var info models.Information
+	if err := h.userSrv.GetInformationFromUser(currentUser, infoID, &info); err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	if _, err := h.repoInfo.Destroy(&info); err != nil {
+	if err := h.infoSrv.Repo().Destroy(&info); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}

@@ -6,9 +6,9 @@ import (
 )
 
 type IInformationRepository interface {
-	All(scopes ...func(db *gorm.DB) *gorm.DB) (*[]models.Information, error)
-	Find(scopes ...func(db *gorm.DB) *gorm.DB) (*models.Information, error)
-	Create(model *models.Information, scopes ...func(db *gorm.DB) *gorm.DB) error
-	Update(model *models.Information, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) error
-	Destroy(model *models.Information, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Find(result *models.Information, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Where(result *[]models.Information, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Create(model *models.Information) error
+	Update(model *models.Information, data map[string]interface{}) error
+	Destroy(model *models.Information) error
 }

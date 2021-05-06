@@ -45,7 +45,7 @@ const mutations = {
     const index = state.users.findIndex(user => user.username === payload)
     if (index < 0) return
 
-    state.users.slice(index, 1)
+    state.users.splice(index, 1)
   }
 }
 

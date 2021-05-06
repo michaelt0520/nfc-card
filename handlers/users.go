@@ -5,32 +5,29 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
-	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // UserHandler : struct
 type UserHandler struct {
-	userRepo *repositories.UserRepository
+	userSrv *services.UserService
 }
 
 // NewUserHandler ...
-func NewUserHandler(userRepo *repositories.UserRepository) *UserHandler {
+func NewUserHandler(userSrv *services.UserService) *UserHandler {
 	return &UserHandler{
-		userRepo: userRepo,
+		userSrv: userSrv,
 	}
 }
 
 // Show : show current user
 func (h *UserHandler) Show(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentUser := user.(*models.User)
 
 	var resUser serializers.UserResponse
 	if err := serializers.ConvertSerializer(currentUser, &resUser); err != nil {
@@ -45,13 +42,11 @@ func (h *UserHandler) Show(c *gin.Context) {
 
 // Update ...
 func (h *UserHandler) Update(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentUser := user.(*models.User)
 
 	// get data from body
 	var userVals serializers.UserUpdateRequest
@@ -61,13 +56,12 @@ func (h *UserHandler) Update(c *gin.Context) {
 	}
 
 	var data map[string]interface{}
-	err := serializers.ConvertSerializer(userVals, &data)
-	if err != nil {
+	if err := serializers.ConvertSerializer(userVals, &data); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if _, err := h.userRepo.Update(currentUser, data); err != nil {
+	if err := h.userSrv.Repo().Update(currentUser, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -85,13 +79,11 @@ func (h *UserHandler) Update(c *gin.Context) {
 
 // UpdatePassword : update current user's password
 func (h *UserHandler) UpdatePassword(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentUser := user.(*models.User)
 
 	// get data from body
 	var userVals serializers.UserUpdatePasswordRequest
@@ -110,7 +102,7 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	if _, errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil, "password": *userVals.NewPassword}); errUpdate != nil {
+	if errUpdate := h.userSrv.Repo().Update(currentUser, map[string]interface{}{"jwt": nil, "password": *userVals.NewPassword}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}

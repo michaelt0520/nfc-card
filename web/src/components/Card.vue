@@ -13,8 +13,8 @@
                   class="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   @input="$emit('select-cards-per-page', $event)"
                 >
-                  <option>10</option>
-                  <option>20</option>
+                  <option>2</option>
+                  <option>5</option>
                   <option>50</option>
                 </select>
                 <div

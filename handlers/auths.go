@@ -9,21 +9,21 @@ import (
 	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/jwt"
 	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // AuthHandler : Session Handler
 type AuthHandler struct {
-	userRepo *repositories.UserRepository
+	userSrv *services.UserService
 }
 
 const DefaultAvatar = "/public/avatars/default_avatar.png"
 
 // NewAuthHandler : Constructor
-func NewAuthHandler(userRepo *repositories.UserRepository) *AuthHandler {
+func NewAuthHandler(userSrv *services.UserService) *AuthHandler {
 	return &AuthHandler{
-		userRepo: userRepo,
+		userSrv: userSrv,
 	}
 }
 
@@ -46,7 +46,7 @@ func (h *AuthHandler) Signup(c *gin.Context) {
 	user.Type = models.Personal
 	user.Role = models.UserStandard
 
-	if _, err := h.userRepo.Create(&user); err != nil {
+	if err := h.userSrv.Repo().Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -62,15 +62,19 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
+	var filterUser = map[string]interface{}{
+		"username": loginVals.Username,
+	}
+
 	var resU models.User
-	if _, err := h.userRepo.Find(&resU, map[string]interface{}{"username": loginVals.Username}); err != nil {
+	if err := h.userSrv.FindOne(&resU, filterUser); err != nil {
 		fmt.Println(err.Error())
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}
 
 	if err := resU.CheckPassword(loginVals.Password); err != nil {
-		respondError(c, http.StatusForbidden, errors.PasswordIncorrect.Error())
+		respondError(c, http.StatusForbidden, err.Error())
 		return
 	}
 
@@ -80,7 +84,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 		return
 	}
 
-	if _, errUpdate := h.userRepo.Update(&resU, map[string]interface{}{"jwt": token}); errUpdate != nil {
+	if errUpdate := h.userSrv.Repo().Update(&resU, map[string]interface{}{"jwt": token}); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}
@@ -98,15 +102,17 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 
 // Signout : DELETE #signout
 func (h *AuthHandler) Signout(c *gin.Context) {
-	// get currentUser
-	user, ok := c.Get("currentUser")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentUser, err := h.userSrv.GetCurrentUser(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentUser := user.(*models.User)
 
-	if _, errUpdate := h.userRepo.Update(currentUser, map[string]interface{}{"jwt": nil}); errUpdate != nil {
+	var dataUser = map[string]interface{}{
+		"jwt": nil,
+	}
+
+	if errUpdate := h.userSrv.Repo().Update(currentUser, dataUser); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}

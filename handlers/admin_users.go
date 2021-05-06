@@ -8,49 +8,69 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // AdminUserHandler : struct
 type AdminUserHandler struct {
-	userRepo *repositories.UserRepository
+	userSrv *services.UserService
 }
 
 // NewAdminUserHandler ...
-func NewAdminUserHandler(userRepo *repositories.UserRepository) *AdminUserHandler {
+func NewAdminUserHandler(userSrv *services.UserService) *AdminUserHandler {
 	return &AdminUserHandler{
-		userRepo: userRepo,
+		userSrv: userSrv,
 	}
 }
 
 // Index : list all users
 func (h *AdminUserHandler) Index(c *gin.Context) {
-	var users []serializers.UserResponse
+	paramQuery := c.Query("q")
+	var filterUser = map[string]interface{}{
+		"name": paramQuery,
+	}
 
-	if _, err := h.userRepo.All(&users); err != nil {
+	var users []models.User
+	if err := h.userSrv.FindMany(&users, filterUser); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: users, Error: nil})
+	var result []serializers.UserResponse
+	if err := serializers.ConvertSerializer(users, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Show : Get user by username
 func (h *AdminUserHandler) Show(c *gin.Context) {
-	var user models.User
-	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	var filterUser = map[string]interface{}{
+		"username": c.Param("username"),
 	}
 
-	var resUser serializers.UserResponse
-	if err := serializers.ConvertSerializer(user, &resUser); err != nil {
+	var preloadData = map[string]interface{}{
+		"Informations": nil,
+		"Company":      nil,
+	}
+
+	var user models.User
+	if err := h.userSrv.FindOneWithScopes(&user, filterUser, preloadData); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	resUser.Type = user.TypeToString()
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: resUser, Error: nil})
+	var result serializers.UserResponse
+	if err := serializers.ConvertSerializer(user, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	result.Type = user.TypeToString()
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: result, Error: nil})
 }
 
 // Create : create user
@@ -68,7 +88,7 @@ func (h *AdminUserHandler) Create(c *gin.Context) {
 		return
 	}
 
-	if _, err := h.userRepo.Create(&user); err != nil {
+	if err := h.userSrv.Repo().Create(&user); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -78,9 +98,14 @@ func (h *AdminUserHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *AdminUserHandler) Update(c *gin.Context) {
+	var filterUser = map[string]interface{}{
+		"username": c.Param("username"),
+	}
+
 	var user models.User
-	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	if err := h.userSrv.FindOne(&user, filterUser); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	// get data from body
@@ -96,7 +121,7 @@ func (h *AdminUserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if _, err := h.userRepo.Update(&user, data); err != nil {
+	if err := h.userSrv.Repo().Update(&user, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -133,13 +158,17 @@ func (h *AdminUserHandler) Upload(c *gin.Context) {
 
 // Delete : soft delete user
 func (h *AdminUserHandler) Destroy(c *gin.Context) {
+	var filterUser = map[string]interface{}{
+		"username": c.Param("username"),
+	}
+
 	var user models.User
-	if _, err := h.userRepo.Find(&user, map[string]interface{}{"username": c.Param("username")}); err != nil {
-		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
+	if err := h.userSrv.FindOne(&user, filterUser); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if _, err := h.userRepo.Destroy(&user); err != nil {
+	if err := h.userSrv.Repo().Destroy(&user); err != nil {
 		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
 		return
 	}

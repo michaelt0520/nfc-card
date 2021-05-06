@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"github.com/michaelt0520/nfc-card/interfaces"
 	"github.com/michaelt0520/nfc-card/models"
 	"gorm.io/gorm"
 )
@@ -18,69 +19,54 @@ func (u *CardRepository) CardTable() *gorm.DB {
 	return GetDB().Model(&models.Card{})
 }
 
-var _ Repository = &CardRepository{}
+var _ interfaces.ICardRepository = &CardRepository{}
 
 // Find : get card by code
-func (u *CardRepository) All(result interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.CardTable().Scopes(scopes...).Preload("User").Find(result)
+func (u *CardRepository) Find(result *models.Card, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	query := u.CardTable().Scopes(scopes...).First(result)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
-}
-
-// Find : get card by code
-func (u *CardRepository) Find(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.CardTable().Scopes(scopes...).Preload("User.Informations").Preload("User.Company").Where(data).First(result)
-	if err := query.Error; err != nil {
-		return nil, err
-	}
-
-	return query, nil
+	return nil
 }
 
 // Where :
-func (u *CardRepository) Where(result interface{}, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) (*gorm.DB, error) {
-	query := u.CardTable().Scopes(scopes...).Preload("User.Informations").Preload("User.Company").Where(data).Find(result)
+func (u *CardRepository) Where(result *[]models.Card, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	query := u.CardTable().Scopes(scopes...).Find(result)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }
 
 // Create : Save card to db
-func (u *CardRepository) Create(model interface{}) (*gorm.DB, error) {
-	record := model.(*models.Card)
-	query := u.CardTable().Where("code = ?", record.Code).FirstOrCreate(&record)
+func (u *CardRepository) Create(model *models.Card) error {
+	query := u.CardTable().Where("code = ?", model.Code).FirstOrCreate(&model)
 	if err := query.Error; err != nil {
-		return query, nil
+		return nil
 	}
 
-	return query, nil
+	return nil
 }
 
 // Update : Update card to db
-func (u *CardRepository) Update(model interface{}, data map[string]interface{}) (*gorm.DB, error) {
-	record := model.(*models.Card)
-
-	query := u.CardTable().Model(record).Updates(data)
+func (u *CardRepository) Update(model *models.Card, data map[string]interface{}) error {
+	query := u.CardTable().Model(model).Updates(data)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }
 
 // Destroy : destroy card
-func (u *CardRepository) Destroy(model interface{}) (*gorm.DB, error) {
-	record := model.(*models.Card)
-
-	query := u.CardTable().Delete(record)
+func (u *CardRepository) Destroy(model *models.Card) error {
+	query := u.CardTable().Delete(model)
 	if err := query.Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return query, nil
+	return nil
 }

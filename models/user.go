@@ -101,3 +101,38 @@ func (user *User) RoleToString() string {
 func (user *User) TypeToString() string {
 	return typeToString[user.Type]
 }
+
+// func (user *User) MarshalJSON() ([]byte, error) {
+// 	marshalMap, err := json.Marshal(user)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	var unmarshalMap map[string]interface{}
+// 	if err := json.Unmarshal(marshalMap, &unmarshalMap); err != nil {
+// 		return nil, err
+// 	}
+
+// 	unmarshalMap["type"] = user.TypeToString()
+// 	unmarshalMap["role"] = user.RoleToString()
+
+// 	result, err := json.Marshal(unmarshalMap)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return result, nil
+// }
+
+// func (user *User) ConvertToSerializer(result interface{}) error {
+// 	marshal, err := user.MarshalJSON()
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	if err := json.Unmarshal(marshal, &result); err != nil {
+// 		return err
+// 	}
+
+// 	return nil
+// }

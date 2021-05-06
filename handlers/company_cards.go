@@ -4,50 +4,45 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/michaelt0520/nfc-card/errors"
 	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // CompanyCardHandler : struct
 type CompanyCardHandler struct {
-	cardRepo *repositories.CardRepository
+	compSrv *services.CompanyService
+	cardSrv *services.CardService
 }
 
 // NewCompanyCardHandler ...
-func NewCompanyCardHandler(cardRepo *repositories.CardRepository) *CompanyCardHandler {
+func NewCompanyCardHandler(compSrv *services.CompanyService, cardSrv *services.CardService) *CompanyCardHandler {
 	return &CompanyCardHandler{
-		cardRepo: cardRepo,
+		compSrv: compSrv,
+		cardSrv: cardSrv,
 	}
 }
 
 // Index : list all cards
 func (h *CompanyCardHandler) Index(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
-		return
-	}
-	currentCompany := company.(*models.Company)
-
-	// get parameters
-	var paramVals serializers.CardParametersRequest
-	if err := c.ShouldBind(&paramVals); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	var data map[string]interface{}
-	if err := serializers.ConvertSerializer(paramVals, &data); err != nil {
-		respondError(c, http.StatusBadRequest, err.Error())
-		return
+	paramQuery := c.Query("q")
+	var filterCard = map[string]interface{}{
+		"company_id": currentCompany.ID,
+		"code":       paramQuery,
 	}
-	data["company_id"] = currentCompany.ID
+
+	var preloadData = map[string]interface{}{
+		"User": nil,
+	}
 
 	var cards []models.Card
-	if _, err := h.cardRepo.Where(&cards, data, repositories.Paginate(c)); err != nil {
+	if err := h.cardSrv.FindManyWithScopes(&cards, filterCard, preloadData, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -58,22 +53,25 @@ func (h *CompanyCardHandler) Index(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &cards, Error: nil})
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Update ...
 func (h *CompanyCardHandler) Update(c *gin.Context) {
-	// get currentCompany
-	company, ok := c.Get("currentCompany")
-	if !ok {
-		respondError(c, http.StatusUnauthorized, errors.RecordNotFound.Error())
+	currentCompany, err := h.compSrv.GetCurrentCompany(c)
+	if err != nil {
+		respondError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	currentCompany := company.(*models.Company)
+
+	var filterCard = map[string]interface{}{
+		"code":       c.Param("code"),
+		"company_id": currentCompany.ID,
+	}
 
 	// query card from database
 	var card models.Card
-	if _, err := h.cardRepo.Where(&card, map[string]interface{}{"code": c.Param("code"), "company_id": currentCompany.ID}); err != nil {
+	if err := h.cardSrv.FindOne(&card, filterCard); err != nil {
 		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
@@ -85,16 +83,21 @@ func (h *CompanyCardHandler) Update(c *gin.Context) {
 	}
 
 	var data map[string]interface{}
-	err := serializers.ConvertSerializer(cardVals, &data)
-	if err != nil {
+	if err := serializers.ConvertSerializer(cardVals, &data); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if _, err := h.cardRepo.Update(&card, data); err != nil {
+	if err := h.cardSrv.Repo().Update(&card, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &card, Error: nil})
+	var result serializers.CardResponse
+	if err := serializers.ConvertSerializer(card, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }

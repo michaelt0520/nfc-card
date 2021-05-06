@@ -6,9 +6,9 @@ import (
 )
 
 type ICompanyRepository interface {
-	All(scopes ...func(db *gorm.DB) *gorm.DB) (*[]models.Company, error)
-	Find(scopes ...func(db *gorm.DB) *gorm.DB) (*models.Company, error)
-	Create(model *models.Company, scopes ...func(db *gorm.DB) *gorm.DB) error
-	Update(model *models.Company, data map[string]interface{}, scopes ...func(db *gorm.DB) *gorm.DB) error
-	Destroy(model *models.Company, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Find(result *models.Company, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Where(result *[]models.Company, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Create(model *models.Company) error
+	Update(model *models.Company, data map[string]interface{}) error
+	Destroy(model *models.Company) error
 }

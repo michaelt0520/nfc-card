@@ -5,51 +5,70 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/models"
-	"github.com/michaelt0520/nfc-card/repositories"
 	"github.com/michaelt0520/nfc-card/serializers"
+	"github.com/michaelt0520/nfc-card/services"
 )
 
 // AdminCardHandler : struct
 type AdminCardHandler struct {
-	cardRepo *repositories.CardRepository
+	cardSrv *services.CardService
 }
 
 // NewAdminCardHandler ...
-func NewAdminCardHandler(cardRepo *repositories.CardRepository) *AdminCardHandler {
+func NewAdminCardHandler(cardSrv *services.CardService) *AdminCardHandler {
 	return &AdminCardHandler{
-		cardRepo: cardRepo,
+		cardSrv: cardSrv,
 	}
 }
 
 // Index : list all cards
 func (h *AdminCardHandler) Index(c *gin.Context) {
-	var cards []serializers.CardResponse
+	paramQuery := c.Query("q")
+	var filterCard = map[string]interface{}{
+		"code": paramQuery,
+	}
 
-	if _, err := h.cardRepo.All(&cards); err != nil {
+	var cards []models.Card
+	if err := h.cardSrv.FindMany(&cards, filterCard, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &cards, Error: nil})
+	var result []serializers.CardResponse
+	if err := serializers.ConvertSerializer(cards, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Show ...
 func (h *AdminCardHandler) Show(c *gin.Context) {
-	var resCard models.Card
-	if _, err := h.cardRepo.Find(&resCard, map[string]interface{}{"code": c.Param("code")}); err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
-		return
+	paramQuery := c.Param("code")
+	var filterCard = map[string]interface{}{
+		"code": paramQuery,
 	}
 
-	var card serializers.CardResponse
-	if err := serializers.ConvertSerializer(resCard, &card); err != nil {
+	var preloadData = map[string]interface{}{
+		"User": nil,
+	}
+
+	var card models.Card
+	if err := h.cardSrv.FindOneWithScopes(&card, filterCard, preloadData); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	card.User.Type = resCard.User.TypeToString()
-	card.User.Role = resCard.User.RoleToString()
 
-	c.JSON(http.StatusOK, serializers.Resp{Result: &card, Error: nil})
+	var result serializers.CardResponse
+	if err := serializers.ConvertSerializer(card, &result); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	result.User.Type = card.User.TypeToString()
+	result.User.Role = card.User.RoleToString()
+
+	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }
 
 // Create ...
@@ -66,9 +85,8 @@ func (h *AdminCardHandler) Create(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	card.Activated = true
 
-	if _, err := h.cardRepo.Create(&card); err != nil {
+	if err := h.cardSrv.Repo().Create(&card); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -78,9 +96,14 @@ func (h *AdminCardHandler) Create(c *gin.Context) {
 
 // Update ...
 func (h *AdminCardHandler) Update(c *gin.Context) {
+	paramQuery := c.Param("code")
+	var filterCard = map[string]interface{}{
+		"code": paramQuery,
+	}
+
 	var card models.Card
-	if _, err := h.cardRepo.Find(&card, map[string]interface{}{"code": c.Param("code")}); err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
+	if err := h.cardSrv.FindOne(&card, filterCard); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -97,7 +120,7 @@ func (h *AdminCardHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if _, err := h.cardRepo.Update(card, data); err != nil {
+	if err := h.cardSrv.Repo().Update(&card, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -107,13 +130,18 @@ func (h *AdminCardHandler) Update(c *gin.Context) {
 
 // Destroy ...
 func (h *AdminCardHandler) Destroy(c *gin.Context) {
+	paramQuery := c.Param("code")
+	var filterCard = map[string]interface{}{
+		"code": paramQuery,
+	}
+
 	var card models.Card
-	if _, err := h.cardRepo.Find(&card, map[string]interface{}{"code": c.Param("code")}); err != nil {
-		respondError(c, http.StatusNotFound, err.Error())
+	if err := h.cardSrv.FindOne(&card, filterCard); err != nil {
+		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if _, err := h.cardRepo.Destroy(&card); err != nil {
+	if err := h.cardSrv.Repo().Destroy(&card); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
