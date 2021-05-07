@@ -3,8 +3,8 @@
     <Header />
 
     <div v-if="loaded" class="bg-gray-100 pt-14">
-      <div class="flex justify-self-center pt-40 pb-8 mx-auto h-screen">
-        <div class="w-1/2 flex flex-row mx-auto">
+      <div class="flex justify-self-center pt-40 pb-8 mx-auto min-h-screen">
+        <div class="w-3/4 flex flex-row mx-auto">
           <div class="w-1/4">
             <div class="mx-auto container w-60 shadow-md">
               <div
