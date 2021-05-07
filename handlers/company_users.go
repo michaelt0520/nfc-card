@@ -102,7 +102,7 @@ func (h *CompanyUserHandler) Create(c *gin.Context) {
 func (h *CompanyUserHandler) Update(c *gin.Context) {
 	currentCompany, err := h.compSrv.GetCurrentCompany(c)
 	if err != nil {
-		respondError(c, http.StatusUnauthorized, err.Error())
+		respondError(c, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -117,12 +117,12 @@ func (h *CompanyUserHandler) Update(c *gin.Context) {
 
 	var user models.User
 	if errUser := h.userSrv.FindOneWithScopes(&user, filterUser, preloadData); errUser != nil {
-		respondError(c, http.StatusUnauthorized, errUser.Error())
+		respondError(c, http.StatusNotFound, errUser.Error())
 		return
 	}
 
-	if user.ID == c.MustGet("user_id") {
-		respondError(c, http.StatusUnauthorized, errors.DontExecuteYourSelf.Error())
+	if user.ID == c.MustGet("user_id") || user.Role == models.UserCompanyManager || user.Role == models.UserAdmin {
+		respondError(c, http.StatusForbidden, errors.DontExecuteYourSelf.Error())
 		return
 	}
 

@@ -2,7 +2,7 @@
   <div>
     <Header />
 
-    <div v-if="loaded" class="bg-gray-200">
+    <div v-if="loaded" class="bg-gray-200 pt-14">
       <div class="flex flex-col sm:flex-row sm:justify-around">
         <company-side-bar v-model:activeTab="activeTab" :logo="company.logo" />
         <div class="w-full">

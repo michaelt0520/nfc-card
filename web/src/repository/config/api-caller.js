@@ -8,6 +8,12 @@ axios.interceptors.response.use(
   },
 
   function (error) {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      localStorage.removeItem('is_authenticated')
+    }
+
     alertTimeOut('#alert-error')
 
     return Promise.reject(error)

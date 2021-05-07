@@ -5,17 +5,13 @@ const lazyLoadRoute = pageName => {
 }
 
 const routes = [
-  { path: '/', name: 'home', component: lazyLoadRoute('Home') },
-  { path: '/about', name: 'about', component: lazyLoadRoute('About') },
-  { path: '/profile', name: 'profile', component: lazyLoadRoute('Profile') },
-  { path: '/c/:code', name: 'card', component: lazyLoadRoute('Card') },
-  { path: '/setting', name: 'setting', component: lazyLoadRoute('Setting') },
-  { path: '/admin', name: 'admin', component: lazyLoadRoute('Admin'), isPrivate: true },
-  { path: '/company', name: 'company', component: lazyLoadRoute('Company'), isPrivate: true },
-  { path: '/signin', name: 'signin', component: lazyLoadRoute('Signin'), isPrivate: false },
-  { path: '/signup', name: 'signup', component: lazyLoadRoute('Signup') },
-  { path: '/404', name: 'error-404', component: lazyLoadRoute('Error404') },
-  { path: '/:pathMatch(.*)*', component: lazyLoadRoute('Error404') }
+  { path: '/', name: 'home', component: lazyLoadRoute('Home'), meta: { title: 'Dashboard' } },
+  { path: '/c/:code', name: 'card', component: lazyLoadRoute('Card'), meta: { title: 'Card' } },
+  { path: '/setting', name: 'setting', component: lazyLoadRoute('Setting'), meta: { title: 'Setting' } },
+  { path: '/admin', name: 'admin', component: lazyLoadRoute('Admin'), meta: { title: 'Admin' } },
+  { path: '/company', name: 'company', component: lazyLoadRoute('Company'), meta: { title: 'Company' } },
+  { path: '/404', name: 'error-404', component: lazyLoadRoute('Error404'), meta: { title: '404' } },
+  { path: '/:pathMatch(.*)*', component: lazyLoadRoute('Error404'), meta: { title: '404' } }
 ]
 
 const router = createRouter({
@@ -24,6 +20,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  document.title = to.meta.title
+
   const currentUser = localStorage.getItem('user') && JSON.parse(localStorage.getItem('user'))
   const isAuthenticated = localStorage.getItem('is_authenticated')
 

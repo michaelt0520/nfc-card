@@ -34,7 +34,7 @@ func (h *AppHandler) ShowCard(c *gin.Context) {
 
 	var preloadData = map[string]interface{}{
 		"User":              nil,
-		"User.Informations": nil,
+		"User.Informations": "visibled = true",
 		"User.Company":      nil,
 	}
 

@@ -5,14 +5,14 @@
         class="block text-grey-darker text-sm font-bold mb-2"
         for="username"
       >
-        Username
+        Email
       </label>
       <input
         class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-        id="username"
+        id="email"
         type="text"
-        placeholder="Username"
-        v-model="loginUsername"
+        placeholder="Email"
+        v-model="loginEmail"
         @keyup.enter="onClickSignin"
       />
     </div>
@@ -65,7 +65,7 @@ export default {
 
   data() {
     return {
-      loginUsername: "",
+      loginEmail: "",
       loginPassword: "",
     };
   },
@@ -75,7 +75,7 @@ export default {
 
     onClickSignin() {
       const data = {
-        username: this.loginUsername,
+        email: this.loginEmail,
         password: this.loginPassword,
       };
       this.signin(data);

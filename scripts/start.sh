@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DEFAULT_ENV=development
+DEFAULT_HOST=localhost
 DEFAULT_PORT=8001
 
 # check and set port for app
@@ -19,12 +20,21 @@ else
   go_app_env=$DEFAULT_ENV
 fi
 
+# check and set host for app
+if [[ "$host" != "" ]]
+then
+  go_app_host=$host
+else
+  go_app_host=$DEFAULT_HOST
+fi
+
 # export port and env
 export app_port=$go_app_port
 export app_env=$go_app_env
+export app_host=$go_app_host
 
 echo -e "\n\nONETAP run in: $app_env"
-echo -e "ONETAP run with port: $app_port\n\n"
+echo -e "ONETAP run: $app_host:$app_port\n\n"
 
 # check existed or create file env
 FILE="config/.env.${app_env}.sh"

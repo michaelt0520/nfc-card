@@ -13,6 +13,5 @@ func Load(log *zap.Logger) {
 
 	seed.LoadCompanySeed()
 	seed.LoadUserSeed()
-	seed.LoadInformationSeed()
 	seed.LoadCardSeed()
 }

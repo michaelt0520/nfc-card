@@ -63,7 +63,7 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 	}
 
 	var filterUser = map[string]interface{}{
-		"username": loginVals.Username,
+		"email": loginVals.Email,
 	}
 
 	var resU models.User

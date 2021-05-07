@@ -13,8 +13,8 @@
                   class="h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                   @input="$emit('select-cards-per-page', $event)"
                 >
-                  <option>2</option>
-                  <option>5</option>
+                  <option>10</option>
+                  <option>20</option>
                   <option>50</option>
                 </select>
                 <div
@@ -138,27 +138,29 @@
                     </span>
                   </td>
                   <td
-                    class="flex flex-row px-5 py-5 border-b border-gray-200 bg-white text-sm"
+                    class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
-                    <label class="flex items-center">
-                      <input
-                        class="relative w-10 h-5 transition-all cursor-pointer duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
-                        type="checkbox"
-                        :checked="card.activated"
-                        @click="
-                          $emit('on-click-update-activate-card', card, {
-                            activated: !card.activated,
-                          })
-                        "
-                      />
-                    </label>
-                    <button
-                     v-if="$route.name === 'admin'"
-                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
-                      @click="$emit('on-click-remove-card', card)"
-                    >
-                      <ICODelete />
-                    </button>
+                    <div class="flex flex-row">
+                      <label class="flex items-center">
+                        <input
+                          class="relative w-10 h-5 transition-all cursor-pointer duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
+                          type="checkbox"
+                          :checked="card.activated"
+                          @click="
+                            $emit('on-click-update-activate-card', card, {
+                              activated: !card.activated,
+                            })
+                          "
+                        />
+                      </label>
+                      <button
+                        v-if="$route.name === 'admin'"
+                        class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
+                        @click="$emit('on-click-remove-card', card)"
+                      >
+                        <ICODelete />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>

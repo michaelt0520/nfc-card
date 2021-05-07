@@ -5,7 +5,7 @@
       class="fixed top-16 hidden right-5 flex flex-col sm:flex-row sm:items-center bg-white shadow rounded-md py-5 pl-6 pr-8 sm:pr-6"
     >
       <div
-        class="flex flex-row items-center border-b sm:border-b-0 w-full sm:w-auto pb-4 sm:pb-0"
+        class="flex flex-row items-center w-full sm:w-auto sm:pb-0"
       >
         <div class="text-green-500">
           <svg
@@ -25,34 +25,13 @@
         </div>
         <div class="text-sm font-medium ml-3">Success</div>
       </div>
-      <div class="text-sm tracking-wide text-gray-500 mt-4 sm:mt-0 sm:ml-4">
-        Your action was Successful
-      </div>
-      <div
-        class="absolute sm:relative sm:top-auto sm:right-auto ml-auto right-4 top-4 text-gray-400 hover:text-gray-800 cursor-pointer"
-      >
-        <svg
-          class="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          ></path>
-        </svg>
-      </div>
     </div>
     <div
       id="alert-error"
       class="fixed top-16 hidden right-5 flex flex-col sm:flex-row sm:items-center bg-white shadow rounded-md py-5 pl-6 pr-8 sm:pr-6"
     >
       <div
-        class="flex flex-row items-center border-b sm:border-b-0 w-full sm:w-auto pb-4 sm:pb-0"
+        class="flex flex-row items-center w-full sm:w-auto sm:pb-0"
       >
         <div class="text-red-500">
           <svg
@@ -71,27 +50,6 @@
           </svg>
         </div>
         <div class="text-sm font-medium ml-3">Error</div>
-      </div>
-      <div class="text-sm tracking-wide text-gray-500 mt-4 sm:mt-0 sm:ml-4">
-        Your action was Unsuccessful. Please check again
-      </div>
-      <div
-        class="absolute sm:relative sm:top-auto sm:right-auto ml-auto right-4 top-4 text-gray-400 hover:text-gray-800 cursor-pointer"
-      >
-        <svg
-          class="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          ></path>
-        </svg>
       </div>
     </div>
   </div>

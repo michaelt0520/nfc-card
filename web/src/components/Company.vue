@@ -96,7 +96,6 @@
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
                     <div class="flex items-center">
-                      {{ company.id }}
                       <div class="flex-shrink-0 w-10 h-10">
                         <img
                           class="w-full h-full rounded-full"
@@ -129,19 +128,21 @@
                   <td
                     class="px-5 py-5 border-b border-gray-200 bg-white text-sm"
                   >
-                    <button
-                      class="flex-no-shrink p-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-green"
-                      @click="onShowEditCompanyModal(company)"
-                    >
-                      <ICOEdit />
-                    </button>
+                    <div class="flex">
+                      <button
+                        class="flex-no-shrink p-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-green"
+                        @click="onShowEditCompanyModal(company)"
+                      >
+                        <ICOEdit />
+                      </button>
 
-                    <button
-                      class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
-                      @click="$emit('on-click-remove-company', company)"
-                    >
-                      <ICODelete />
-                    </button>
+                      <button
+                        class="flex-no-shrink p-2 ml-2 border-2 rounded text-red border-red hover:text-red-500 hover:bg-red"
+                        @click="$emit('on-click-remove-company', company)"
+                      >
+                        <ICODelete />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
