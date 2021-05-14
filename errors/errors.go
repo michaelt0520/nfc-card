@@ -20,4 +20,5 @@ var (
 
 	DontExecuteYourSelf = status.Error(4001, "Dont execute yourself")
 	UseableCard         = status.Error(4002, "Card has been used")
+	CardNotCompatible   = status.Error(4003, "Card is not compatible")
 )

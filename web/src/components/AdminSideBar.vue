@@ -1,5 +1,5 @@
 <template>
-  <div class="w-64 h-screen bg-white">
+  <div class="w-64 min-h-screen bg-white">
     <div class="flex items-center justify-center mt-10">
       <img class="h-16" :src="logo" />
     </div>

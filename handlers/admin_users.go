@@ -31,8 +31,14 @@ func (h *AdminUserHandler) Index(c *gin.Context) {
 		"name": paramQuery,
 	}
 
+	var filterSearch = map[string]interface{}{
+		"name":         paramQuery,
+		"email":        paramQuery,
+		"phone_number": paramQuery,
+	}
+
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, filterSearch, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}

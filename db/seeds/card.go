@@ -36,12 +36,11 @@ func (seed *Seed) LoadCardSeed() {
 		{Code: "ONETAP023", Activated: true},
 		{Code: "ONETAP024", Activated: true},
 		{Code: "ONETAP025", Activated: true},
-    {Code: "ONETAP026", Activated: true},
-    {Code: "ONETAP027", Activated: true},
-    {Code: "ONETAP028", Activated: true},
-    {Code: "ONETAP029", Activated: true},
-    {Code: "ONETAP030", Activated: true},
-
+		{Code: "ONETAP026", Activated: true},
+		{Code: "ONETAP027", Activated: true},
+		{Code: "ONETAP028", Activated: true},
+		{Code: "ONETAP029", Activated: true},
+		{Code: "ONETAP030", Activated: true},
 	}
 
 	for _, card := range cards {

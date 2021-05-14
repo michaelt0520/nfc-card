@@ -1,6 +1,8 @@
 package seeds
 
-import "go.uber.org/zap"
+import (
+	"go.uber.org/zap"
+)
 
 // Seed : struct
 type Seed struct {

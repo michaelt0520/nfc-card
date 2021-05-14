@@ -3,6 +3,7 @@ package middlewares
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
@@ -19,7 +20,11 @@ func BasicAuth(c *gin.Context) (*jwt.PayLoad, error) {
 	payload, errExtract := jwt.ExtractToken(token)
 	if errExtract != nil {
 		return nil, errExtract
+
 	}
+
+	log := models.SQLLog{UserID: 1, Action: "ABC", CreatedAt: time.Now(), UpdatedAt: time.Now()}
+	models.CreateIssue(log)
 
 	c.Set("user_id", payload.UserID)
 

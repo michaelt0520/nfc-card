@@ -68,7 +68,6 @@ func (h *AuthHandler) Signin(c *gin.Context) {
 
 	var resU models.User
 	if err := h.userSrv.FindOne(&resU, filterUser); err != nil {
-		fmt.Println(err.Error())
 		respondError(c, http.StatusNotFound, errors.RecordNotFound.Error())
 		return
 	}

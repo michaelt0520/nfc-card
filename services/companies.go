@@ -39,7 +39,7 @@ func (s *CompanyService) GetCurrentCompany(c *gin.Context) (*models.Company, err
 }
 
 func (s *CompanyService) FindOne(result *models.Company, filter map[string]interface{}) error {
-	if err := s.compRepo.Find(result, queries.BuildWhere(queries.BuildQueries(filter))); err != nil {
+	if err := s.compRepo.Find(result, queries.BuildWhere(queries.BuildFinds(filter))); err != nil {
 		return err
 	}
 

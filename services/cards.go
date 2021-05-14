@@ -22,7 +22,7 @@ func (s *CardService) Repo() *repositories.CardRepository {
 }
 
 func (s *CardService) FindOne(result *models.Card, filter map[string]interface{}) error {
-	if err := s.cardRepo.Find(result, queries.BuildWhere(queries.BuildCardQueries(filter))); err != nil {
+	if err := s.cardRepo.Find(result, queries.BuildWhere(queries.BuildFinds(filter))); err != nil {
 		return err
 	}
 
@@ -30,7 +30,7 @@ func (s *CardService) FindOne(result *models.Card, filter map[string]interface{}
 }
 
 func (s *CardService) FindMany(result *[]models.Card, filter map[string]interface{}, c *gin.Context) error {
-	if err := s.cardRepo.Where(result, queries.BuildWhere(queries.BuildCardQueries(filter)), queries.Paginate(c)); err != nil {
+	if err := s.cardRepo.Where(result, queries.BuildWhere(queries.BuildQueries(filter)), queries.Paginate(c)); err != nil {
 		return err
 	}
 
@@ -38,7 +38,7 @@ func (s *CardService) FindMany(result *[]models.Card, filter map[string]interfac
 }
 
 func (s *CardService) FindManyWithScopes(result *[]models.Card, filter map[string]interface{}, preloadData map[string]interface{}, c *gin.Context) error {
-	if err := s.cardRepo.Where(result, queries.BuildWhere(queries.BuildCardQueries(filter)), queries.BuildPreload(preloadData), queries.Paginate(c)); err != nil {
+	if err := s.cardRepo.Where(result, queries.BuildWhere(queries.BuildQueries(filter)), queries.BuildPreload(preloadData), queries.Paginate(c)); err != nil {
 		return err
 	}
 
@@ -46,7 +46,7 @@ func (s *CardService) FindManyWithScopes(result *[]models.Card, filter map[strin
 }
 
 func (s *CardService) FindOneWithScopes(result *models.Card, filter map[string]interface{}, preloadData map[string]interface{}) error {
-	if err := s.cardRepo.Find(result, queries.BuildWhere(queries.BuildCardQueries(filter)), queries.BuildPreload(preloadData)); err != nil {
+	if err := s.cardRepo.Find(result, queries.BuildWhere(queries.BuildFinds(filter)), queries.BuildPreload(preloadData)); err != nil {
 		return err
 	}
 
@@ -60,7 +60,7 @@ func (s *CardService) RemoveCard(filter map[string]interface{}) error {
 	}
 
 	var card models.Card
-	if err := s.cardRepo.Find(&card, queries.BuildWhere(queries.BuildCardQueries(filter)), queries.BuildPreload(preloadData)); err != nil {
+	if err := s.cardRepo.Find(&card, queries.BuildWhere(queries.BuildFinds(filter)), queries.BuildPreload(preloadData)); err != nil {
 		return err
 	}
 

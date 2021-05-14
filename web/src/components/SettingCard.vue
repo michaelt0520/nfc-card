@@ -13,7 +13,7 @@
     <div class="bg-white space-y-6">
       <div class="flex pt-4 md:w-11/12 mx-auto">
         <input
-          class="shadow appearance-none border border-gray-300 rounded-full w-full py-2 px-3 mx-4 h-10 text-grey-darker"
+          class="shadow appearance-none border border-gray-300 rounded-full w-full py-2 px-3 mx-4 h-10 text-grey-darker focus:outline-none"
           placeholder="Add Card"
           v-model="cardCode"
         />
@@ -38,7 +38,7 @@
           </div>
           <label class="flex items-center">
             <input
-              class="relative w-10 h-5 transition-all duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none"
+              class="relative w-10 h-5 transition-all duration-200 ease-in-out bg-gray-400 rounded-full shadow-inner outline-none appearance-none cursor-pointer"
               type="checkbox"
               :checked="card.activated"
               @click="onClickToggleActivate(card)"
@@ -94,7 +94,9 @@ export default {
           activated: !card.activated,
         },
       };
-      this.updateCard(data);
+      this.updateCard(data).then(() => {
+        this.cardCode = "";
+      });
     },
 
     onClickRemoveCard(cardCode) {

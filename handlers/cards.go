@@ -55,6 +55,11 @@ func (h *CardHandler) Create(c *gin.Context) {
 		return
 	}
 
+	if currentUser.Role == models.UserStandard && card.CompanyID != nil {
+		respondError(c, http.StatusUnprocessableEntity, errors.CardNotCompatible.Error())
+		return
+	}
+
 	if err := h.userSrv.AddCardToUser(currentUser, &card); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return

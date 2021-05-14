@@ -1,5 +1,5 @@
 # App
-export app_host=http://localhost:$app_port
+export app_host=http://$app_host:$app_port
 
 # Postgres
 export db_host=localhost

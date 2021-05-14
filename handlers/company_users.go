@@ -35,11 +35,14 @@ func (h *CompanyUserHandler) Index(c *gin.Context) {
 	paramQuery := c.Query("q")
 	var filterUser = map[string]interface{}{
 		"company_id": currentCompany.ID,
-		"name":       paramQuery,
+	}
+
+	var filterSearch = map[string]interface{}{
+		"name": paramQuery,
 	}
 
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, filterSearch, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -143,7 +146,7 @@ func (h *CompanyUserHandler) ShowPersonalUsers(c *gin.Context) {
 	}
 
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, nil, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}

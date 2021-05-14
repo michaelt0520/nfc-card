@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/michaelt0520/nfc-card/errors"
+	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/serializers"
 	"github.com/michaelt0520/nfc-card/services"
 )
@@ -28,7 +29,12 @@ func (h *UserHandler) Show(c *gin.Context) {
 		"Cards":        nil,
 	}
 
-	currentUser, err := h.userSrv.GetCurrentUserWithPreloads(c, preloadData)
+	var filterUser = map[string]interface{}{
+		"id": c.MustGet("user_id"),
+	}
+
+	var currentUser models.User
+	err := h.userSrv.FindOneWithScopes(&currentUser, filterUser, preloadData)
 	if err != nil {
 		respondError(c, http.StatusUnauthorized, err.Error())
 		return
@@ -45,7 +51,12 @@ func (h *UserHandler) Show(c *gin.Context) {
 
 // Update ...
 func (h *UserHandler) Update(c *gin.Context) {
-	currentUser, err := h.userSrv.GetCurrentUser(c)
+	var filterUser = map[string]interface{}{
+		"id": c.MustGet("user_id"),
+	}
+
+	var currentUser models.User
+	err := h.userSrv.FindOne(&currentUser, filterUser)
 	if err != nil {
 		respondError(c, http.StatusUnauthorized, err.Error())
 		return
@@ -64,7 +75,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.userSrv.Repo().Update(currentUser, data); err != nil {
+	if err := h.userSrv.Repo().Update(&currentUser, data); err != nil {
 		respondError(c, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
@@ -103,7 +114,12 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 		return
 	}
 
-	if errUpdate := h.userSrv.Repo().Update(currentUser, map[string]interface{}{"jwt": nil, "password": *userVals.NewPassword}); errUpdate != nil {
+	var data = map[string]interface{}{
+		"jwt":      nil,
+		"password": *userVals.NewPassword,
+	}
+
+	if errUpdate := h.userSrv.UpdatePassword(currentUser, data); errUpdate != nil {
 		respondError(c, http.StatusUnprocessableEntity, errUpdate.Error())
 		return
 	}

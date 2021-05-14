@@ -44,7 +44,7 @@ func (h *AppHandler) ShowCard(c *gin.Context) {
 		return
 	}
 
-	if resCard.Activated == false {
+	if resCard.Activated == false || resCard.UserID == nil {
 		respondError(c, http.StatusNotFound, errors.DeactivatedCard.Error())
 		return
 	}
@@ -92,7 +92,7 @@ func (h *AppHandler) SearchUser(c *gin.Context) {
 	}
 
 	var users []models.User
-	if err := h.userSrv.FindMany(&users, filterUser, c); err != nil {
+	if err := h.userSrv.FindMany(&users, filterUser, nil, c); err != nil {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}

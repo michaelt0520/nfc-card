@@ -10,11 +10,12 @@ import (
 
 	"github.com/michaelt0520/nfc-card/api"
 	"github.com/michaelt0520/nfc-card/config"
+	"github.com/michaelt0520/nfc-card/db"
+	"github.com/michaelt0520/nfc-card/db/seeds"
 	"github.com/michaelt0520/nfc-card/handlers"
 	"github.com/michaelt0520/nfc-card/logger"
 	"github.com/michaelt0520/nfc-card/models"
 	"github.com/michaelt0520/nfc-card/repositories"
-	"github.com/michaelt0520/nfc-card/seeds"
 	"github.com/michaelt0520/nfc-card/services"
 )
 
@@ -27,8 +28,14 @@ func main() {
 	// init log
 	log = logger.InitLogger(conf.Env)
 
-	// init repositories
-	if err := repositories.InitRepository(conf); err != nil {
+  // connect db mysql
+	if err := db.ConnectDatabase(conf); err != nil {
+		log.Error("failed to connect db", zap.Error(err))
+		return
+	}
+
+  // connect mongo
+  if err := db.ConnectMongoClient(); err != nil {
 		log.Error("failed to connect db", zap.Error(err))
 		return
 	}
@@ -46,7 +53,7 @@ func main() {
 	}))
 
 	// Migration
-	repositories.GetDB().AutoMigrate(
+	db.Database().AutoMigrate(
 		&models.User{},
 		&models.Information{},
 		&models.Card{},
@@ -77,7 +84,7 @@ func main() {
 	uploadHandler := handlers.NewUploadHandler(userSrv, compSrv)
 	userHandler := handlers.NewUserHandler(userSrv)
 	infoHandler := handlers.NewInformationHandler(userSrv, infoSrv)
-  cardHandler := handlers.NewCardHandler(userSrv, cardSrv)
+	cardHandler := handlers.NewCardHandler(userSrv, cardSrv)
 	compUserHandler := handlers.NewCompanyUserHandler(compSrv, userSrv)
 	compCardHandler := handlers.NewCompanyCardHandler(compSrv, cardSrv)
 	compHandler := handlers.NewCompanyHandler(compSrv)
@@ -94,7 +101,7 @@ func main() {
 		authHandler,
 		userHandler,
 		infoHandler,
-    cardHandler,
+		cardHandler,
 		compUserHandler,
 		compCardHandler,
 		compHandler,

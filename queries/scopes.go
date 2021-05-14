@@ -21,6 +21,20 @@ func BuildWhere(_filters map[string]interface{}) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func BuildOr(_filters map[string]interface{}) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		for k, v := range _filters {
+			if v != nil {
+				db.Or(k, v)
+			} else {
+				db.Or(k)
+			}
+		}
+
+		return db
+	}
+}
+
 func BuildPreload(_associations map[string]interface{}) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		for k, v := range _associations {

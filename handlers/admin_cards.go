@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -133,8 +132,6 @@ func (h *AdminCardHandler) Update(c *gin.Context) {
 		respondError(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	fmt.Println(result)
 
 	c.JSON(http.StatusOK, serializers.Resp{Result: &result, Error: nil})
 }

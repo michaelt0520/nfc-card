@@ -101,7 +101,9 @@ export default {
     ...mapActions("users", ["updateCurrentUserPassword"]),
 
     onClickUpdatePassword() {
-      this.updateCurrentUserPassword(this.password);
+      this.updateCurrentUserPassword(this.password).then(() => {
+        this.$router.push("/");
+      });
     },
   },
 };
