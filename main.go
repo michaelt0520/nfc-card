@@ -28,14 +28,14 @@ func main() {
 	// init log
 	log = logger.InitLogger(conf.Env)
 
-  // connect db mysql
+	// connect db mysql
 	if err := db.ConnectDatabase(conf); err != nil {
 		log.Error("failed to connect db", zap.Error(err))
 		return
 	}
 
-  // connect mongo
-  if err := db.ConnectMongoClient(); err != nil {
+	// connect mongo
+	if err := db.ConnectMongoClient(); err != nil {
 		log.Error("failed to connect db", zap.Error(err))
 		return
 	}
