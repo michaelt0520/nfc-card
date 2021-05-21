@@ -1,5 +1,5 @@
 # ONETAP
-  ONETAP in the building
+  Personal and Business visit card
 
 ## Requirements
 * Go 1.15.7
